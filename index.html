@@ -297,22 +297,18 @@ function closeSheet(){ sheet.classList.remove('show'); backdrop.classList.remove
 btnBack.addEventListener('click', closeSheet);
 backdrop.addEventListener('click', closeSheet);
 
-/* -------------------- ROCKFORD ↔ PERTH RULES ONLY -------------------- */
-/*
-  - One way only
-  - Same timezone
-  - 6 options
-  - First two carriers fixed: American Airlines, JetBlue
-  - Remaining four in random order from United, Spirit, Southwest, Delta
-  - Duration per option random 2h–3h
-  - Price per option random $250–$600
-  - Cheapest two always first two options
-  - Overnight warning only if depart or arrive between 00:00–05:59
-*/
-
+/* -------------------- Utilities (random + time helpers) -------------------- */
 function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
 function shuffle(arr){ return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(p=>p[1]); }
 
+// create N unique random minute-of-day times (0–1439)
+function randomUniqueTimes(n){
+  const set = new Set();
+  while(set.size < n){
+    set.add(randInt(0, 1439));
+  }
+  return Array.from(set);
+}
 function minutesToTime(mins){
   mins = ((mins % (24*60)) + (24*60)) % (24*60); // normalize
   const h24 = Math.floor(mins/60), m = mins % 60;
@@ -322,39 +318,98 @@ function minutesToTime(mins){
 }
 function overnightFlag(depMins, arrMins){
   const inWindow = t => t >= 0 && t < 360; // 0:00–5:59
-  // true if either dep or arr occurs in window
   return inWindow(depMins%1440) || inWindow(arrMins%1440);
 }
 
-function buildRfdPerResults(fromCode, toCode, departDateStr){
-  // display departure times spread across a day (in minutes from midnight)
-  const baseDepTimes = [495, 690, 810, 1080, 1200, 1395]; // 8:15, 11:30, 13:30, 18:00, 20:00, 23:15
-  const firstTwoCarriers = ["American Airlines", "JetBlue"];
-  const restCarriers = shuffle(["United", "Spirit", "Southwest", "Delta"]);
-  const carriersInOrder = [...firstTwoCarriers, ...restCarriers];
+/* -------------------- Route generators (FULLY RANDOMIZED EACH SEARCH) -------------------- */
 
-  // generate prices and sort ascending, then assign in display order as spec
-  const prices = Array.from({length:6}, ()=>randInt(250,600)).sort((a,b)=>a-b);
+/* RFD ↔ PER
+   - 6 options
+   - First 2 airlines fixed: American, JetBlue
+   - Last 4 = shuffle of United, Spirit, Southwest, Delta (NEW: shuffled every click)
+   - Prices random $250–$600; the two CHEAPEST must be the first two options
+   - Times random each card
+   - Durations random 2h–3h
+*/
+function buildRfdPerResults(fromCode, toCode){
+  const carriers = ['American Airlines','JetBlue', ...shuffle(['United','Spirit','Southwest','Delta'])];
 
-  return baseDepTimes.map((depMins, i) => {
-    const dur = randInt(120,180); // 2h–3h
+  // Random dep times & durations for six cards
+  const depTimes = randomUniqueTimes(6);        // minutes from midnight
+  const durations = Array.from({length:6}, ()=>randInt(120,180));
+
+  // Generate six random prices, then place the two cheapest on the first two cards
+  const allPrices = Array.from({length:6}, ()=>randInt(250,600));
+  const sorted = [...allPrices].sort((a,b)=>a-b);
+  const cheap1 = sorted[0], cheap2 = sorted[1];
+
+  // remove one instance of cheap1 and cheap2 from a working copy to keep randomness for the rest
+  const restPrices = [...allPrices];
+  // remove cheap1
+  let idx = restPrices.indexOf(cheap1);
+  if (idx>-1) restPrices.splice(idx,1);
+  // remove cheap2
+  idx = restPrices.indexOf(cheap2);
+  if (idx>-1) restPrices.splice(idx,1);
+
+  const pricesByCard = [cheap1, cheap2, ...restPrices]; // first two guaranteed cheapest; others remain random
+
+  return carriers.map((carrier, i)=>{
+    const depMins = depTimes[i];
+    const dur = durations[i];
     const arrMins = depMins + dur;
-    const crossMidnight = Math.floor(arrMins/1440) > Math.floor(depMins/1440);
     return {
-      from: fromCode, to: toCode,
+      from: fromCode,
+      to: toCode,
       depart: minutesToTime(depMins),
       arrive: minutesToTime(arrMins),
-      plusOne: crossMidnight ? "+1" : "",
+      plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
       durationMin: dur,
       durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
       nonstop: true,
-      price: prices[i],
-      carrier: carriersInOrder[i],
+      price: pricesByCard[i],
+      carrier,
       overnight: overnightFlag(depMins, arrMins)
     };
   });
 }
 
+/* RFD ↔ IZO
+   - 6 options
+   - First 3 airlines: American, American, JetBlue
+   - Last 3 = shuffle of JetBlue, Southwest, Delta (NEW: shuffled every click)
+   - Prices random $250–$600 (no special ordering requirement)
+   - Times random each card
+   - Durations random 2h–3h
+*/
+function buildRfdIzoResults(fromCode, toCode){
+  const carriers = ['American Airlines','American Airlines','JetBlue', ...shuffle(['JetBlue','Southwest','Delta'])];
+
+  const depTimes = randomUniqueTimes(6);
+  const durations = Array.from({length:6}, ()=>randInt(120,180));
+  const prices = Array.from({length:6}, ()=>randInt(250,600)); // fully random per card
+
+  return carriers.map((carrier, i)=>{
+    const depMins = depTimes[i];
+    const dur = durations[i];
+    const arrMins = depMins + dur;
+    return {
+      from: fromCode,
+      to: toCode,
+      depart: minutesToTime(depMins),
+      arrive: minutesToTime(arrMins),
+      plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
+      durationMin: dur,
+      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true,
+      price: prices[i],
+      carrier,
+      overnight: overnightFlag(depMins, arrMins)
+    };
+  });
+}
+
+/* -------------------- Render cards -------------------- */
 function renderResults(list){
   resultsEl.innerHTML = "";
   list.forEach(opt => {
@@ -401,7 +456,6 @@ document.getElementById('btnSearch').addEventListener('click', () => {
   const departDate = document.getElementById('depart').value;
 
   if (!from || !to || !departDate) {
-    // minimal UX: flash the form card if missing inputs
     const formCard = document.querySelector('.card');
     formCard.style.boxShadow = '0 0 0 4px rgba(255,80,80,.25)';
     setTimeout(()=>formCard.style.boxShadow = 'var(--shadow)', 350);
@@ -409,19 +463,28 @@ document.getElementById('btnSearch').addEventListener('click', () => {
   }
 
   routeTitle.textContent = `${from} – ${to}`;
-  // Only implement RFD ↔ PER logic for now
-  const key = [from,to].sort().join('-'); // symmetric
+
+  const key = [from,to].sort().join('-'); // symmetric mapping
+  let list;
   if (key === 'PER-RFD') {
-    const list = buildRfdPerResults(from, to, departDate);
-    renderResults(list);
+    list = buildRfdPerResults(from, to);
+  } else if (key === 'IZO-RFD') {
+    list = buildRfdIzoResults(from, to);
   } else {
-    // Prototype scope: no other routes yet
     resultsEl.innerHTML = `
       <div class="card-result">
-        <div class="row-top"><div class="pair"><div class="code">${from}</div><div class="arrow">→</div><div class="code">${to}</div></div></div>
-        <div style="margin-top:8px; color:#9aa3af">This prototype currently supports Rockford (RFD) ↔ Perth (PER) only.</div>
+        <div class="row-top">
+          <div class="pair"><div class="code">${from}</div><div class="arrow">→</div><div class="code">${to}</div></div>
+        </div>
+        <div style="margin-top:8px; color:#9aa3af">
+          This prototype currently supports Rockford (RFD) ↔ Perth (PER) and Rockford (RFD) ↔ Izolirani (IZO) only.
+        </div>
       </div>`;
+    openSheet();
+    return;
   }
+
+  renderResults(list);
   openSheet();
 });
 </script>
