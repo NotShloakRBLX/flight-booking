@@ -23,96 +23,121 @@
   html,body{height:100%}
   body{
     margin:0; background:var(--bg); color:var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Segoe UI, Roboto, Inter, system-ui, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    color-scheme: dark;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Segoe UI,Roboto,Inter,system-ui,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    color-scheme:dark;
   }
 
-  /* iPhone-first layout, single column to avoid overlap */
-  .page{
-    width:clamp(320px, 92vw, 420px);   /* iPhone 15 Pro ~393px CSS wide */
-    margin:0 auto;
-    padding:22px 16px 40px;
-  }
-  h1{
-    font-size:48px; line-height:1;
-    margin:6px 4px 18px; font-weight:800; letter-spacing:-.4px;
-  }
+  /* iPhone-first layout */
+  .page{width:clamp(320px,92vw,420px); margin:0 auto; padding:22px 16px 40px;}
+  h1{font-size:48px; line-height:1; margin:6px 4px 18px; font-weight:800; letter-spacing:-.4px}
 
   .card{
-    position:relative;
-    background:var(--card);
-    border:1px solid var(--cardBorder);
-    border-radius:var(--radiusCard);
-    box-shadow:var(--shadow);
-    padding:22px 20px 24px;
+    position:relative; background:var(--card); border:1px solid var(--cardBorder);
+    border-radius:var(--radiusCard); box-shadow:var(--shadow); padding:22px 20px 24px;
   }
 
-  /* Single column with generous spacing for mobile */
-  .grid{
-    display:grid;
-    grid-template-columns:1fr;
-    row-gap:20px;
-  }
+  /* single-column mobile form */
+  .grid{display:grid; grid-template-columns:1fr; row-gap:20px}
 
-  .label{
-    font-size:16px;
-    color:var(--muted);
-    margin:0 0 8px;
-  }
+  .label{font-size:16px; color:var(--muted); margin:0 0 8px;}
 
   .row{position:relative}
   .line-wrap{position:relative; padding:0 0 12px;}
-  .line-wrap::after{
-    content:""; position:absolute; left:0; right:0; bottom:0;
-    height:2px; background:var(--line); border-radius:2px;
-  }
+  .line-wrap::after{content:""; position:absolute; left:0; right:0; bottom:0; height:2px; background:var(--line); border-radius:2px;}
 
-  /* inputs */
   .input, .select select{
     width:100%; background:transparent; border:0; outline:0; color:var(--ink);
     font-size:21px; padding:6px 34px 6px 0; line-height:1.25;
   }
   .input::placeholder{color:rgba(255,255,255,.55)}
-  .focusbar{
-    position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--lineActive);
-    transform:scaleX(0); transform-origin:left; transition:transform var(--t);
-  }
+  .focusbar{position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--lineActive);
+    transform:scaleX(0); transform-origin:left; transition:transform var(--t)}
   .input:focus ~ .focusbar,
   .select select:focus ~ .focusbar{transform:scaleX(1)}
 
-  /* date input polish (iOS Safari) */
-  input[type="date"]{ -webkit-appearance: none; appearance: none; }
-  input[type="date"]::-webkit-calendar-picker-indicator{ opacity:0; } /* hide native icon */
+  /* date (hide iOS calendar icon so our icon shows) */
+  input[type="date"]{-webkit-appearance:none; appearance:none}
+  input[type="date"]::-webkit-calendar-picker-indicator{opacity:0}
 
-  .select{position:relative;}
-  .select select{
-    -webkit-appearance:none; appearance:none; cursor:pointer;
-  }
-
-  .icon{position:absolute; right:0; top:50%; transform:translateY(-50%); width:20px; height:20px;}
-  .icon svg{width:100%; height:100%; display:block;}
+  .select{position:relative}
+  .icon{position:absolute; right:0; top:50%; transform:translateY(-50%); width:20px; height:20px}
+  .icon svg{width:100%; height:100%; display:block}
   .icon svg *{stroke:var(--accent); fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round}
 
-  /* swap pill stays centered near the top; out of the fields’ way */
   .swap{
     position:absolute; left:50%; top:-18px; transform:translateX(-50%);
     width:40px; height:40px; border-radius:50%;
     background:#2a2d33; border:1px solid var(--cardBorder);
-    display:grid; place-items:center; box-shadow:0 6px 18px rgba(0,0,0,.34);
+    display:grid; place-items:center; box-shadow:0 6px 18px rgba(0,0,0,.34)
   }
   .swap svg{width:20px;height:20px}
   .swap svg path{stroke:var(--accent); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
 
-  .cta{margin-top:22px;}
+  .cta{margin-top:22px}
   .cta button{
-    width:100%; height:60px; border-radius:34px; border:0; outline:0; cursor:pointer;
+    width:100%; height:60px; border-radius:34px; border:0; cursor:pointer;
     background:var(--accent); color:#fff; font-weight:800; font-size:24px; letter-spacing:.2px;
-    box-shadow:0 12px 26px rgba(30,139,255,.33);
-    transition:transform var(--t), background var(--t);
+    box-shadow:0 12px 26px rgba(30,139,255,.33); transition:transform var(--t), background var(--t)
   }
   .cta button:hover{background:var(--accentHover)}
   .cta button:active{transform:translateY(1px)}
+
+  /* ---------- RESULTS SHEET (overlay) ---------- */
+  .backdrop{
+    position:fixed; inset:0; background:rgba(0,0,0,.45);
+    opacity:0; pointer-events:none; transition:opacity var(--t);
+  }
+  .backdrop.show{opacity:1; pointer-events:auto}
+
+  .sheet{
+    position:fixed; left:50%; transform:translate(-50%, 100%);
+    bottom:0; width:clamp(320px,92vw,420px); max-height:86vh;
+    background:var(--card); border:1px solid var(--cardBorder); border-radius:28px 28px 0 0;
+    box-shadow:0 -18px 48px rgba(0,0,0,.6); overflow:hidden; transition:transform var(--t)
+  }
+  .sheet.show{transform:translate(-50%,0)}
+
+  .sheet-header{
+    position:sticky; top:0; background:linear-gradient(180deg, rgba(0,0,0,.22), transparent 70%), var(--card);
+    padding:14px 16px 8px; z-index:2; display:flex; align-items:center; justify-content:center;
+  }
+  .route-title{font-weight:800; letter-spacing:.4px}
+  .btn-back{
+    position:absolute; left:10px; top:10px; width:36px; height:36px; border-radius:50%;
+    border:1px solid var(--cardBorder); background:#2a2d33; display:grid; place-items:center
+  }
+  .btn-back svg{width:18px;height:18px}
+  .sheet-sub{padding:0 16px 10px; font-size:22px; color:#e7e7e7}
+
+  .results{
+    padding:10px 12px 18px; overflow:auto; max-height:calc(86vh - 94px);
+  }
+
+  .card-result{
+    background:#22252a; border:1px solid rgba(255,255,255,.08); border-radius:18px;
+    padding:14px 14px 10px; margin:12px 4px; box-shadow:0 8px 24px rgba(0,0,0,.35);
+    transition:transform var(--t), box-shadow var(--t)
+  }
+  .card-result:active{transform:translateY(1px); box-shadow:0 6px 18px rgba(0,0,0,.28)}
+  .row-top{display:flex; align-items:center; justify-content:space-between; gap:8px}
+  .pair{display:flex; align-items:baseline; gap:10px}
+  .code{font-weight:800; letter-spacing:.6px; color:#ddd}
+  .arrow{opacity:.9}
+  .timepair{font-size:20px; font-weight:800; letter-spacing:.2px}
+  .plus1{font-size:14px; color:var(--muted); margin-left:2px}
+
+  .right-price{font-weight:800; font-size:20px; color:#2ea0ff; display:flex; align-items:center; gap:6px}
+  .right-price svg{width:16px;height:16px}
+
+  .row-mid{color:var(--muted); margin:6px 0 0; display:flex; gap:14px; font-size:15px}
+  .row-foot{
+    margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,.06);
+    display:flex; align-items:center; gap:8px; color:#ffcc66; font-size:14px
+  }
+  .row-foot.hide{display:none}
+
+  @media (min-width:480px){ .sheet, .page{width:420px} }
 </style>
 </head>
 <body>
@@ -120,7 +145,6 @@
     <h1>Book</h1>
 
     <section class="card" aria-label="Flight Search">
-      <!-- swap icon -->
       <div class="swap" aria-hidden="true">
         <svg viewBox="0 0 24 24">
           <path d="M3 7h12"></path>
@@ -139,10 +163,7 @@
               <option value="" selected disabled>City / airport</option>
             </select>
             <div class="icon" aria-hidden="true">
-              <!-- paper airplane -->
-              <svg viewBox="0 0 24 24">
-                <path d="M4.5 12.8l14.6-8.75c.5-.3 1.1.23.83.76L13.6 20.9a.7.7 0 0 1-1.31-.06l-1.24-5.17-5.17-1.24a.7.7 0 0 1 .06-1.31z"></path>
-              </svg>
+              <svg viewBox="0 0 24 24"><path d="M4.5 12.8l14.6-8.75c.5-.3 1.1.23.83.76L13.6 20.9a.7.7 0 0 1-1.31-.06l-1.24-5.17-5.17-1.24a.7.7 0 0 1 .06-1.31z"></path></svg>
             </div>
             <div class="focusbar"></div>
           </div>
@@ -156,9 +177,7 @@
               <option value="" selected disabled>City / airport</option>
             </select>
             <div class="icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M4.5 12.8l14.6-8.75c.5-.3 1.1.23.83.76L13.6 20.9a.7.7 0 0 1-1.31-.06l-1.24-5.17-5.17-1.24a.7.7 0 0 1 .06-1.31z"></path>
-              </svg>
+              <svg viewBox="0 0 24 24"><path d="M4.5 12.8l14.6-8.75c.5-.3 1.1.23.83.76L13.6 20.9a.7.7 0 0 1-1.31-.06l-1.24-5.17-5.17-1.24a.7.7 0 0 1 .06-1.31z"></path></svg>
             </div>
             <div class="focusbar"></div>
           </div>
@@ -168,7 +187,7 @@
         <div class="row">
           <div class="label">Depart</div>
           <div class="line-wrap">
-            <input class="input" type="date" aria-label="Depart date" />
+            <input id="depart" class="input" type="date" aria-label="Depart date" />
             <div class="icon" aria-hidden="true">
               <svg viewBox="0 0 24 24">
                 <rect x="3" y="5" width="18" height="16" rx="2"></rect>
@@ -181,11 +200,11 @@
           </div>
         </div>
 
-        <!-- RETURN -->
+        <!-- RETURN (ignored for one-way; kept for layout parity only) -->
         <div class="row">
           <div class="label">Return</div>
           <div class="line-wrap">
-            <input class="input" type="date" aria-label="Return date" />
+            <input id="return" class="input" type="date" aria-label="Return date (ignored for one-way)" />
             <div class="icon" aria-hidden="true">
               <svg viewBox="0 0 24 24">
                 <rect x="3" y="5" width="18" height="16" rx="2"></rect>
@@ -202,13 +221,9 @@
         <div class="row">
           <div class="label">Passengers</div>
           <div class="line-wrap select">
-            <select aria-label="Passengers">
-              <option selected>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
+            <select id="pax" aria-label="Passengers">
+              <option selected>1</option><option>2</option><option>3</option>
+              <option>4</option><option>5</option><option>6</option>
             </select>
             <div class="focusbar"></div>
           </div>
@@ -216,53 +231,199 @@
       </div>
 
       <div class="cta">
-        <button type="button">Search</button>
+        <button id="btnSearch" type="button">Search</button>
       </div>
     </section>
   </main>
 
-  <script>
-    // Airport list
-    const AIRPORTS = [
-      { name: 'Rockford Intl Airport (RFD)', code: 'RFD' },
-      { name: 'Mellor Regional Airport (MLR)', code: 'MLR' },
-      { name: 'Perth Intl Airport (PER)', code: 'PER' },
-      { name: 'Izolirani Intl Airport (IZO)', code: 'IZO' },
-      { name: 'Larnaca Intl Airport (LCA)', code: 'LCA' },
-      { name: 'Phapos Regional Airport (PHP)', code: 'PHP' },
-      { name: 'Tokyo Haneda Intl (HND)', code: 'HND' },
-      { name: 'Grindavik Intl Airport (GRV)', code: 'GRV' },
-      { name: 'Sauthemptona Airport (SAU)', code: 'SAU' }
-    ];
+  <!-- RESULTS OVERLAY -->
+  <div class="backdrop" id="backdrop"></div>
+  <section class="sheet" id="sheet" aria-modal="true" role="dialog">
+    <div class="sheet-header">
+      <button class="btn-back" id="btnBack" aria-label="Back">
+        <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" stroke="#9aa3af" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="route-title" id="routeTitle">RFD – PER</div>
+    </div>
+    <div class="sheet-sub">Choose departure</div>
+    <div class="results" id="results"></div>
+  </section>
 
-    const fromSel = document.getElementById('from');
-    const toSel   = document.getElementById('to');
+<script>
+/* -------------------- Airports + form behavior -------------------- */
+const AIRPORTS = [
+  { code:'RFD', name:'Rockford Intl Airport (RFD)' },
+  { code:'MLR', name:'Mellor Regional Airport (MLR)' },
+  { code:'PER', name:'Perth Intl Airport (PER)' },
+  { code:'IZO', name:'Izolirani Intl Airport (IZO)' },
+  { code:'LCA', name:'Larnaca Intl Airport (LCA)' },
+  { code:'PHP', name:'Phapos Regional Airport (PHP)' },
+  { code:'HND', name:'Tokyo Haneda Intl (HND)' },
+  { code:'GRV', name:'Grindavik Intl Airport (GRV)' },
+  { code:'SAU', name:'Sauthemptona Airport (SAU)' }
+];
 
-    function fillSelect(selectEl, excludeCode) {
-      const current = selectEl.value;
-      selectEl.innerHTML = '<option value="" disabled selected>City / airport</option>';
-      AIRPORTS.forEach(a => {
-        if (a.code !== excludeCode) {
-          const opt = document.createElement('option');
-          opt.value = a.code;
-          opt.textContent = a.name;
-          selectEl.appendChild(opt);
-        }
-      });
-      if (current && current !== excludeCode) {
-        const exists = Array.from(selectEl.options).some(o => o.value === current);
-        if (exists) selectEl.value = current;
-      }
+const fromSel = document.getElementById('from');
+const toSel   = document.getElementById('to');
+
+function fillSelect(selectEl, excludeCode) {
+  const current = selectEl.value;
+  selectEl.innerHTML = '<option value="" disabled selected>City / airport</option>';
+  AIRPORTS.forEach(a => {
+    if (a.code !== excludeCode) {
+      const opt = document.createElement('option');
+      opt.value = a.code; opt.textContent = a.name;
+      selectEl.appendChild(opt);
     }
+  });
+  if (current && current !== excludeCode) {
+    const exists = Array.from(selectEl.options).some(o => o.value === current);
+    if (exists) selectEl.value = current;
+  }
+}
+fillSelect(fromSel);
+fillSelect(toSel);
+fromSel.addEventListener('change', () => fillSelect(toSel, fromSel.value || null));
 
-    // Initial population
-    fillSelect(fromSel);
-    fillSelect(toSel);
+/* -------------------- Results overlay helpers -------------------- */
+const backdrop = document.getElementById('backdrop');
+const sheet = document.getElementById('sheet');
+const btnBack = document.getElementById('btnBack');
+const resultsEl = document.getElementById('results');
+const routeTitle = document.getElementById('routeTitle');
 
-    // When FROM changes, re-render TO without the chosen FROM
-    fromSel.addEventListener('change', () => {
-      fillSelect(toSel, fromSel.value || null);
-    });
-  </script>
+function openSheet(){ backdrop.classList.add('show'); sheet.classList.add('show'); }
+function closeSheet(){ sheet.classList.remove('show'); backdrop.classList.remove('show'); }
+btnBack.addEventListener('click', closeSheet);
+backdrop.addEventListener('click', closeSheet);
+
+/* -------------------- ROCKFORD ↔ PERTH RULES ONLY -------------------- */
+/*
+  - One way only
+  - Same timezone
+  - 6 options
+  - First two carriers fixed: American Airlines, JetBlue
+  - Remaining four in random order from United, Spirit, Southwest, Delta
+  - Duration per option random 2h–3h
+  - Price per option random $250–$600
+  - Cheapest two always first two options
+  - Overnight warning only if depart or arrive between 00:00–05:59
+*/
+
+function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
+function shuffle(arr){ return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(p=>p[1]); }
+
+function minutesToTime(mins){
+  mins = ((mins % (24*60)) + (24*60)) % (24*60); // normalize
+  const h24 = Math.floor(mins/60), m = mins % 60;
+  const h12 = ((h24 + 11) % 12) + 1;
+  const ampm = h24 < 12 ? 'AM' : 'PM';
+  return `${h12}:${m.toString().padStart(2,'0')} ${ampm}`;
+}
+function overnightFlag(depMins, arrMins){
+  const inWindow = t => t >= 0 && t < 360; // 0:00–5:59
+  // true if either dep or arr occurs in window
+  return inWindow(depMins%1440) || inWindow(arrMins%1440);
+}
+
+function buildRfdPerResults(fromCode, toCode, departDateStr){
+  // display departure times spread across a day (in minutes from midnight)
+  const baseDepTimes = [495, 690, 810, 1080, 1200, 1395]; // 8:15, 11:30, 13:30, 18:00, 20:00, 23:15
+  const firstTwoCarriers = ["American Airlines", "JetBlue"];
+  const restCarriers = shuffle(["United", "Spirit", "Southwest", "Delta"]);
+  const carriersInOrder = [...firstTwoCarriers, ...restCarriers];
+
+  // generate prices and sort ascending, then assign in display order as spec
+  const prices = Array.from({length:6}, ()=>randInt(250,600)).sort((a,b)=>a-b);
+
+  return baseDepTimes.map((depMins, i) => {
+    const dur = randInt(120,180); // 2h–3h
+    const arrMins = depMins + dur;
+    const crossMidnight = Math.floor(arrMins/1440) > Math.floor(depMins/1440);
+    return {
+      from: fromCode, to: toCode,
+      depart: minutesToTime(depMins),
+      arrive: minutesToTime(arrMins),
+      plusOne: crossMidnight ? "+1" : "",
+      durationMin: dur,
+      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true,
+      price: prices[i],
+      carrier: carriersInOrder[i],
+      overnight: overnightFlag(depMins, arrMins)
+    };
+  });
+}
+
+function renderResults(list){
+  resultsEl.innerHTML = "";
+  list.forEach(opt => {
+    const card = document.createElement('div');
+    card.className = 'card-result';
+    card.innerHTML = `
+      <div class="row-top">
+        <div class="pair">
+          <div class="code">${opt.from}</div>
+          <div class="arrow">→</div>
+          <div class="code">${opt.to}</div>
+        </div>
+        <div class="right-price">
+          <span>$${opt.price.toLocaleString()}</span>
+          <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+
+      <div class="row-top" style="margin-top:6px">
+        <div class="timepair">
+          ${opt.depart} &nbsp;→&nbsp; ${opt.arrive}
+          ${opt.plusOne ? `<span class="plus1">${opt.plusOne}</span>` : ``}
+        </div>
+      </div>
+
+      <div class="row-mid">
+        <div>${opt.durationText}</div>
+        <div>Nonstop</div>
+        <div style="color:#9aa3af;">${opt.carrier}</div>
+      </div>
+
+      <div class="row-foot ${opt.overnight ? "" : "hide"}">
+        <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2z" stroke="#ffcc66" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Overnight flight or connection</span>
+      </div>
+    `;
+    resultsEl.appendChild(card);
+  });
+}
+
+/* -------------------- Search button -------------------- */
+document.getElementById('btnSearch').addEventListener('click', () => {
+  const from = fromSel.value, to = toSel.value;
+  const departDate = document.getElementById('depart').value;
+
+  if (!from || !to || !departDate) {
+    // minimal UX: flash the form card if missing inputs
+    const formCard = document.querySelector('.card');
+    formCard.style.boxShadow = '0 0 0 4px rgba(255,80,80,.25)';
+    setTimeout(()=>formCard.style.boxShadow = 'var(--shadow)', 350);
+    return;
+  }
+
+  routeTitle.textContent = `${from} – ${to}`;
+  // Only implement RFD ↔ PER logic for now
+  const key = [from,to].sort().join('-'); // symmetric
+  if (key === 'PER-RFD') {
+    const list = buildRfdPerResults(from, to, departDate);
+    renderResults(list);
+  } else {
+    // Prototype scope: no other routes yet
+    resultsEl.innerHTML = `
+      <div class="card-result">
+        <div class="row-top"><div class="pair"><div class="code">${from}</div><div class="arrow">→</div><div class="code">${to}</div></div></div>
+        <div style="margin-top:8px; color:#9aa3af">This prototype currently supports Rockford (RFD) ↔ Perth (PER) only.</div>
+      </div>`;
+  }
+  openSheet();
+});
+</script>
 </body>
 </html>
