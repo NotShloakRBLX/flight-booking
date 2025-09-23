@@ -25,11 +25,12 @@
     margin:0; background:var(--bg); color:var(--ink);
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Segoe UI, Roboto, Inter, system-ui, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
+    color-scheme: dark;
   }
 
-  /* Mobile-first layout with breathing room */
+  /* iPhone-first layout, single column to avoid overlap */
   .page{
-    width:clamp(320px, 90vw, 420px);
+    width:clamp(320px, 92vw, 420px);   /* iPhone 15 Pro ~393px CSS wide */
     margin:0 auto;
     padding:22px 16px 40px;
   }
@@ -47,10 +48,10 @@
     padding:22px 20px 24px;
   }
 
+  /* Single column with generous spacing for mobile */
   .grid{
     display:grid;
-    grid-template-columns:1fr 1fr;
-    column-gap:24px;
+    grid-template-columns:1fr;
     row-gap:20px;
   }
 
@@ -61,44 +62,41 @@
   }
 
   .row{position:relative}
-  .line-wrap{position:relative; padding:0 0 10px;}
+  .line-wrap{position:relative; padding:0 0 12px;}
   .line-wrap::after{
     content:""; position:absolute; left:0; right:0; bottom:0;
     height:2px; background:var(--line); border-radius:2px;
   }
 
-  /* text inputs (dates) */
-  .input{
+  /* inputs */
+  .input, .select select{
     width:100%; background:transparent; border:0; outline:0; color:var(--ink);
-    font-size:21px; padding:4px 32px 6px 0; line-height:1.25;
+    font-size:21px; padding:6px 34px 6px 0; line-height:1.25;
   }
   .input::placeholder{color:rgba(255,255,255,.55)}
   .focusbar{
     position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--lineActive);
     transform:scaleX(0); transform-origin:left; transition:transform var(--t);
   }
-  .input:focus ~ .focusbar{transform:scaleX(1)}
+  .input:focus ~ .focusbar,
+  .select select:focus ~ .focusbar{transform:scaleX(1)}
 
-  /* hide native date icon so our calendar icon shows */
-  input[type="date"]::-webkit-calendar-picker-indicator{
-    opacity:0;
-  }
+  /* date input polish (iOS Safari) */
+  input[type="date"]{ -webkit-appearance: none; appearance: none; }
+  input[type="date"]::-webkit-calendar-picker-indicator{ opacity:0; } /* hide native icon */
 
-  /* selects styled to match inputs */
   .select{position:relative;}
   .select select{
-    -webkit-appearance:none; appearance:none; width:100%;
-    background:transparent; border:0; outline:0; color:var(--ink);
-    font-size:21px; padding:4px 32px 6px 0; cursor:pointer; line-height:1.25;
+    -webkit-appearance:none; appearance:none; cursor:pointer;
   }
 
   .icon{position:absolute; right:0; top:50%; transform:translateY(-50%); width:20px; height:20px;}
   .icon svg{width:100%; height:100%; display:block;}
   .icon svg *{stroke:var(--accent); fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round}
 
-  /* Swap circle centered between From/To */
+  /* swap pill stays centered near the top; out of the fields’ way */
   .swap{
-    position:absolute; left:50%; transform:translate(-50%,-16px);
+    position:absolute; left:50%; top:-18px; transform:translateX(-50%);
     width:40px; height:40px; border-radius:50%;
     background:#2a2d33; border:1px solid var(--cardBorder);
     display:grid; place-items:center; box-shadow:0 6px 18px rgba(0,0,0,.34);
@@ -115,12 +113,6 @@
   }
   .cta button:hover{background:var(--accentHover)}
   .cta button:active{transform:translateY(1px)}
-
-  @media (max-width:360px){
-    h1{font-size:44px}
-    .grid{column-gap:18px; row-gap:18px}
-    .page{width:92vw}
-  }
 </style>
 </head>
 <body>
@@ -128,6 +120,7 @@
     <h1>Book</h1>
 
     <section class="card" aria-label="Flight Search">
+      <!-- swap icon -->
       <div class="swap" aria-hidden="true">
         <svg viewBox="0 0 24 24">
           <path d="M3 7h12"></path>
@@ -163,7 +156,6 @@
               <option value="" selected disabled>City / airport</option>
             </select>
             <div class="icon" aria-hidden="true">
-              <!-- paper airplane -->
               <svg viewBox="0 0 24 24">
                 <path d="M4.5 12.8l14.6-8.75c.5-.3 1.1.23.83.76L13.6 20.9a.7.7 0 0 1-1.31-.06l-1.24-5.17-5.17-1.24a.7.7 0 0 1 .06-1.31z"></path>
               </svg>
@@ -221,9 +213,6 @@
             <div class="focusbar"></div>
           </div>
         </div>
-
-        <!-- spacer to balance grid -->
-        <div class="row"></div>
       </div>
 
       <div class="cta">
@@ -250,7 +239,6 @@
     const toSel   = document.getElementById('to');
 
     function fillSelect(selectEl, excludeCode) {
-      // preserve current value if still valid
       const current = selectEl.value;
       selectEl.innerHTML = '<option value="" disabled selected>City / airport</option>';
       AIRPORTS.forEach(a => {
@@ -261,7 +249,6 @@
           selectEl.appendChild(opt);
         }
       });
-      // restore if possible
       if (current && current !== excludeCode) {
         const exists = Array.from(selectEl.options).some(o => o.value === current);
         if (exists) selectEl.value = current;
@@ -274,8 +261,7 @@
 
     // When FROM changes, re-render TO without the chosen FROM
     fromSel.addEventListener('change', () => {
-      const fromCode = fromSel.value || null;
-      fillSelect(toSel, fromCode);
+      fillSelect(toSel, fromSel.value || null);
     });
   </script>
 </body>
