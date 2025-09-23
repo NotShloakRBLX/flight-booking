@@ -13,88 +13,110 @@
     --ink:#fff;
     --accent:#1e8bff;
     --accentHover:#2a96ff;
-    --line:rgba(255,255,255,.14);
+    --line:rgba(255,255,255,.16);
     --lineActive:#1e8bff;
-    --shadow:0 14px 36px rgba(0,0,0,.42);
-    --radiusCard:22px;
+    --shadow:0 18px 48px rgba(0,0,0,.45);
+    --radiusCard:26px;
     --t:.28s cubic-bezier(.2,.8,.2,1);
   }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
     margin:0; background:var(--bg); color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",Segoe UI,Roboto,Inter,system-ui,Arial,sans-serif;
-    -webkit-font-smoothing:antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Segoe UI, Roboto, Inter, system-ui, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* Smaller overall layout */
-  .page{padding:18px 16px 32px; width:min(92vw, 360px); margin:0 auto;}
-  h1{font-size:42px; line-height:1; margin:6px 2px 14px; font-weight:800; letter-spacing:-.4px}
+  /* MOBILE-FIRST, ROOMIER LAYOUT */
+  .page{
+    width:clamp(320px, 90vw, 420px);
+    margin:0 auto;
+    padding:22px 16px 40px;
+  }
+  h1{
+    font-size:48px; line-height:1;
+    margin:6px 4px 18px; font-weight:800; letter-spacing:-.4px;
+  }
 
   .card{
     position:relative;
     background:var(--card);
     border:1px solid var(--cardBorder);
-    box-shadow:var(--shadow);
     border-radius:var(--radiusCard);
-    padding:16px 16px 18px;
+    box-shadow:var(--shadow);
+    padding:22px 20px 24px;
   }
 
-  .grid{display:grid; grid-template-columns:1fr 1fr; column-gap:16px; row-gap:14px}
+  /* Two columns with generous gaps like the screenshot */
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    column-gap:24px;           /* more space horizontally */
+    row-gap:20px;              /* more space vertically   */
+  }
 
-  .label{font-size:14px; color:var(--muted); margin:0 0 6px;}
+  .label{
+    font-size:16px;
+    color:var(--muted);
+    margin:0 0 8px;
+  }
 
   .row{position:relative}
-  .line-wrap{position:relative; padding:0 0 8px;}
-  .line-wrap::after{content:""; position:absolute; left:0; right:0; bottom:0; height:2px; background:var(--line); border-radius:2px;}
+  .line-wrap{position:relative; padding:0 0 10px;}
+  .line-wrap::after{
+    content:""; position:absolute; left:0; right:0; bottom:0;
+    height:2px; background:var(--line); border-radius:2px;
+  }
   .input{
     width:100%; background:transparent; border:0; outline:0; color:var(--ink);
-    font-size:18px; padding:2px 28px 4px 0;
+    font-size:21px; padding:4px 32px 6px 0; line-height:1.25;
   }
   .input::placeholder{color:rgba(255,255,255,.55)}
-  .focusbar{position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--lineActive);
-    transform:scaleX(0); transform-origin:left; transition:transform var(--t);}
+  .focusbar{
+    position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--lineActive);
+    transform:scaleX(0); transform-origin:left; transition:transform var(--t);
+  }
   .input:focus ~ .focusbar{transform:scaleX(1)}
 
-  .icon{position:absolute; right:0; top:50%; transform:translateY(-50%); width:18px; height:18px;}
+  .icon{position:absolute; right:0; top:50%; transform:translateY(-50%); width:20px; height:20px;}
   .icon svg{width:100%; height:100%; display:block;}
-  .icon svg *{stroke:var(--accent); fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
+  .icon svg *{stroke:var(--accent); fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round}
 
-  /* swap circle between From/To */
+  /* Swap circle centered between From/To */
   .swap{
-    position:absolute; left:50%; transform:translate(-50%,-14px);
-    width:36px; height:36px; border-radius:50%;
+    position:absolute; left:50%; transform:translate(-50%,-16px);
+    width:40px; height:40px; border-radius:50%;
     background:#2a2d33; border:1px solid var(--cardBorder);
-    display:grid; place-items:center; box-shadow:0 6px 16px rgba(0,0,0,.34);
+    display:grid; place-items:center; box-shadow:0 6px 18px rgba(0,0,0,.34);
   }
-  .swap svg{width:18px;height:18px}
-  .swap svg path{stroke:var(--accent); fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
+  .swap svg{width:20px;height:20px}
+  .swap svg path{stroke:var(--accent); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
 
   /* Passengers select */
   .select{position:relative;}
   .select select{
     -webkit-appearance:none; appearance:none; width:100%;
     background:transparent; border:0; outline:0; color:var(--ink);
-    font-size:18px; padding:2px 22px 4px 0; cursor:pointer;
+    font-size:21px; padding:4px 24px 6px 0; cursor:pointer;
   }
   .chev{position:absolute; right:0; top:50%; transform:translateY(-50%); width:16px; height:16px}
   .chev svg path{stroke:rgba(255,255,255,.7); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
 
-  .cta{margin-top:18px;}
+  .cta{margin-top:22px;}
   .cta button{
-    width:100%; height:54px; border-radius:34px; border:0; outline:0; cursor:pointer;
-    background:var(--accent); color:#fff; font-weight:800; font-size:22px; letter-spacing:.2px;
-    box-shadow:0 10px 22px rgba(30,139,255,.32);
+    width:100%; height:60px; border-radius:34px; border:0; outline:0; cursor:pointer;
+    background:var(--accent); color:#fff; font-weight:800; font-size:24px; letter-spacing:.2px;
+    box-shadow:0 12px 26px rgba(30,139,255,.33);
     transition:transform var(--t), background var(--t);
   }
   .cta button:hover{background:var(--accentHover)}
   .cta button:active{transform:translateY(1px)}
 
-  /* tiny screens */
-  @media (max-width:330px){
+  /* Extra mobile optimization: if the screen gets very narrow, keep spacing and scale type */
+  @media (max-width:360px){
+    h1{font-size:44px}
+    .grid{column-gap:18px; row-gap:18px}
     .page{width:92vw}
-    h1{font-size:38px}
-    .grid{column-gap:12px}
   }
 </style>
 </head>
@@ -103,7 +125,6 @@
     <h1>Book</h1>
 
     <section class="card" aria-label="Flight Search">
-      <!-- swap arrows floating between From / To -->
       <div class="swap" aria-hidden="true">
         <svg viewBox="0 0 24 24">
           <path d="M3 7h12"></path>
@@ -120,6 +141,7 @@
           <div class="line-wrap">
             <input class="input" type="text" placeholder="City / airport" aria-label="From" />
             <div class="icon" aria-hidden="true">
+              <!-- paper airplane -->
               <svg viewBox="0 0 24 24">
                 <path d="M4.5 12.8l14.6-8.75c.5-.3 1.1.23.83.76L13.6 20.9a.7.7 0 0 1-1.31-.06l-1.24-5.17-5.17-1.24a.7.7 0 0 1 .06-1.31z"></path>
               </svg>
