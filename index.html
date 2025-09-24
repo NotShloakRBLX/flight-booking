@@ -269,7 +269,7 @@ function overnightFlag(depMins, arrMins){ const w=t=>t>=0&&t<360; return w(depMi
 /* Airline codes (used on Review & Pay) */
 const AIRLINE_CODES = {
   'American Airlines':'AA','JetBlue':'B6','Delta':'DL','United':'UA','Southwest':'WN','Spirit':'NK',
-  'Emirates':'EK','Singapore Airlines':'SQ','Lufthansa':'LH','SWISS':'LX','Korean Air':'KE','KLM':'KL','Qatar Airways':'QR','Air France':'AF','Qantas':'QF'
+  'Emirates':'EK','Singapore Airlines':'SQ','Lufthansa':'LH','SWISS':'LX','Korean Air':'KE','KLM':'KL','Qatar Airways':'QR','Air France':'AF','Qantas':'QF','CEBU Pacific':'5J','British Airways':'BA','Condor':'DE','easyJet':'U2'
 };
 
 /* Country mapping for INTL check */
@@ -398,6 +398,14 @@ const AIRCRAFT_RULES = {
   },
   'GRV-LCA': {
     'Delta': ['A350']
+  },
+  'GRV-HND': {
+    'Lufthansa': ['A320'],
+    'CEBU Pacific': ['A320'],
+    'British Airways': ['A320'],
+    'Qatar Airways': ['A320'],
+    'Condor': ['A320'],
+    'easyJet': ['A320']
   }
 };
 
@@ -1031,6 +1039,45 @@ function buildLcaGrvResults(from, to){
   }];
 }
 
+function buildHndGrvResults(from, to){
+  // 6 options in this fixed order:
+  // First 3: Lufthansa, CEBU Pacific, British Airways
+  // Last 3:  Qatar Airways, Condor, easyJet
+  const carriers = [
+    'Lufthansa', 'CEBU Pacific', 'British Airways',
+    'Qatar Airways', 'Condor', 'easyJet'
+  ];
+
+  const depTimes  = randomUniqueTimes(6);
+  const durations = Array.from({length:6}, () => randInt(120, 180)); // 2h–3h
+  const prices    = Array.from({length:6}, () => randInt(250, 600)); // $250–$600
+
+  // Both HND and GRV are in the JP group per your country mapping → tzDelta = 0
+  const tzDelta =
+    (countryOf(from) === 'US' && countryOf(to) === 'JP') ? 360 :
+    (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
+
+  return carriers.map((carrier, i) => {
+    const depMins = depTimes[i];
+    const dur     = durations[i];
+    const arrMins = depMins + dur + tzDelta;
+
+    return {
+      from, to,
+      depart: minutesToTime(depMins),
+      arrive: minutesToTime(arrMins),
+      plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
+      durationMin: dur,
+      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true,
+      price: prices[i],
+      carrier,
+      overnight: overnightFlag(depMins, arrMins),
+      aircraft: pickAircraft(from, to, carrier) // uses GRV-HND rules above
+    };
+  });
+}
+
 /* -------------------- Results list -------------------- */
 function resultsView(list){
   const div=document.createElement('div'); div.className='results';
@@ -1205,6 +1252,7 @@ document.getElementById('btnSearch').addEventListener('click', () => {
   else if (key==='LCA-PHP') list=buildLcaPhpResults(from,to);
   else if (key==='HND-LCA') list=buildLcaHndResults(from,to);
   else if (key==='GRV-LCA') list=buildLcaGrvResults(from,to);
+  else if (key==='GRV-HND') list=buildHndGrvResults(from,to);
   else {
     const v=document.createElement('div'); v.className='view';
     v.innerHTML=`<div class="panel"><div class="kv"><span>Route</span><b>${from} → ${to}</b></div>
