@@ -287,7 +287,7 @@ function overnightFlag(depMins, arrMins){ const w=t=>t>=0&&t<360; return w(depMi
 /* Airline codes (used on Review & Pay) */
 const AIRLINE_CODES = {
   'American Airlines':'AA','JetBlue':'B6','Delta':'DL','United':'UA','Southwest':'WN','Spirit':'NK',
-  'Emirates':'EK','Singapore Airlines':'SQ','Lufthansa':'LH','SWISS':'LX','Korean Air':'KE','KLM':'KL','Qatar Airways':'QR','Air France':'AF','Qantas':'QF','CEBU Pacific':'5J','British Airways':'BA','Condor':'DE','easyJet':'U2'
+  'Emirates':'EK','Singapore':'SQ','Lufthansa':'LH','SWISS':'LX','Korean Air':'KE','KLM':'KL','Qatar Airways':'QR','Air France':'AF','Qantas':'QF','CEBU Pacific':'5J','British Airways':'BA','Condor':'DE','easyJet':'U2'
 };
 
 /* Country mapping for INTL check */
@@ -332,7 +332,7 @@ const AIRCRAFT_RULES = {
     'Lufthansa':['A350','A380','B747'],
     'Delta':['A350','B757'],
     'Emirates':['A380','B777','A350'],
-    'Singapore Airlines':['A350','B777'],
+    'Singapore':['A350','B777'],
     'British Airways':['B777', 'A380', 'A350'],
     'American Airlines':['B777','B787'],
     'KLM':['B777'],
@@ -522,7 +522,7 @@ function buildRfdPhpResults(from,to){
 
 /* RFD ↔ HND (Tokyo) */
 function buildRfdHndResults(fromCode, toCode){
-  const firstSix = shuffle(['American Airlines','Delta','Emirates','Singapore Airlines','British Airways','Lufthansa']);
+  const firstSix = shuffle(['American Airlines','Delta','Emirates','Singapore','British Airways','Lufthansa']);
   const pool = ['SWISS','Korean Air','KLM','Qatar Airways','Air France'];
   const lastSix = shuffle((() => { const out=[...pool]; while(out.length<6) out.push(pool[randInt(0,pool.length-1)]); return out; })());
   const carriers = [...firstSix, ...lastSix];
@@ -1027,7 +1027,7 @@ function buildLcaPhpResults(from, to){
 
 function buildLcaHndResults(from, to){
   // 3 options in this order: Delta, Singapore, Emirates
-  const carriers = ['Delta', 'Singapore Airlines', 'Emirates'];
+  const carriers = ['Delta', 'Singapore', 'Emirates'];
 
   const depTimes  = randomUniqueTimes(3);
   const durations = Array.from({length:3}, () => randInt(720, 960));   // 12h–16h
@@ -1211,21 +1211,19 @@ const BUILDER_MAP = {
   'GRV-RFD': buildRfdGrvResults,
 
   'IZO-PER': buildPerIzoResults,
-  'HND-GRV': buildHndGrvResults,
+  'GRV-HND': buildHndGrvResults,     // (sorted)
   'HND-SAU': buildHndSauResults,
   'GRV-SAU': buildGrvSauResults,
   'HND-LCA': buildLcaHndResults,
   'GRV-LCA': buildLcaGrvResults,
 
-  // Add any additional builder you already created:
-  'PER-MLR': buildPerMlrResults,   // if you added it earlier
-  'PER-LCA': buildPerLcaResults,   // "
-  'PER-PHP': buildPerPhpResults,   // "
-  'MLR-IZO': buildMlrIzoResults,
-  'MLR-LCA': buildMlrLcaResults,
+  'MLR-PER': buildPerMlrResults,     // (sorted)
+  'LCA-PER': buildPerLcaResults,     // (sorted)
+  'PER-PHP': buildPerPhpResults,
+  'IZO-MLR': buildMlrIzoResults,     // (sorted)
+  'LCA-MLR': buildMlrLcaResults,     // (sorted)
   'MLR-PHP': buildMlrPhpResults,
-  'IZO-HND': buildIzoHndResults,   // 3 fixed departure times
-  // ...keep extending as you add routes
+  'HND-IZO': buildIzoHndResults      // (sorted)
 };
 
 function builderFor(a,b){
@@ -1542,7 +1540,9 @@ document.getElementById('btnSearch').addEventListener('click', () => {
     return;
   }
 
- // If this route requires connections, build those results and show
+  const key = [from, to].sort().join('-');   // <-- move this up
+
+  // If this route requires connections, build those results and show
   if (CONNECTION_RULES[key]) {
     const list = buildConnectedResults(from, to);
     const resNode = resultsView(list);
