@@ -80,7 +80,7 @@
   .cta button:hover{background:var(--accentHover)}
   .cta button:active{transform:translateY(1px)}
 
-  /* ---------- RESULTS SHEET (overlay) ---------- */
+  /* ---------- RESULTS / FLOW SHEET ---------- */
   .backdrop{
     position:fixed; inset:0; background:rgba(0,0,0,.45);
     opacity:0; pointer-events:none; transition:opacity var(--t);
@@ -89,7 +89,7 @@
 
   .sheet{
     position:fixed; left:50%; transform:translate(-50%, 100%);
-    bottom:0; width:clamp(320px,92vw,420px); max-height:86vh;
+    bottom:0; width:min(420px, 96vw); max-height:86vh;
     background:var(--card); border:1px solid var(--cardBorder); border-radius:28px 28px 0 0;
     box-shadow:0 -18px 48px rgba(0,0,0,.6); overflow:hidden; transition:transform var(--t)
   }
@@ -105,16 +105,26 @@
     border:1px solid var(--cardBorder); background:#2a2d33; display:grid; place-items:center
   }
   .btn-back svg{width:18px;height:18px}
-  .sheet-sub{padding:0 16px 10px; font-size:22px; color:#e7e7e7}
 
-  .results{padding:10px 12px 18px; overflow:auto; max-height:calc(86vh - 94px);}
+  /* view container with smoother slide/fade */
+  .view{
+    padding:12px 16px 22px;
+    max-height:calc(86vh - 76px);
+    overflow:auto;
+    animation:fadeSlideIn .28s var(--t) both;
+  }
+  @keyframes fadeSlideIn {
+    from { opacity:0; transform:translateY(12px) }
+    to   { opacity:1; transform:none }
+  }
 
+  .results{padding:10px 12px 18px;}
   .card-result{
     background:#22252a; border:1px solid rgba(255,255,255,.08); border-radius:18px;
     padding:14px 14px 10px; margin:12px 4px; box-shadow:0 8px 24px rgba(0,0,0,.35);
-    transition:transform var(--t), box-shadow var(--t)
+    transition:transform var(--t), box-shadow var(--t), background var(--t)
   }
-  .card-result:active{transform:translateY(1px); box-shadow:0 6px 18px rgba(0,0,0,.28)}
+  .card-result:active{transform:translateY(1px); box-shadow:0 6px 18px rgba(0,0,0,.28); background:#202228}
   .row-top{display:flex; align-items:center; justify-content:space-between; gap:8px}
   .pair{display:flex; align-items:baseline; gap:10px}
   .code{font-weight:800; letter-spacing:.6px; color:#ddd}
@@ -127,15 +137,11 @@
   .row-foot{margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,.06); display:flex; align-items:center; gap:8px; color:#ffcc66; font-size:14px}
   .row-foot.hide{display:none}
 
-  /* ------ steps (summary, passengers, review/pay) ------ */
-  .view{padding:12px 16px 22px; overflow:auto; max-height:calc(86vh - 76px); opacity:0; transform:translateY(8px); transition:opacity var(--t), transform var(--t)}
-  .view.show{opacity:1; transform:none}
-
-  .panel{background:#23262c; border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:14px 14px 10px; margin:10px 0; box-shadow:0 8px 22px rgba(0,0,0,.32)}
-  .panel h3{margin:0 0 6px; font-size:20px}
-  .kv{display:flex; justify-content:space-between; margin:6px 0; color:#cfd6dd}
+  /* ----- small info/summary/pay panels ----- */
+  .panel{background:#23262c; border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:14px 14px 12px; margin:10px 0; box-shadow:0 8px 22px rgba(0,0,0,.32)}
+  .panel h3{margin:0 0 8px; font-size:20px}
+  .kv{display:flex; justify-content:space-between; margin:6px 0; color:#cfd6dd; gap:12px}
   .kv b{color:#fff}
-
   .btn-lg{width:100%; height:56px; border-radius:30px; border:0; background:var(--accent); color:#fff; font-weight:800; font-size:20px; box-shadow:0 10px 24px rgba(30,139,255,.33); cursor:pointer; transition:transform var(--t), background var(--t)}
   .btn-lg:active{transform:translateY(1px)}
 
@@ -143,13 +149,20 @@
   .info .title{font-weight:800; margin-bottom:8px}
   .muted{color:#aab2ba}
 
-  .form-row{display:grid; gap:10px; grid-template-columns:1fr}
-  .form-row.half{grid-template-columns:1fr 1fr}
-  .field{display:flex; flex-direction:column; gap:6px}
-  .field label{color:#c8ced6; font-size:14px}
+  /* ----- form system (FIXES: no clipping on narrow screens) ----- */
+  .form-row{display:grid; gap:12px; grid-template-columns:1fr; width:100%}
+  .form-row.half{grid-template-columns:repeat(2, minmax(0,1fr))}
+  @media (max-width: 360px){
+    .form-row.half{grid-template-columns:1fr} /* collapse on very small widths */
+  }
+  .field{display:flex; flex-direction:column; gap:6px; min-width:0}
+  .field label{
+    color:#c8ced6; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
   .field input, .field select, .field textarea{
-    background:#121317; color:#fff; border:1px solid rgba(255,255,255,.16);
-    border-radius:12px; padding:12px 12px; font-size:16px; outline:none;
+    width:100%; max-width:100%; background:#121317; color:#fff;
+    border:1px solid rgba(255,255,255,.16); border-radius:12px; padding:12px 12px;
+    font-size:16px; outline:none; -webkit-appearance:none; appearance:none;
   }
 
   .agree{display:flex; align-items:flex-start; gap:10px; margin:12px 0 8px; color:#cfd6dd}
@@ -254,7 +267,7 @@
     </section>
   </main>
 
-  <!-- RESULTS OVERLAY -->
+  <!-- FLOW OVERLAY -->
   <div class="backdrop" id="backdrop"></div>
   <section class="sheet" id="sheet" aria-modal="true" role="dialog">
     <div class="sheet-header">
@@ -302,13 +315,13 @@ fillSelect(fromSel);
 fillSelect(toSel);
 fromSel.addEventListener('change', () => fillSelect(toSel, fromSel.value || null));
 
-/* -------------------- Results overlay helpers -------------------- */
+/* -------------------- Overlay + transitions -------------------- */
 const backdrop = document.getElementById('backdrop');
 const sheet = document.getElementById('sheet');
 const btnBack = document.getElementById('btnBack');
 const sheetBody = document.getElementById('sheetBody');
 const routeTitle = document.getElementById('routeTitle');
-let stepStack = []; // for back button behavior
+let stepStack = [];
 
 function openSheet(){ backdrop.classList.add('show'); sheet.classList.add('show'); }
 function closeSheet(){ sheet.classList.remove('show'); backdrop.classList.remove('show'); stepStack = []; }
@@ -319,14 +332,10 @@ btnBack.addEventListener('click', () => {
   renderView(prev.title, prev.html);
 });
 
-/* -------------------- Utilities (random + time helpers) -------------------- */
+/* -------------------- Utilities -------------------- */
 function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
 function shuffle(arr){ return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(p=>p[1]); }
-function randomUniqueTimes(n){
-  const set = new Set();
-  while(set.size < n){ set.add(randInt(0, 1439)); }
-  return Array.from(set);
-}
+function randomUniqueTimes(n){ const s=new Set(); while(s.size<n) s.add(randInt(0,1439)); return [...s]; }
 function minutesToTime(mins){
   mins = ((mins % (24*60)) + (24*60)) % (24*60);
   const h24 = Math.floor(mins/60), m = mins % 60;
@@ -334,244 +343,175 @@ function minutesToTime(mins){
   const ampm = h24 < 12 ? 'AM' : 'PM';
   return `${h12}:${m.toString().padStart(2,'0')} ${ampm}`;
 }
-function overnightFlag(depMins, arrMins){
-  const inWindow = t => t >= 0 && t < 360; // 12–6am
-  return inWindow(depMins%1440) || inWindow(arrMins%1440);
-}
+function overnightFlag(depMins, arrMins){ const w=t=>t>=0&&t<360; return w(depMins%1440)||w(arrMins%1440); }
 
-/* Airline codes for later display on Review & Pay */
-const AIRLINE_CODES = {
-  'American Airlines':'AA',
-  'JetBlue':'B6',
-  'Delta':'DL',
-  'United':'UA',
-  'Southwest':'WN',
-  'Spirit':'NK'
-};
+const AIRLINE_CODES = { 'American Airlines':'AA','JetBlue':'B6','Delta':'DL','United':'UA','Southwest':'WN','Spirit':'NK' };
 
-/* Country mapping for INTL check */
 function countryOf(code){
-  // USA group
   if (['RFD','PER','LCA','PHP','MLR','IZO'].includes(code)) return 'US';
-  // Japan group
   if (['HND','GRV','SAU'].includes(code)) return 'JP';
   return 'US';
 }
 function isIntl(a,b){ return countryOf(a) !== countryOf(b); }
 
-/* -------------------- Route generators (random every search) -------------------- */
-function buildRfdPerResults(fromCode, toCode){
-  const carriers = ['American Airlines','JetBlue', ...shuffle(['United','Spirit','Southwest','Delta'])];
-  const depTimes = randomUniqueTimes(6);
-  const durations = Array.from({length:6}, ()=>randInt(120,180));
-  const allPrices = Array.from({length:6}, ()=>randInt(250,600));
-  const sorted = [...allPrices].sort((a,b)=>a-b);
-  const cheap1 = sorted[0], cheap2 = sorted[1];
-  const rest = [...allPrices];
-  let idx = rest.indexOf(cheap1); if (idx>-1) rest.splice(idx,1);
-  idx = rest.indexOf(cheap2); if (idx>-1) rest.splice(idx,1);
-  const pricesByCard = [cheap1, cheap2, ...rest];
-  return carriers.map((carrier, i)=>{
-    const dep=depTimes[i], dur=durations[i], arr=dep+dur;
-    return {
-      from:fromCode,to:toCode,
-      depart:minutesToTime(dep), arrive:minutesToTime(arr),
-      plusOne: Math.floor(arr/1440) > Math.floor(dep/1440) ? '+1':'',
-      durationMin:dur, durationText:`${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop:true, price:pricesByCard[i], carrier, overnight:overnightFlag(dep,arr)
-    };
-  });
+/* -------------------- Route generators -------------------- */
+function buildRfdPerResults(from,to){
+  const carriers=['American Airlines','JetBlue',...shuffle(['United','Spirit','Southwest','Delta'])];
+  const depTimes=randomUniqueTimes(6);
+  const durations=Array.from({length:6},()=>randInt(120,180));
+  const allPrices=Array.from({length:6},()=>randInt(250,600));
+  const sorted=[...allPrices].sort((a,b)=>a-b), cheap1=sorted[0], cheap2=sorted[1];
+  const rest=[...allPrices]; let i=rest.indexOf(cheap1); if(i>-1)rest.splice(i,1); i=rest.indexOf(cheap2); if(i>-1)rest.splice(i,1);
+  const prices=[cheap1,cheap2,...rest];
+  return carriers.map((c,idx)=>{const d=depTimes[idx],du=durations[idx],a=d+du;return{
+    from,to,depart:minutesToTime(d),arrive:minutesToTime(a),
+    plusOne:Math.floor(a/1440)>Math.floor(d/1440)?'+1':'',
+    durationMin:du,durationText:`${Math.floor(du/60)}h ${String(du%60).padStart(2,'0')}m`,
+    nonstop:true,price:prices[idx],carrier:c,overnight:overnightFlag(d,a)}});
 }
-function buildRfdIzoResults(fromCode, toCode){
-  const carriers = ['American Airlines','American Airlines','JetBlue', ...shuffle(['JetBlue','Southwest','Delta'])];
-  const depTimes = randomUniqueTimes(6);
-  const durations = Array.from({length:6}, ()=>randInt(120,180));
-  const prices = Array.from({length:6}, ()=>randInt(250,600));
-  return carriers.map((carrier, i)=>{
-    const dep=depTimes[i], dur=durations[i], arr=dep+dur;
-    return {from:fromCode,to:toCode, depart:minutesToTime(dep), arrive:minutesToTime(arr),
-      plusOne:Math.floor(arr/1440)>Math.floor(dep/1440)?'+1':'', durationMin:dur,
-      durationText:`${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop:true, price:prices[i], carrier, overnight:overnightFlag(dep,arr)};
-  });
+function buildRfdIzoResults(from,to){
+  const carriers=['American Airlines','American Airlines','JetBlue',...shuffle(['JetBlue','Southwest','Delta'])];
+  const depTimes=randomUniqueTimes(6), durations=Array.from({length:6},()=>randInt(120,180)), prices=Array.from({length:6},()=>randInt(250,600));
+  return carriers.map((c,idx)=>{const d=depTimes[idx],du=durations[idx],a=d+du;return{
+    from,to,depart:minutesToTime(d),arrive:minutesToTime(a),
+    plusOne:Math.floor(a/1440)>Math.floor(d/1440)?'+1':'',
+    durationMin:du,durationText:`${Math.floor(du/60)}h ${String(du%60).padStart(2,'0')}m`,
+    nonstop:true,price:prices[idx],carrier:c,overnight:overnightFlag(d,a)}});
 }
-function buildRfdLcaResults(fromCode, toCode){
-  const carriers = ['JetBlue','Delta','Delta', ...shuffle(['American Airlines','Southwest','United'])];
-  const depTimes  = randomUniqueTimes(6);
-  const durations = Array.from({length:6}, ()=>randInt(90,120));
-  const prices    = Array.from({length:6}, ()=>randInt(250,550));
-  return carriers.map((carrier, i)=>{
-    const dep=depTimes[i], dur=durations[i], arr=dep+dur;
-    return {from:fromCode,to:toCode, depart:minutesToTime(dep), arrive:minutesToTime(arr),
-      plusOne:Math.floor(arr/1440)>Math.floor(dep/1440)?'+1':'', durationMin:dur,
-      durationText:`${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop:true, price:prices[i], carrier, overnight:overnightFlag(dep,arr)};
-  });
+function buildRfdLcaResults(from,to){
+  const carriers=['JetBlue','Delta','Delta',...shuffle(['American Airlines','Southwest','United'])];
+  const depTimes=randomUniqueTimes(6), durations=Array.from({length:6},()=>randInt(90,120)), prices=Array.from({length:6},()=>randInt(250,550));
+  return carriers.map((c,idx)=>{const d=depTimes[idx],du=durations[idx],a=d+du;return{
+    from,to,depart:minutesToTime(d),arrive:minutesToTime(a),
+    plusOne:Math.floor(a/1440)>Math.floor(d/1440)?'+1':'',
+    durationMin:du,durationText:`${Math.floor(du/60)}h ${String(du%60).padStart(2,'0')}m`,
+    nonstop:true,price:prices[idx],carrier:c,overnight:overnightFlag(d,a)}});
 }
-function buildRfdPhpResults(fromCode, toCode){
-  const carriers = ['JetBlue','JetBlue','Delta', ...shuffle(['American Airlines','United','Southwest'])];
-  const depTimes  = randomUniqueTimes(6);
-  const durations = Array.from({length:6}, ()=>randInt(90,120));
-  const prices    = Array.from({length:6}, ()=>randInt(250,550));
-  return carriers.map((carrier, i)=>{
-    const dep=depTimes[i], dur=durations[i], arr=dep+dur;
-    return {from:fromCode,to:toCode, depart:minutesToTime(dep), arrive:minutesToTime(arr),
-      plusOne:Math.floor(arr/1440)>Math.floor(dep/1440)?'+1':'', durationMin:dur,
-      durationText:`${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop:true, price:prices[i], carrier, overnight:overnightFlag(dep,arr)};
-  });
+function buildRfdPhpResults(from,to){
+  const carriers=['JetBlue','JetBlue','Delta',...shuffle(['American Airlines','United','Southwest'])];
+  const depTimes=randomUniqueTimes(6), durations=Array.from({length:6},()=>randInt(90,120)), prices=Array.from({length:6},()=>randInt(250,550));
+  return carriers.map((c,idx)=>{const d=depTimes[idx],du=durations[idx],a=d+du;return{
+    from,to,depart:minutesToTime(d),arrive:minutesToTime(a),
+    plusOne:Math.floor(a/1440)>Math.floor(d/1440)?'+1':'',
+    durationMin:du,durationText:`${Math.floor(du/60)}h ${String(du%60).padStart(2,'0')}m`,
+    nonstop:true,price:prices[idx],carrier:c,overnight:overnightFlag(d,a)}});
 }
 
-/* -------------------- Results rendering -------------------- */
+/* -------------------- Results list -------------------- */
 function resultsView(list){
-  const div = document.createElement('div');
-  div.className = 'results';
-  list.forEach(opt => {
-    const card = document.createElement('div');
-    card.className = 'card-result';
-    card.innerHTML = `
+  const div=document.createElement('div'); div.className='results';
+  list.forEach(opt=>{
+    const card=document.createElement('div'); card.className='card-result';
+    card.innerHTML=`
       <div class="row-top">
-        <div class="pair">
-          <div class="code">${opt.from}</div>
-          <div class="arrow">→</div>
-          <div class="code">${opt.to}</div>
-        </div>
-        <div class="right-price">
-          <span>$${opt.price.toLocaleString()}</span>
+        <div class="pair"><div class="code">${opt.from}</div><div class="arrow">→</div><div class="code">${opt.to}</div></div>
+        <div class="right-price"><span>$${opt.price.toLocaleString()}</span>
           <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
       </div>
       <div class="row-top" style="margin-top:6px">
-        <div class="timepair">
-          ${opt.depart} &nbsp;→&nbsp; ${opt.arrive}
-          ${opt.plusOne ? `<span class="plus1">${opt.plusOne}</span>` : ``}
-        </div>
+        <div class="timepair">${opt.depart} &nbsp;→&nbsp; ${opt.arrive} ${opt.plusOne?`<span class="plus1">${opt.plusOne}</span>`:''}</div>
       </div>
       <div class="row-mid">
-        <div>${opt.durationText}</div>
-        <div>Nonstop</div>
-        <div style="color:#9aa3af;">${opt.carrier}</div>
+        <div>${opt.durationText}</div><div>Nonstop</div><div style="color:#9aa3af;">${opt.carrier}</div>
       </div>
-      <div class="row-foot ${opt.overnight ? "" : "hide"}">
+      <div class="row-foot ${opt.overnight?'':'hide'}">
         <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2z" stroke="#ffcc66" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span>Overnight flight or connection</span>
       </div>`;
-    card.addEventListener('click', ()=>openSummary(opt));
+    card.addEventListener('click',()=>openSummary(opt));
     div.appendChild(card);
   });
   return div;
 }
 
+/* ------- navigation/render with smooth swap ------- */
 function renderView(title, htmlNode){
   routeTitle.textContent = title;
-  sheetBody.classList.remove('show');
-  // swap content with tiny delay for smoothness
-  setTimeout(()=>{
-    sheetBody.innerHTML = '';
-    sheetBody.appendChild(htmlNode);
-    sheetBody.classList.add('show');
-  }, 10);
-  // push to back stack
-  stepStack.push({title, html: htmlNode});
+  sheetBody.innerHTML = '';
+  sheetBody.appendChild(htmlNode);
+  // trigger animation on each swap
+  sheetBody.classList.remove('anim');
+  void sheetBody.offsetWidth; // reflow to restart animation
+  sheetBody.classList.add('anim');
 }
+sheetBody.classList.add('anim');
 
-function openSheetWith(nodeTitle, node){
-  stepStack = [];
-  openSheet();
-  renderView(nodeTitle, node);
-}
+/* -------------------- Steps -------------------- */
+let lastSelection=null;
 
-/* -------------------- Steps: Summary → Passengers → Review & Pay -------------------- */
-let lastSelection = null;
 function openSummary(opt){
-  lastSelection = {
-    ...opt,
-    airlineCode: AIRLINE_CODES[opt.carrier] || ''
-  };
-  const v = document.createElement('div'); v.className = 'view show';
+  lastSelection = {...opt, airlineCode: (AIRLINE_CODES[opt.carrier]||'')};
+  const v=document.createElement('div'); v.className='view';
 
-  const warn = opt.overnight ? `
+  const warn=opt.overnight?`
     <div class="panel" style="color:#ffcc66; display:flex; align-items:center; gap:8px">
       <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2z" stroke="#ffcc66" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Overnight flight or connection
-    </div>` : '';
+    </div>`:'';
 
-  v.innerHTML = `
+  v.innerHTML=`
     <div class="panel">
       <div style="font-weight:800; color:#21d07a; margin-bottom:6px">DEPART</div>
-      <div style="font-size:17px; color:#e9eef4; margin-bottom:6px">
-        ${opt.from} to ${opt.to}
-      </div>
+      <div style="font-size:17px; color:#e9eef4; margin-bottom:6px">${opt.from} to ${opt.to}</div>
       <div class="kv"><span><b>${opt.depart}</b> → <b>${opt.arrive}</b> ${opt.plusOne?'<span class="muted">+1</span>':''}</span><span>Nonstop</span></div>
       <div class="kv"><span>Duration</span><b>${opt.durationText}</b></div>
     </div>
     ${warn}
-    <div class="panel">
-      <div class="kv"><span>Total amount due</span><b>$${opt.price.toLocaleString()}</b></div>
-    </div>
-    <button class="btn-lg" id="goPassengers">Continue</button>
-  `;
-  v.querySelector('#goPassengers').addEventListener('click', ()=>openPassengers());
+    <div class="panel"><div class="kv"><span>Total amount due</span><b>$${opt.price.toLocaleString()}</b></div></div>
+    <button class="btn-lg" id="goPassengers">Continue</button>`;
+  v.querySelector('#goPassengers').addEventListener('click',()=>openPassengers());
+  if(!stepStack.length) openSheet();
+  stepStack.push({title:'Your trip summary', html:v});
   renderView('Your trip summary', v);
 }
 
 function openPassengers(){
-  const intl = isIntl(lastSelection.from, lastSelection.to);
-  const v = document.createElement('div'); v.className = 'view show';
-
-  const info = intl ? `
+  const intl=isIntl(lastSelection.from,lastSelection.to);
+  const v=document.createElement('div'); v.className='view';
+  const info=intl?`
     <div class="panel info">
       <div class="title">Know before you go</div>
-      <div class="muted">
-        International travel requires a valid passport. Check visa and travel document requirements for your destination.
-      </div>
-    </div>` : '';
+      <div class="muted">International travel requires a valid passport. Check visa and travel document requirements for your destination.</div>
+    </div>`:'';
 
-  v.innerHTML = `
+  v.innerHTML=`
     ${info}
-    <div class="panel">
-      <div class="kv"><span>Your trip total</span><b>$${lastSelection.price.toLocaleString()}</b></div>
-    </div>
+    <div class="panel"><div class="kv"><span>Your trip total</span><b>$${lastSelection.price.toLocaleString()}</b></div></div>
 
     <div class="panel">
       <h3>Passenger 1</h3>
       <div class="form-row">
-        <div class="field"><label>First name •</label><input type="text" placeholder="As on ID"></div>
-        <div class="field"><label>Middle name</label><input type="text" placeholder="Optional"></div>
-        <div class="field"><label>Last name •</label><input type="text" placeholder="As on ID"></div>
+        <div class="field"><label>First name •</label><input type="text" placeholder="As on ID" autocomplete="given-name"></div>
+        <div class="field"><label>Middle name</label><input type="text" placeholder="Optional" autocomplete="additional-name"></div>
+        <div class="field"><label>Last name •</label><input type="text" placeholder="As on ID" autocomplete="family-name"></div>
       </div>
       <div class="form-row half" style="margin-top:8px">
-        <div class="field"><label>Date of birth •</label><input type="date"></div>
+        <div class="field"><label>Date of birth •</label><input type="date" autocomplete="bday"></div>
         <div class="field">
           <label>Gender •</label>
-          <select>
-            <option value="" disabled selected>Select</option>
-            <option>Female</option><option>Male</option><option>Unspecified</option>
-          </select>
+          <select autocomplete="sex"><option value="" disabled selected>Select</option><option>Female</option><option>Male</option><option>Unspecified</option></select>
         </div>
       </div>
     </div>
 
-    <button class="btn-lg" id="goPay">Continue</button>
-  `;
-  v.querySelector('#goPay').addEventListener('click', ()=>openReviewPay());
+    <button class="btn-lg" id="goPay">Continue</button>`;
+  v.querySelector('#goPay').addEventListener('click',()=>openReviewPay());
+  stepStack.push({title:'Passengers', html:v});
   renderView('Passengers', v);
 }
 
 function openReviewPay(){
-  const v = document.createElement('div'); v.className = 'view show';
+  const v=document.createElement('div'); v.className='view';
 
-  v.innerHTML = `
+  v.innerHTML=`
     <div class="panel">
       <div style="font-weight:800; margin-bottom:6px">Your trip</div>
       <div style="font-size:16px; margin-bottom:6px">${lastSelection.from} → ${lastSelection.to}</div>
-      <div class="kv">
-        <span><b>${lastSelection.depart}</b> → <b>${lastSelection.arrive}</b> ${lastSelection.plusOne?'<span class="muted">+1</span>':''}</span>
-        <span>${lastSelection.airlineCode ? lastSelection.airlineCode : ''}</span>
-      </div>
+      <div class="kv"><span><b>${lastSelection.depart}</b> → <b>${lastSelection.arrive}</b> ${lastSelection.plusOne?'<span class="muted">+1</span>':''}</span><span>${lastSelection.airlineCode}</span></div>
       <div class="kv"><span>Duration</span><b>${lastSelection.durationText}</b></div>
       <div class="kv"><span>Stops</span><b>Nonstop</b></div>
-      ${lastSelection.overnight ? `<div style="margin-top:8px; color:#ffcc66; display:flex; align-items:center; gap:8px">
+      ${lastSelection.overnight?`<div style="margin-top:8px; color:#ffcc66; display:flex; align-items:center; gap:8px">
         <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2z" stroke="#ffcc66" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Overnight flight or connection
       </div>`:''}
@@ -588,19 +528,25 @@ function openReviewPay(){
     <div class="panel">
       <h3>Credit / debit card</h3>
       <div class="form-row">
-        <div class="field"><label>Card number •</label><input type="text" inputmode="numeric" placeholder="1234 5678 9012 3456"></div>
+        <div class="field"><label>Card number •</label>
+          <input type="text" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456"></div>
         <div class="form-row half">
-          <div class="field"><label>Expiry date •</label><input type="text" placeholder="MM/YY"></div>
-          <div class="field"><label>Security code •</label><input type="text" inputmode="numeric" placeholder="CVV"></div>
+          <div class="field"><label>Expiry date •</label>
+            <input type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY"></div>
+          <div class="field"><label>Security code •</label>
+            <input type="text" inputmode="numeric" autocomplete="cc-csc" placeholder="CVV" maxlength="4"></div>
         </div>
-        <div class="field"><label>Billing address •</label><input type="text" placeholder="Street address"></div>
+        <div class="field"><label>Billing address •</label>
+          <input type="text" autocomplete="address-line1" placeholder="Street address"></div>
         <div class="form-row half">
-          <div class="field"><label>Cardholder name •</label><input type="text" placeholder="Full name"></div>
-          <div class="field"><label>Postal code •</label><input type="text" placeholder="ZIP / Postal"></div>
+          <div class="field"><label>Cardholder name •</label>
+            <input type="text" autocomplete="cc-name" placeholder="Full name"></div>
+          <div class="field"><label>Postal code •</label>
+            <input type="text" autocomplete="postal-code" placeholder="ZIP / Postal"></div>
         </div>
       </div>
 
-      <label class="agree"><input type="checkbox"> 
+      <label class="agree"><input type="checkbox">
         <span>I agree to the terms and conditions, refund policy, and conditions of carriage.</span>
       </label>
       <button class="btn-lg">Pay now</button>
@@ -608,12 +554,12 @@ function openReviewPay(){
         <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.25 3.438 10.063 9 12 5.563-1.938 9-6.75 9-12V5l-9-4z" fill="none" stroke="#9aa3af" stroke-width="1.5"/></svg>
         Secure checkout
       </div>
-    </div>
-  `;
+    </div>`;
+  stepStack.push({title:'Review and pay', html:v});
   renderView('Review and pay', v);
 }
 
-/* -------------------- Search handler -------------------- */
+/* -------------------- Search: supported routes -------------------- */
 document.getElementById('btnSearch').addEventListener('click', () => {
   const from = fromSel.value, to = toSel.value;
   const departDate = document.getElementById('depart').value;
@@ -625,34 +571,24 @@ document.getElementById('btnSearch').addEventListener('click', () => {
     return;
   }
 
-  const key = [from, to].sort().join('-'); // symmetric
+  const key=[from,to].sort().join('-');
   let list;
-  if (key === 'PER-RFD') {
-    list = buildRfdPerResults(from, to);
-  } else if (key === 'IZO-RFD') {
-    list = buildRfdIzoResults(from, to);
-  } else if (key === 'LCA-RFD') {
-    list = buildRfdLcaResults(from, to);
-  } else if (key === 'PHP-RFD') {
-    list = buildRfdPhpResults(from, to);
-  } else {
-    const v = document.createElement('div'); v.className='view show';
-    v.innerHTML = `
-      <div class="panel">
-        <div class="kv">
-          <span>Route</span>
-          <b>${from} → ${to}</b>
-        </div>
-        <div class="muted">This prototype currently supports Rockford (RFD) ↔ Perth (PER),
-        Rockford (RFD) ↔ Izolirani (IZO), Rockford (RFD) ↔ Larnaca (LCA),
-        and Rockford (RFD) ↔ Phaphos (PHP).</div>
-      </div>`;
-    openSheetWith('Choose departure', v);
+  if (key==='PER-RFD') list=buildRfdPerResults(from,to);
+  else if (key==='IZO-RFD') list=buildRfdIzoResults(from,to);
+  else if (key==='LCA-RFD') list=buildRfdLcaResults(from,to);
+  else if (key==='PHP-RFD') list=buildRfdPhpResults(from,to);
+  else{
+    const v=document.createElement('div'); v.className='view';
+    v.innerHTML=`<div class="panel"><div class="kv"><span>Route</span><b>${from} → ${to}</b></div>
+      <div class="muted">This prototype currently supports Rockford (RFD) ↔ Perth (PER),
+      Rockford (RFD) ↔ Izolirani (IZO), Rockford (RFD) ↔ Larnaca (LCA),
+      and Rockford (RFD) ↔ Phaphos (PHP).</div></div>`;
+    openSheet(); renderView('Choose departure', v); stepStack=[{title:'Choose departure', html:v}];
     return;
   }
 
   const resNode = resultsView(list);
-  openSheetWith('Choose departure', resNode);
+  openSheet(); renderView('Choose departure', resNode); stepStack=[{title:'Choose departure', html:resNode}];
 });
 </script>
 </body>
