@@ -291,7 +291,7 @@ const AIRCRAFT_RULES = {
     'Southwest':['B737']
   },
   'IZO-RFD': {
-    'American Airlines':['B737','A320'],
+    'American Airlines':['B737','A320','B777'],
     'JetBlue':['A320'],
     'Southwest':['B737'],
     'Delta':['A320']
@@ -372,7 +372,11 @@ const AIRCRAFT_RULES = {
     'American Airlines': ['A320'],
     'United': ['A320', 'B737'],
     'Delta': ['A320']
-  }
+  },
+  'IZO-LCA': {
+    'American Airlines': ['A320', 'B737'],
+    'Delta': ['A320'],
+    'United': ['A320']
 };
 
 function routeKey(a,b){ return [a,b].sort().join('-'); }
@@ -773,6 +777,39 @@ function buildMlrPhpResults(from, to){
   });
 }
 
+function buildIzoLcaResults(from, to){
+  // 6 options:
+  // First 3: American (x2), Delta (x1)
+  // Last 3:  Delta   (x2), United (x1)
+  const carriers = [
+    'American Airlines', 'American Airlines', 'Delta',
+    'Delta', 'Delta', 'United'
+  ];
+
+  const depTimes  = randomUniqueTimes(6);
+  const durations = Array.from({length:6}, () => randInt(90, 120)); // 1h30m–2h
+  const prices    = Array.from({length:6}, () => randInt(250, 550)); // $250–$550
+
+  return carriers.map((carrier, i) => {
+    const depMins = depTimes[i];
+    const dur     = durations[i];
+    const arrMins = depMins + dur;
+    return {
+      from, to,
+      depart: minutesToTime(depMins),
+      arrive: minutesToTime(arrMins),
+      plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
+      durationMin: dur,
+      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true,
+      price: prices[i],
+      carrier,
+      overnight: overnightFlag(depMins, arrMins),
+      aircraft: pickAircraft(from, to, carrier) // uses IZO-LCA rules above
+    };
+  });
+}
+
 /* -------------------- Results list -------------------- */
 function resultsView(list){
   const div=document.createElement('div'); div.className='results';
@@ -940,6 +977,7 @@ document.getElementById('btnSearch').addEventListener('click', () => {
   else if (key==='IZO-MLR') list=buildMlrIzoResults(from,to);
   else if (key==='LCA-MLR') list=buildMlrLcaResults(from,to);
   else if (key==='MLR-PHP') list=buildMlrPhpResults(from,to);
+  else if (key==='IZO-LCA') list=buildIzoLcaResults(from,to);
   else {
     const v=document.createElement('div'); v.className='view';
     v.innerHTML=`<div class="panel"><div class="kv"><span>Route</span><b>${from} → ${to}</b></div>
