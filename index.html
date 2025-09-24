@@ -387,6 +387,9 @@ const AIRCRAFT_RULES = {
   },
   'GRV-IZO': {
     'Lufthansa': ['A350']
+  },
+  'LCA-PHP': {
+    'Delta': ['CRJ700', 'E190']
   }
 };
 
@@ -928,6 +931,35 @@ function buildIzoGrvResults(from, to){
   }];
 }
 
+function buildLcaPhpResults(from, to){
+  // 6 options — all Delta
+  const carriers = Array(6).fill('Delta');
+
+  const depTimes  = randomUniqueTimes(6);
+  const durations = Array.from({length:6}, () => randInt(30, 60));  // 30m–1h
+  const prices    = Array.from({length:6}, () => randInt(100, 250)); // $100–$250
+
+  return carriers.map((carrier, i) => {
+    const depMins = depTimes[i];
+    const dur     = durations[i];
+    const arrMins = depMins + dur;
+
+    return {
+      from, to,
+      depart: minutesToTime(depMins),
+      arrive: minutesToTime(arrMins),
+      plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
+      durationMin: dur,
+      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true,
+      price: prices[i],
+      carrier,
+      overnight: overnightFlag(depMins, arrMins),
+      aircraft: pickAircraft(from, to, carrier)   // → CRJ700 or E190
+    };
+  });
+}
+
 /* -------------------- Results list -------------------- */
 function resultsView(list){
   const div=document.createElement('div'); div.className='results';
@@ -1099,6 +1131,7 @@ document.getElementById('btnSearch').addEventListener('click', () => {
   else if (key==='IZO-PHP') list=buildIzoPhpResults(from,to);
   else if (key==='HND-IZO') list=buildIzoHndResults(from,to);
   else if (key==='GRV-IZO') list=buildIzoGrvResults(from,to);
+  else if (key==='LCA-PHP') list=buildLcaPhpResults(from,to);
   else {
     const v=document.createElement('div'); v.className='view';
     v.innerHTML=`<div class="panel"><div class="kv"><span>Route</span><b>${from} → ${to}</b></div>
