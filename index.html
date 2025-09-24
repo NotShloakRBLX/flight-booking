@@ -345,7 +345,7 @@ function minutesToTime(mins){
 }
 function overnightFlag(depMins, arrMins){ const w=t=>t>=0&&t<360; return w(depMins%1440)||w(arrMins%1440); }
 
-const AIRLINE_CODES = { 'American Airlines':'AA','JetBlue':'B6','Delta':'DL','United':'UA','Southwest':'WN','Spirit':'NK' };
+const AIRLINE_CODES = { 'American Airlines':'AA','JetBlue':'B6','Delta':'DL','United':'UA','Southwest':'WN','Spirit':'NK','Emirates':'EK','Singapore Airlines': 'SQ','Lufthansa': 'LH','SWISS': 'LX','Korean Air': 'KE','KLM': 'KL','Qatar Airways': 'QR','Air France': 'AF' };
 
 function countryOf(code){
   if (['RFD','PER','LCA','PHP','MLR','IZO'].includes(code)) return 'US';
@@ -395,6 +395,58 @@ function buildRfdPhpResults(from,to){
     plusOne:Math.floor(a/1440)>Math.floor(d/1440)?'+1':'',
     durationMin:du,durationText:`${Math.floor(du/60)}h ${String(du%60).padStart(2,'0')}m`,
     nonstop:true,price:prices[idx],carrier:c,overnight:overnightFlag(d,a)}});
+}
+
+  /* RFD ↔ HND (Tokyo)
+   - 12 options
+   - First 6: shuffle of [American Airlines, Delta, Emirates, Singapore Airlines, United, Lufthansa]
+   - Remaining 6: shuffle of [SWISS, Korean Air, KLM, Qatar Airways, Air France] (pool filled to 6)
+   - Price: $900–$1100
+   - Duration: 8h30–12h (510–720 min)
+   - Time zone: HND is +6h vs US (apply +360 min US→JP, -360 min JP→US)
+*/
+function buildRfdHndResults(fromCode, toCode){
+  const firstSix = shuffle([
+    'American Airlines','Delta','Emirates','Singapore Airlines','United','Lufthansa'
+  ]);
+
+  // Pool has 5 names but we need 6 cards → fill by random repeats, then shuffle
+  const pool = ['SWISS','Korean Air','KLM','Qatar Airways','Air France'];
+  const lastSix = shuffle((() => {
+    const out = [...pool];
+    while (out.length < 6) out.push(pool[randInt(0, pool.length - 1)]);
+    return out;
+  })());
+
+  const carriers = [...firstSix, ...lastSix];
+
+  const depTimes  = randomUniqueTimes(12);
+  const durations = Array.from({length:12}, () => randInt(510, 720));  // 8h30–12h
+  const prices    = Array.from({length:12}, () => randInt(900, 1100));
+
+  // timezone delta: +6h when US→JP, -6h when JP→US
+  const tzDelta =
+    (countryOf(fromCode) === 'US' && countryOf(toCode) === 'JP') ? 360 :
+    (countryOf(fromCode) === 'JP' && countryOf(toCode) === 'US') ? -360 : 0;
+
+  return carriers.map((carrier, i) => {
+    const depMins = depTimes[i];
+    const dur     = durations[i];
+    const arrMins = depMins + dur + tzDelta;
+    return {
+      from: fromCode,
+      to: toCode,
+      depart: minutesToTime(depMins),
+      arrive: minutesToTime(arrMins),
+      plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
+      durationMin: dur,
+      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true,
+      price: prices[i],
+      carrier,
+      overnight: overnightFlag(depMins, arrMins)
+    };
+  });
 }
 
 /* -------------------- Results list -------------------- */
@@ -577,6 +629,7 @@ document.getElementById('btnSearch').addEventListener('click', () => {
   else if (key==='IZO-RFD') list=buildRfdIzoResults(from,to);
   else if (key==='LCA-RFD') list=buildRfdLcaResults(from,to);
   else if (key==='PHP-RFD') list=buildRfdPhpResults(from,to);
+  else if (key==='HND-RFD') list=buildRfdHndResults(from,to);
   else{
     const v=document.createElement('div'); v.className='view';
     v.innerHTML=`<div class="panel"><div class="kv"><span>Route</span><b>${from} → ${to}</b></div>
