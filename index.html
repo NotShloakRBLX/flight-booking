@@ -326,7 +326,7 @@ function overnightFlag(depMins, arrMins){
 /* RFD ↔ PER
    - 6 options
    - First 2 airlines fixed: American, JetBlue
-   - Last 4 = shuffle of United, Spirit, Southwest, Delta (NEW: shuffled every click)
+   - Last 4 = shuffle of United, Spirit, Southwest, Delta (shuffled every click)
    - Prices random $250–$600; the two CHEAPEST must be the first two options
    - Times random each card
    - Durations random 2h–3h
@@ -343,16 +343,11 @@ function buildRfdPerResults(fromCode, toCode){
   const sorted = [...allPrices].sort((a,b)=>a-b);
   const cheap1 = sorted[0], cheap2 = sorted[1];
 
-  // remove one instance of cheap1 and cheap2 from a working copy to keep randomness for the rest
   const restPrices = [...allPrices];
-  // remove cheap1
-  let idx = restPrices.indexOf(cheap1);
-  if (idx>-1) restPrices.splice(idx,1);
-  // remove cheap2
-  idx = restPrices.indexOf(cheap2);
-  if (idx>-1) restPrices.splice(idx,1);
+  let idx = restPrices.indexOf(cheap1); if (idx>-1) restPrices.splice(idx,1);
+  idx = restPrices.indexOf(cheap2); if (idx>-1) restPrices.splice(idx,1);
 
-  const pricesByCard = [cheap1, cheap2, ...restPrices]; // first two guaranteed cheapest; others remain random
+  const pricesByCard = [cheap1, cheap2, ...restPrices]; // first two guaranteed cheapest
 
   return carriers.map((carrier, i)=>{
     const depMins = depTimes[i];
@@ -377,8 +372,8 @@ function buildRfdPerResults(fromCode, toCode){
 /* RFD ↔ IZO
    - 6 options
    - First 3 airlines: American, American, JetBlue
-   - Last 3 = shuffle of JetBlue, Southwest, Delta (NEW: shuffled every click)
-   - Prices random $250–$600 (no special ordering requirement)
+   - Last 3 = shuffle of JetBlue, Southwest, Delta (shuffled every click)
+   - Prices random $250–$600
    - Times random each card
    - Durations random 2h–3h
 */
@@ -387,7 +382,44 @@ function buildRfdIzoResults(fromCode, toCode){
 
   const depTimes = randomUniqueTimes(6);
   const durations = Array.from({length:6}, ()=>randInt(120,180));
-  const prices = Array.from({length:6}, ()=>randInt(250,600)); // fully random per card
+  const prices = Array.from({length:6}, ()=>randInt(250,600));
+
+  return carriers.map((carrier, i)=>{
+    const depMins = depTimes[i];
+    const dur = durations[i];
+    const arrMins = depMins + dur;
+    return {
+      from: fromCode,
+      to: toCode,
+      depart: minutesToTime(depMins),
+      arrive: minutesToTime(arrMins),
+      plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
+      durationMin: dur,
+      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true,
+      price: prices[i],
+      carrier,
+      overnight: overnightFlag(depMins, arrMins)
+    };
+  });
+}
+
+/* RFD ↔ LCA
+   - 6 options
+   - Price range: $250–$550 (fully random)
+   - First 3 options: JetBlue (1), Delta (2)
+   - Remaining 3 shuffle: American, Southwest, United (shuffled every click)
+   - Flight time range: 1h30–2h (90–120 min)
+*/
+function buildRfdLcaResults(fromCode, toCode){
+  const carriers = [
+    'JetBlue','Delta','Delta',
+    ...shuffle(['American Airlines','Southwest','United'])
+  ];
+
+  const depTimes  = randomUniqueTimes(6);                 // minutes 0–1439
+  const durations = Array.from({length:6}, ()=>randInt(90,120)); // 1h30–2h
+  const prices    = Array.from({length:6}, ()=>randInt(250,550));
 
   return carriers.map((carrier, i)=>{
     const depMins = depTimes[i];
@@ -470,6 +502,8 @@ document.getElementById('btnSearch').addEventListener('click', () => {
     list = buildRfdPerResults(from, to);
   } else if (key === 'IZO-RFD') {
     list = buildRfdIzoResults(from, to);
+  } else if (key === 'LCA-RFD') {
+    list = buildRfdLcaResults(from, to);
   } else {
     resultsEl.innerHTML = `
       <div class="card-result">
@@ -477,7 +511,7 @@ document.getElementById('btnSearch').addEventListener('click', () => {
           <div class="pair"><div class="code">${from}</div><div class="arrow">→</div><div class="code">${to}</div></div>
         </div>
         <div style="margin-top:8px; color:#9aa3af">
-          This prototype currently supports Rockford (RFD) ↔ Perth (PER) and Rockford (RFD) ↔ Izolirani (IZO) only.
+          This prototype currently supports Rockford (RFD) ↔ Perth (PER), Rockford (RFD) ↔ Izolirani (IZO), and Rockford (RFD) ↔ Larnaca (LCA).
         </div>
       </div>`;
     openSheet();
