@@ -356,6 +356,11 @@ const AIRCRAFT_RULES = {
   },
   'GRV-PER': {
     'Qantas': ['A350']
+  },
+  'IZO-MLR': {
+    'American Airlines': ['A320', 'B737'],
+    'United': ['A320'],
+    'Delta': ['A320']
   }
 };
 
@@ -658,6 +663,39 @@ function buildPerGrvResults(from, to){
   }];
 }
 
+function buildMlrIzoResults(from, to){
+  // 6 options:
+  // First 3: American (x3)
+  // Last 3: United (x2), Delta (x1)
+  const carriers = [
+    'American Airlines', 'American Airlines', 'American Airlines',
+    'United', 'United', 'Delta'
+  ];
+
+  const depTimes  = randomUniqueTimes(6);
+  const durations = Array.from({length:6}, () => randInt(120, 180)); // 2–3h
+  const prices    = Array.from({length:6}, () => randInt(250, 600)); // $250–$600
+
+  return carriers.map((carrier, i) => {
+    const depMins = depTimes[i];
+    const dur     = durations[i];
+    const arrMins = depMins + dur;
+    return {
+      from, to,
+      depart: minutesToTime(depMins),
+      arrive: minutesToTime(arrMins),
+      plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
+      durationMin: dur,
+      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true,
+      price: prices[i],
+      carrier,
+      overnight: overnightFlag(depMins, arrMins),
+      aircraft: pickAircraft(from, to, carrier) // uses IZO-MLR rules above
+    };
+  });
+}
+
 /* -------------------- Results list -------------------- */
 function resultsView(list){
   const div=document.createElement('div'); div.className='results';
@@ -822,6 +860,7 @@ document.getElementById('btnSearch').addEventListener('click', () => {
   else if (key==='LCA-PER') list=buildPerLcaResults(from,to);
   else if (key==='PER-PHP') list=buildPerPhpResults(from,to);
   else if (key==='GRV-PER') list=buildPerGrvResults(from,to);
+  else if (key==='IZO-MLR') list=buildMlrIzoResults(from,to);
   else {
     const v=document.createElement('div'); v.className='view';
     v.innerHTML=`<div class="panel"><div class="kv"><span>Route</span><b>${from} → ${to}</b></div>
