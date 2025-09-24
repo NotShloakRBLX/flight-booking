@@ -384,6 +384,9 @@ const AIRCRAFT_RULES = {
   },
   'HND-IZO': {
     'American Airlines': ['B777']
+  },
+  'GRV-IZO': {
+    'Lufthansa': ['A350']
   }
 };
 
@@ -892,6 +895,39 @@ function buildIzoHndResults(from, to){
   });
 }
 
+function buildIzoGrvResults(from, to){
+  // 1 option — Lufthansa (A350), 11h–12h30m, $900–$1200
+  const carrier = 'Lufthansa';
+
+  // Fixed departure time: 6:40 PM
+  const depMins  = 18*60 + 40;   // 1120
+
+  // Random duration: 11h–12h30m (660–750 min)
+  const dur      = randInt(660, 750);
+
+  // Timezone: GRV is JP group; IZO is US group → +6h when US→JP, -6h when JP→US
+  const tzDelta =
+    (countryOf(from) === 'US' && countryOf(to) === 'JP') ? 360 :
+    (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
+
+  const arrMins = depMins + dur + tzDelta;
+  const price   = randInt(900, 1200);
+
+  return [{
+    from, to,
+    depart: minutesToTime(depMins),                  // fixed dep time
+    arrive: minutesToTime(arrMins),                  // calculated from dur + tz
+    plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
+    durationMin: dur,
+    durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+    nonstop: true,
+    price,
+    carrier,
+    overnight: overnightFlag(depMins, arrMins),
+    aircraft: pickAircraft(from, to, carrier)       // → 'A350' per GRV-IZO rules
+  }];
+}
+
 /* -------------------- Results list -------------------- */
 function resultsView(list){
   const div=document.createElement('div'); div.className='results';
@@ -1062,6 +1098,7 @@ document.getElementById('btnSearch').addEventListener('click', () => {
   else if (key==='IZO-LCA') list=buildIzoLcaResults(from,to);
   else if (key==='IZO-PHP') list=buildIzoPhpResults(from,to);
   else if (key==='HND-IZO') list=buildIzoHndResults(from,to);
+  else if (key==='GRV-IZO') list=buildIzoGrvResults(from,to);
   else {
     const v=document.createElement('div'); v.className='view';
     v.innerHTML=`<div class="panel"><div class="kv"><span>Route</span><b>${from} → ${to}</b></div>
