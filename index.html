@@ -413,6 +413,10 @@ const AIRCRAFT_RULES = {
     'Lufthansa': ['A320'],
     'British Airways': ['A320'],
     'Condor': ['A320']
+  },
+  'GRV-SAU': {
+    'SWISS': ['A320'],
+    'easyJet': ['A320']
   }
 };
 
@@ -1124,6 +1128,40 @@ function buildHndSauResults(from, to){
   });
 }
 
+function buildGrvSauResults(from, to){
+  // 4 options: SWISS (2), easyJet (2)
+  const carriers = ['SWISS','SWISS','easyJet','easyJet'];
+
+  const depTimes  = randomUniqueTimes(4);
+  const durations = Array.from({length:4}, () => randInt(90, 150));   // 1h30m–2h30m
+  const prices    = Array.from({length:4}, () => randInt(250, 550));  // $250–$550
+
+  // SAU is +1h vs GRV (both "JP group"); apply within-JP offset
+  let tzDelta = 0;
+  if (from === 'GRV' && to === 'SAU') tzDelta = 60;       // GRV → SAU: +1h
+  else if (from === 'SAU' && to === 'GRV') tzDelta = -60; // SAU → GRV: -1h
+
+  return carriers.map((carrier, i) => {
+    const depMins = depTimes[i];
+    const dur     = durations[i];
+    const arrMins = depMins + dur + tzDelta;
+
+    return {
+      from, to,
+      depart: minutesToTime(depMins),
+      arrive: minutesToTime(arrMins),
+      plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
+      durationMin: dur,
+      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true,
+      price: prices[i],
+      carrier,
+      overnight: overnightFlag(depMins, arrMins),
+      aircraft: pickAircraft(from, to, carrier) // uses GRV-SAU rules above
+    };
+  });
+}
+
 /* -------------------- Results list -------------------- */
 function resultsView(list){
   const div=document.createElement('div'); div.className='results';
@@ -1300,6 +1338,7 @@ document.getElementById('btnSearch').addEventListener('click', () => {
   else if (key==='GRV-LCA') list=buildLcaGrvResults(from,to);
   else if (key==='GRV-HND') list=buildHndGrvResults(from,to);
   else if (key==='HND-SAU') list=buildHndSauResults(from,to);
+  else if (key==='GRV-SAU') list=buildGrvSauResults(from,to);
   else {
     const v=document.createElement('div'); v.className='view';
     v.innerHTML=`<div class="panel"><div class="kv"><span>Route</span><b>${from} → ${to}</b></div>
