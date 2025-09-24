@@ -441,6 +441,43 @@ function buildRfdLcaResults(fromCode, toCode){
   });
 }
 
+/* RFD ↔ PHP (Phaphos)
+   - 6 options
+   - Price range: $250–$550 (fully random per card)
+   - First 3: JetBlue, JetBlue, Delta
+   - Remaining 3: shuffle of American, United, Southwest (random every click)
+   - Flight time: 1h30–2h (90–120 min), randomized per card
+*/
+function buildRfdPhpResults(fromCode, toCode){
+  const carriers = [
+    'JetBlue', 'JetBlue', 'Delta',
+    ...shuffle(['American Airlines', 'United', 'Southwest'])
+  ];
+
+  const depTimes  = randomUniqueTimes(6);                    // unique, random minutes 0–1439
+  const durations = Array.from({length:6}, ()=>randInt(90,120)); // 1h30–2h
+  const prices    = Array.from({length:6}, ()=>randInt(250,550)); // $250–$550
+
+  return carriers.map((carrier, i)=>{
+    const depMins = depTimes[i];
+    const dur = durations[i];
+    const arrMins = depMins + dur;
+    return {
+      from: fromCode,
+      to: toCode,
+      depart: minutesToTime(depMins),
+      arrive: minutesToTime(arrMins),
+      plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
+      durationMin: dur,
+      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true,
+      price: prices[i],
+      carrier,
+      overnight: overnightFlag(depMins, arrMins) // shows only if dep/arr is 12–6am
+    };
+  });
+}
+
 /* -------------------- Render cards -------------------- */
 function renderResults(list){
   resultsEl.innerHTML = "";
@@ -504,7 +541,9 @@ document.getElementById('btnSearch').addEventListener('click', () => {
     list = buildRfdIzoResults(from, to);
   } else if (key === 'LCA-RFD') {
     list = buildRfdLcaResults(from, to);
-  } else {
+  } else if (key === 'PHP-RFD') {
+    list = buildRfdPhpResults(from, to);
+  }
     resultsEl.innerHTML = `
       <div class="card-result">
         <div class="row-top">
