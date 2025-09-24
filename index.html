@@ -327,6 +327,9 @@ const AIRCRAFT_RULES = {
     'American Airlines':['CRJ700','E190'],
     'JetBlue':['A320'],
     'United':['CRJ700','E190']
+  },
+  'GRV-RFD': {
+    'United': ['B787']
   }
 };
 
@@ -438,6 +441,40 @@ function buildRfdHndResults(fromCode, toCode){
     nonstop:true,price:prices[idx],carrier:c,overnight:overnightFlag(d,a),
     aircraft: pickAircraft(from,to,c)
   }});
+}
+
+/* RFD ↔ GRV (Grindavik)
+   - 1 option
+   - Airline: United
+   - Aircraft: B787 (from AIRCRAFT_RULES)
+   - Price: $850–$1100
+   - Duration: 6h–8h (360–480 min)
+   - Time zone: JP is +6h vs US (apply ±360 min)
+*/
+function buildRfdGrvResults(fromCode, toCode){
+  const depMins = randInt(0, 1439);            // random departure time (min-of-day)
+  const dur     = randInt(360, 480);           // 6–8 hours
+  const tzDelta =
+    (countryOf(fromCode) === 'US' && countryOf(toCode) === 'JP') ? 360 :
+    (countryOf(fromCode) === 'JP' && countryOf(toCode) === 'US') ? -360 : 0;
+
+  const arrMins = depMins + dur + tzDelta;
+  const price   = randInt(850, 1100);
+
+  return [{
+    from: fromCode,
+    to: toCode,
+    depart: minutesToTime(depMins),
+    arrive: minutesToTime(arrMins),
+    plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
+    durationMin: dur,
+    durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+    nonstop: true,
+    price,
+    carrier: 'United',
+    overnight: overnightFlag(depMins, arrMins),
+    aircraft: pickAircraft(fromCode, toCode, 'United') // → 'B787'
+  }];
 }
 
 /* -------------------- Results list -------------------- */
@@ -598,6 +635,7 @@ document.getElementById('btnSearch').addEventListener('click', () => {
   else if (key==='PHP-RFD') list=buildRfdPhpResults(from,to);
   else if (key==='HND-RFD') list=buildRfdHndResults(from,to);
   else if (key==='MLR-RFD') list=buildRfdMlrResults(from,to);
+  else if (key==='GRV-RFD') list=buildRfdGrvResults(from,to);
   else {
     const v=document.createElement('div'); v.className='view';
     v.innerHTML=`<div class="panel"><div class="kv"><span>Route</span><b>${from} → ${to}</b></div>
