@@ -381,6 +381,9 @@ const AIRCRAFT_RULES = {
   'IZO-PHP': {
     'American Airlines': ['A320', 'B737'],
     'Spirit': ['A320']
+  },
+  'HND-IZO': {
+    'American Airlines': ['B777']
   }
 };
 
@@ -846,6 +849,49 @@ function buildIzoPhpResults(from, to){
   });
 }
 
+function buildIzoHndResults(from, to){
+  // 3 options — all American; aircraft B777 via AIRCRAFT_RULES
+  const carriers = ['American Airlines','American Airlines','American Airlines'];
+
+  // Fixed departure times (local): 6:45 PM, 8:20 PM, 11:40 PM
+  const fixedDepTimes = [
+    18*60 + 45,  // 6:45 PM → 1125
+    20*60 + 20,  // 8:20 PM → 1220
+    23*60 + 40   // 11:40 PM → 1420
+  ];
+
+  // Randomized durations 7h–8h30m (420–510 min)
+  const durations = Array.from({length:3}, () => randInt(420, 510));
+
+  // Randomized prices $850–$1100
+  const prices = Array.from({length:3}, () => randInt(850, 1100));
+
+  // Timezone offset per your rule: HND is +6h vs US airports
+  const tzDelta =
+    (countryOf(from) === 'US' && countryOf(to) === 'JP') ? 360 :
+    (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
+
+  return carriers.map((carrier, i) => {
+    const depMins = fixedDepTimes[i];      // NOT randomized
+    const dur     = durations[i];          // randomized
+    const arrMins = depMins + dur + tzDelta;
+
+    return {
+      from, to,
+      depart: minutesToTime(depMins),
+      arrive: minutesToTime(arrMins),
+      plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
+      durationMin: dur,
+      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true,
+      price: prices[i],
+      carrier,
+      overnight: overnightFlag(depMins, arrMins),
+      aircraft: pickAircraft(from, to, carrier) // → B777
+    };
+  });
+}
+
 /* -------------------- Results list -------------------- */
 function resultsView(list){
   const div=document.createElement('div'); div.className='results';
@@ -1015,6 +1061,7 @@ document.getElementById('btnSearch').addEventListener('click', () => {
   else if (key==='MLR-PHP') list=buildMlrPhpResults(from,to);
   else if (key==='IZO-LCA') list=buildIzoLcaResults(from,to);
   else if (key==='IZO-PHP') list=buildIzoPhpResults(from,to);
+  else if (key==='HND-IZO') list=buildIzoHndResults(from,to);
   else {
     const v=document.createElement('div'); v.className='view';
     v.innerHTML=`<div class="panel"><div class="kv"><span>Route</span><b>${from} → ${to}</b></div>
