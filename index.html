@@ -28,7 +28,6 @@
     color-scheme:dark;
   }
 
-  /* iPhone-first layout */
   .page{width:clamp(320px,92vw,420px); margin:0 auto; padding:22px 16px 40px;}
   h1{font-size:48px; line-height:1; margin:6px 4px 18px; font-weight:800; letter-spacing:-.4px}
 
@@ -39,24 +38,15 @@
 
   .grid{display:grid; grid-template-columns:1fr; row-gap:20px}
   .label{font-size:16px; color:var(--muted); margin:0 0 8px;}
-
   .row{position:relative}
   .line-wrap{position:relative; padding:0 0 12px;}
   .line-wrap::after{content:""; position:absolute; left:0; right:0; bottom:0; height:2px; background:var(--line); border-radius:2px;}
-
-  .input, .select select{
-    width:100%; background:transparent; border:0; outline:0; color:var(--ink);
-    font-size:21px; padding:6px 34px 6px 0; line-height:1.25;
-  }
+  .input, .select select{width:100%; background:transparent; border:0; outline:0; color:var(--ink); font-size:21px; padding:6px 34px 6px 0; line-height:1.25;}
   .input::placeholder{color:rgba(255,255,255,.55)}
-  .focusbar{position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--lineActive);
-    transform:scaleX(0); transform-origin:left; transition:transform var(--t)}
-  .input:focus ~ .focusbar,
-  .select select:focus ~ .focusbar{transform:scaleX(1)}
-
+  .focusbar{position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--lineActive); transform:scaleX(0); transform-origin:left; transition:transform var(--t)}
+  .input:focus ~ .focusbar, .select select:focus ~ .focusbar{transform:scaleX(1)}
   input[type="date"]{-webkit-appearance:none; appearance:none}
   input[type="date"]::-webkit-calendar-picker-indicator{opacity:0}
-
   .select{position:relative}
   .icon{position:absolute; right:0; top:50%; transform:translateY(-50%); width:20px; height:20px}
   .icon svg{width:100%; height:100%; display:block}
@@ -72,72 +62,36 @@
   .swap svg path{stroke:var(--accent); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
 
   .cta{margin-top:22px}
-  .cta button{
-    width:100%; height:60px; border-radius:34px; border:0; cursor:pointer;
-    background:var(--accent); color:#fff; font-weight:800; font-size:24px; letter-spacing:.2px;
-    box-shadow:0 12px 26px rgba(30,139,255,.33); transition:transform var(--t), background var(--t)
-  }
+  .cta button{width:100%; height:60px; border-radius:34px; border:0; cursor:pointer; background:var(--accent); color:#fff; font-weight:800; font-size:24px; letter-spacing:.2px; box-shadow:0 12px 26px rgba(30,139,255,.33); transition:transform var(--t), background var(--t)}
   .cta button:hover{background:var(--accentHover)}
   .cta button:active{transform:translateY(1px)}
 
-  /* ---------- RESULTS / FLOW SHEET ---------- */
-  .backdrop{
-    position:fixed; inset:0; background:rgba(0,0,0,.45);
-    opacity:0; pointer-events:none; transition:opacity var(--t);
-  }
+  /* ---------- OVERLAY ---------- */
+  .backdrop{position:fixed; inset:0; background:rgba(0,0,0,.45); opacity:0; pointer-events:none; transition:opacity var(--t);}
   .backdrop.show{opacity:1; pointer-events:auto}
-
-  .sheet{
-    position:fixed; left:50%; transform:translate(-50%, 100%);
-    bottom:0; width:min(420px, 96vw); max-height:86vh;
-    background:var(--card); border:1px solid var(--cardBorder); border-radius:28px 28px 0 0;
-    box-shadow:0 -18px 48px rgba(0,0,0,.6); overflow:hidden; transition:transform var(--t)
-  }
+  .sheet{position:fixed; left:50%; transform:translate(-50%, 100%); bottom:0; width:min(420px,96vw); max-height:86vh; background:var(--card); border:1px solid var(--cardBorder); border-radius:28px 28px 0 0; box-shadow:0 -18px 48px rgba(0,0,0,.6); overflow:hidden; transition:transform var(--t)}
   .sheet.show{transform:translate(-50%,0)}
-
-  .sheet-header{
-    position:sticky; top:0; background:linear-gradient(180deg, rgba(0,0,0,.22), transparent 70%), var(--card);
-    padding:14px 16px 8px; z-index:2; display:flex; align-items:center; justify-content:center;
-  }
+  .sheet-header{position:sticky; top:0; background:linear-gradient(180deg, rgba(0,0,0,.22), transparent 70%), var(--card); padding:14px 16px 8px; z-index:2; display:flex; align-items:center; justify-content:center;}
   .route-title{font-weight:800; letter-spacing:.4px}
-  .btn-back{
-    position:absolute; left:10px; top:10px; width:36px; height:36px; border-radius:50%;
-    border:1px solid var(--cardBorder); background:#2a2d33; display:grid; place-items:center
-  }
+  .btn-back{position:absolute; left:10px; top:10px; width:36px; height:36px; border-radius:50%; border:1px solid var(--cardBorder); background:#2a2d33; display:grid; place-items:center}
   .btn-back svg{width:18px;height:18px}
 
-  /* view container with smoother slide/fade */
-  .view{
-    padding:12px 16px 22px;
-    max-height:calc(86vh - 76px);
-    overflow:auto;
-    animation:fadeSlideIn .28s var(--t) both;
-  }
-  @keyframes fadeSlideIn {
-    from { opacity:0; transform:translateY(12px) }
-    to   { opacity:1; transform:none }
-  }
+  .view{padding:12px 16px 22px; max-height:calc(86vh - 76px); overflow:auto; animation:fadeSlideIn .28s var(--t) both;}
+  @keyframes fadeSlideIn {from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none}}
 
   .results{padding:10px 12px 18px;}
-  .card-result{
-    background:#22252a; border:1px solid rgba(255,255,255,.08); border-radius:18px;
-    padding:14px 14px 10px; margin:12px 4px; box-shadow:0 8px 24px rgba(0,0,0,.35);
-    transition:transform var(--t), box-shadow var(--t), background var(--t)
-  }
+  .card-result{background:#22252a; border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:14px 14px 10px; margin:12px 4px; box-shadow:0 8px 24px rgba(0,0,0,.35); transition:transform var(--t), box-shadow var(--t), background var(--t)}
   .card-result:active{transform:translateY(1px); box-shadow:0 6px 18px rgba(0,0,0,.28); background:#202228}
   .row-top{display:flex; align-items:center; justify-content:space-between; gap:8px}
   .pair{display:flex; align-items:baseline; gap:10px}
   .code{font-weight:800; letter-spacing:.6px; color:#ddd}
-  .arrow{opacity:.9}
   .timepair{font-size:20px; font-weight:800; letter-spacing:.2px}
   .plus1{font-size:14px; color:var(--muted); margin-left:2px}
   .right-price{font-weight:800; font-size:20px; color:#2ea0ff; display:flex; align-items:center; gap:6px}
-  .right-price svg{width:16px;height:16px}
   .row-mid{color:var(--muted); margin:6px 0 0; display:flex; gap:14px; font-size:15px}
   .row-foot{margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,.06); display:flex; align-items:center; gap:8px; color:#ffcc66; font-size:14px}
   .row-foot.hide{display:none}
 
-  /* ----- small info/summary/pay panels ----- */
   .panel{background:#23262c; border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:14px 14px 12px; margin:10px 0; box-shadow:0 8px 22px rgba(0,0,0,.32)}
   .panel h3{margin:0 0 8px; font-size:20px}
   .kv{display:flex; justify-content:space-between; margin:6px 0; color:#cfd6dd; gap:12px}
@@ -149,22 +103,12 @@
   .info .title{font-weight:800; margin-bottom:8px}
   .muted{color:#aab2ba}
 
-  /* ----- form system (FIXES: no clipping on narrow screens) ----- */
   .form-row{display:grid; gap:12px; grid-template-columns:1fr; width:100%}
   .form-row.half{grid-template-columns:repeat(2, minmax(0,1fr))}
-  @media (max-width: 360px){
-    .form-row.half{grid-template-columns:1fr} /* collapse on very small widths */
-  }
+  @media (max-width: 360px){ .form-row.half{grid-template-columns:1fr} }
   .field{display:flex; flex-direction:column; gap:6px; min-width:0}
-  .field label{
-    color:#c8ced6; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  }
-  .field input, .field select, .field textarea{
-    width:100%; max-width:100%; background:#121317; color:#fff;
-    border:1px solid rgba(255,255,255,.16); border-radius:12px; padding:12px 12px;
-    font-size:16px; outline:none; -webkit-appearance:none; appearance:none;
-  }
-
+  .field label{color:#c8ced6; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .field input, .field select{width:100%; max-width:100%; background:#121317; color:#fff; border:1px solid rgba(255,255,255,.16); border-radius:12px; padding:12px 12px; font-size:16px; outline:none; -webkit-appearance:none; appearance:none;}
   .agree{display:flex; align-items:flex-start; gap:10px; margin:12px 0 8px; color:#cfd6dd}
   .agree input{margin-top:4px}
 
@@ -177,16 +121,10 @@
 
     <section class="card" aria-label="Flight Search">
       <div class="swap" aria-hidden="true">
-        <svg viewBox="0 0 24 24">
-          <path d="M3 7h12"></path>
-          <path d="M10 3l5 4-5 4"></path>
-          <path d="M21 17H9"></path>
-          <path d="M14 21l-5-4 5-4"></path>
-        </svg>
+        <svg viewBox="0 0 24 24"><path d="M3 7h12"></path><path d="M10 3l5 4-5 4"></path><path d="M21 17H9"></path><path d="M14 21l-5-4 5-4"></path></svg>
       </div>
 
       <div class="grid">
-        <!-- FROM -->
         <div class="row">
           <div class="label">From</div>
           <div class="line-wrap select">
@@ -200,7 +138,6 @@
           </div>
         </div>
 
-        <!-- TO -->
         <div class="row">
           <div class="label">To</div>
           <div class="line-wrap select">
@@ -214,41 +151,28 @@
           </div>
         </div>
 
-        <!-- DEPART -->
         <div class="row">
           <div class="label">Depart</div>
           <div class="line-wrap">
             <input id="depart" class="input" type="date" aria-label="Depart date" />
             <div class="icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <rect x="3" y="5" width="18" height="16" rx="2"></rect>
-                <line x1="3" y1="9" x2="21" y2="9"></line>
-                <line x1="8" y1="3" x2="8" y2="7"></line>
-                <line x1="16" y1="3" x2="16" y2="7"></line>
-              </svg>
+              <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="8" y1="3" x2="8" y2="7"></line><line x1="16" y1="3" x2="16" y2="7"></line></svg>
             </div>
             <div class="focusbar"></div>
           </div>
         </div>
 
-        <!-- RETURN (ignored; one-way app) -->
         <div class="row">
           <div class="label">Return</div>
           <div class="line-wrap">
             <input id="return" class="input" type="date" aria-label="Return date (ignored for one-way)" />
             <div class="icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <rect x="3" y="5" width="18" height="16" rx="2"></rect>
-                <line x1="3" y1="9" x2="21" y2="9"></line>
-                <line x1="8" y1="3" x2="8" y2="7"></line>
-                <line x1="16" y1="3" x2="16" y2="7"></line>
-              </svg>
+              <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="8" y1="3" x2="8" y2="7"></line><line x1="16" y1="3" x2="16" y2="7"></line></svg>
             </div>
             <div class="focusbar"></div>
           </div>
         </div>
 
-        <!-- PASSENGERS -->
         <div class="row">
           <div class="label">Passengers</div>
           <div class="line-wrap select">
@@ -261,13 +185,10 @@
         </div>
       </div>
 
-      <div class="cta">
-        <button id="btnSearch" type="button">Search</button>
-      </div>
+      <div class="cta"><button id="btnSearch" type="button">Search</button></div>
     </section>
   </main>
 
-  <!-- FLOW OVERLAY -->
   <div class="backdrop" id="backdrop"></div>
   <section class="sheet" id="sheet" aria-modal="true" role="dialog">
     <div class="sheet-header">
@@ -345,14 +266,72 @@ function minutesToTime(mins){
 }
 function overnightFlag(depMins, arrMins){ const w=t=>t>=0&&t<360; return w(depMins%1440)||w(arrMins%1440); }
 
-const AIRLINE_CODES = { 'American Airlines':'AA','JetBlue':'B6','Delta':'DL','United':'UA','Southwest':'WN','Spirit':'NK','Emirates':'EK','Singapore Airlines': 'SQ','Lufthansa': 'LH','SWISS': 'LX','Korean Air': 'KE','KLM': 'KL','Qatar Airways': 'QR','Air France': 'AF' };
+/* Airline codes (used on Review & Pay) */
+const AIRLINE_CODES = {
+  'American Airlines':'AA','JetBlue':'B6','Delta':'DL','United':'UA','Southwest':'WN','Spirit':'NK',
+  'Emirates':'EK','Singapore Airlines':'SQ','Lufthansa':'LH','SWISS':'LX','Korean Air':'KE','KLM':'KL','Qatar Airways':'QR','Air France':'AF'
+};
 
+/* Country mapping for INTL check */
 function countryOf(code){
   if (['RFD','PER','LCA','PHP','MLR','IZO'].includes(code)) return 'US';
   if (['HND','GRV','SAU'].includes(code)) return 'JP';
   return 'US';
 }
 function isIntl(a,b){ return countryOf(a) !== countryOf(b); }
+
+/* -------------------- NEW: Aircraft rules per route+airline -------------------- */
+const AIRCRAFT_RULES = {
+  'PER-RFD': {
+    'American Airlines':['A320','B737'],
+    'JetBlue':['A320'],
+    'Spirit':['A320'],
+    'Delta':['A320'],
+    'United':['A320','B737'],
+    'Southwest':['B737']
+  },
+  'IZO-RFD': {
+    'American Airlines':['B737','A320'],
+    'JetBlue':['A320'],
+    'Southwest':['B737'],
+    'Delta':['A320']
+  },
+  'LCA-RFD': {
+    'JetBlue':['A320'],
+    'Delta':['A320','B737','B757','CRJ700'],
+    'Southwest':['B737'],
+    'American Airlines':['A320','B737'],
+    'United':['A320','B737']
+  },
+  'PHP-RFD': {
+    'JetBlue':['A320'],
+    'Delta':['A320'],
+    'United':['A320'],
+    'Southwest':['B737'],
+    'American Airlines':['A320']
+  },
+  'HND-RFD': {
+    'Lufthansa':['A350','A380','B747'],
+    'Delta':['A350','B757'],
+    'Emirates':['A380','B777','A350'],
+    'Singapore Airlines':['A350','B777'],
+    'United':['B777'],
+    'American Airlines':['B777','B787'],
+    'KLM':['B777'],
+    'SWISS':['A330','B777'],
+    'Korean Air':['A380'],
+    'Qatar Airways':['B777','A350','A380'],
+    'Air France':['B777']
+  }
+};
+
+function routeKey(a,b){ return [a,b].sort().join('-'); }
+function pickAircraft(fromCode,toCode,carrier){
+  const rules = AIRCRAFT_RULES[routeKey(fromCode,toCode)];
+  if(!rules || !rules[carrier] || rules[carrier].length===0) return '';
+  const list = rules[carrier];
+  return list[randInt(0, list.length-1)];
+}
 
 /* -------------------- Route generators -------------------- */
 function buildRfdPerResults(from,to){
@@ -367,8 +346,11 @@ function buildRfdPerResults(from,to){
     from,to,depart:minutesToTime(d),arrive:minutesToTime(a),
     plusOne:Math.floor(a/1440)>Math.floor(d/1440)?'+1':'',
     durationMin:du,durationText:`${Math.floor(du/60)}h ${String(du%60).padStart(2,'0')}m`,
-    nonstop:true,price:prices[idx],carrier:c,overnight:overnightFlag(d,a)}});
+    nonstop:true,price:prices[idx],carrier:c,overnight:overnightFlag(d,a),
+    aircraft: pickAircraft(from,to,c)
+  }});
 }
+
 function buildRfdIzoResults(from,to){
   const carriers=['American Airlines','American Airlines','JetBlue',...shuffle(['JetBlue','Southwest','Delta'])];
   const depTimes=randomUniqueTimes(6), durations=Array.from({length:6},()=>randInt(120,180)), prices=Array.from({length:6},()=>randInt(250,600));
@@ -376,8 +358,11 @@ function buildRfdIzoResults(from,to){
     from,to,depart:minutesToTime(d),arrive:minutesToTime(a),
     plusOne:Math.floor(a/1440)>Math.floor(d/1440)?'+1':'',
     durationMin:du,durationText:`${Math.floor(du/60)}h ${String(du%60).padStart(2,'0')}m`,
-    nonstop:true,price:prices[idx],carrier:c,overnight:overnightFlag(d,a)}});
+    nonstop:true,price:prices[idx],carrier:c,overnight:overnightFlag(d,a),
+    aircraft: pickAircraft(from,to,c)
+  }});
 }
+
 function buildRfdLcaResults(from,to){
   const carriers=['JetBlue','Delta','Delta',...shuffle(['American Airlines','Southwest','United'])];
   const depTimes=randomUniqueTimes(6), durations=Array.from({length:6},()=>randInt(90,120)), prices=Array.from({length:6},()=>randInt(250,550));
@@ -385,8 +370,11 @@ function buildRfdLcaResults(from,to){
     from,to,depart:minutesToTime(d),arrive:minutesToTime(a),
     plusOne:Math.floor(a/1440)>Math.floor(d/1440)?'+1':'',
     durationMin:du,durationText:`${Math.floor(du/60)}h ${String(du%60).padStart(2,'0')}m`,
-    nonstop:true,price:prices[idx],carrier:c,overnight:overnightFlag(d,a)}});
+    nonstop:true,price:prices[idx],carrier:c,overnight:overnightFlag(d,a),
+    aircraft: pickAircraft(from,to,c)
+  }});
 }
+
 function buildRfdPhpResults(from,to){
   const carriers=['JetBlue','JetBlue','Delta',...shuffle(['American Airlines','United','Southwest'])];
   const depTimes=randomUniqueTimes(6), durations=Array.from({length:6},()=>randInt(90,120)), prices=Array.from({length:6},()=>randInt(250,550));
@@ -394,37 +382,22 @@ function buildRfdPhpResults(from,to){
     from,to,depart:minutesToTime(d),arrive:minutesToTime(a),
     plusOne:Math.floor(a/1440)>Math.floor(d/1440)?'+1':'',
     durationMin:du,durationText:`${Math.floor(du/60)}h ${String(du%60).padStart(2,'0')}m`,
-    nonstop:true,price:prices[idx],carrier:c,overnight:overnightFlag(d,a)}});
+    nonstop:true,price:prices[idx],carrier:c,overnight:overnightFlag(d,a),
+    aircraft: pickAircraft(from,to,c)
+  }});
 }
 
-  /* RFD ↔ HND (Tokyo)
-   - 12 options
-   - First 6: shuffle of [American Airlines, Delta, Emirates, Singapore Airlines, United, Lufthansa]
-   - Remaining 6: shuffle of [SWISS, Korean Air, KLM, Qatar Airways, Air France] (pool filled to 6)
-   - Price: $900–$1100
-   - Duration: 8h30–12h (510–720 min)
-   - Time zone: HND is +6h vs US (apply +360 min US→JP, -360 min JP→US)
-*/
+/* RFD ↔ HND (Tokyo) */
 function buildRfdHndResults(fromCode, toCode){
-  const firstSix = shuffle([
-    'American Airlines','Delta','Emirates','Singapore Airlines','United','Lufthansa'
-  ]);
-
-  // Pool has 5 names but we need 6 cards → fill by random repeats, then shuffle
+  const firstSix = shuffle(['American Airlines','Delta','Emirates','Singapore Airlines','United','Lufthansa']);
   const pool = ['SWISS','Korean Air','KLM','Qatar Airways','Air France'];
-  const lastSix = shuffle((() => {
-    const out = [...pool];
-    while (out.length < 6) out.push(pool[randInt(0, pool.length - 1)]);
-    return out;
-  })());
-
+  const lastSix = shuffle((() => { const out=[...pool]; while(out.length<6) out.push(pool[randInt(0,pool.length-1)]); return out; })());
   const carriers = [...firstSix, ...lastSix];
 
   const depTimes  = randomUniqueTimes(12);
   const durations = Array.from({length:12}, () => randInt(510, 720));  // 8h30–12h
   const prices    = Array.from({length:12}, () => randInt(900, 1100));
 
-  // timezone delta: +6h when US→JP, -6h when JP→US
   const tzDelta =
     (countryOf(fromCode) === 'US' && countryOf(toCode) === 'JP') ? 360 :
     (countryOf(fromCode) === 'JP' && countryOf(toCode) === 'US') ? -360 : 0;
@@ -444,7 +417,8 @@ function buildRfdHndResults(fromCode, toCode){
       nonstop: true,
       price: prices[i],
       carrier,
-      overnight: overnightFlag(depMins, arrMins)
+      overnight: overnightFlag(depMins, arrMins),
+      aircraft: pickAircraft(fromCode,toCode,carrier)
     };
   });
 }
@@ -461,12 +435,8 @@ function resultsView(list){
           <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
       </div>
-      <div class="row-top" style="margin-top:6px">
-        <div class="timepair">${opt.depart} &nbsp;→&nbsp; ${opt.arrive} ${opt.plusOne?`<span class="plus1">${opt.plusOne}</span>`:''}</div>
-      </div>
-      <div class="row-mid">
-        <div>${opt.durationText}</div><div>Nonstop</div><div style="color:#9aa3af;">${opt.carrier}</div>
-      </div>
+      <div class="row-top" style="margin-top:6px"><div class="timepair">${opt.depart} &nbsp;→&nbsp; ${opt.arrive} ${opt.plusOne?`<span class="plus1">${opt.plusOne}</span>`:''}</div></div>
+      <div class="row-mid"><div>${opt.durationText}</div><div>Nonstop</div><div style="color:#9aa3af;">${opt.carrier}</div></div>
       <div class="row-foot ${opt.overnight?'':'hide'}">
         <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2z" stroke="#ffcc66" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span>Overnight flight or connection</span>
@@ -477,23 +447,17 @@ function resultsView(list){
   return div;
 }
 
-/* ------- navigation/render with smooth swap ------- */
-function renderView(title, htmlNode){
+function renderView(title, node){
   routeTitle.textContent = title;
   sheetBody.innerHTML = '';
-  sheetBody.appendChild(htmlNode);
-  // trigger animation on each swap
-  sheetBody.classList.remove('anim');
-  void sheetBody.offsetWidth; // reflow to restart animation
-  sheetBody.classList.add('anim');
+  sheetBody.appendChild(node);
 }
-sheetBody.classList.add('anim');
 
 /* -------------------- Steps -------------------- */
 let lastSelection=null;
 
 function openSummary(opt){
-  lastSelection = {...opt, airlineCode: (AIRLINE_CODES[opt.carrier]||'')};
+  lastSelection = {...opt, airlineCode: AIRLINE_CODES[opt.carrier] || ''};
   const v=document.createElement('div'); v.className='view';
 
   const warn=opt.overnight?`
@@ -508,13 +472,14 @@ function openSummary(opt){
       <div style="font-size:17px; color:#e9eef4; margin-bottom:6px">${opt.from} to ${opt.to}</div>
       <div class="kv"><span><b>${opt.depart}</b> → <b>${opt.arrive}</b> ${opt.plusOne?'<span class="muted">+1</span>':''}</span><span>Nonstop</span></div>
       <div class="kv"><span>Duration</span><b>${opt.durationText}</b></div>
+      <div class="kv"><span>Aircraft</span><b>${opt.aircraft || '—'}</b></div>
     </div>
     ${warn}
     <div class="panel"><div class="kv"><span>Total amount due</span><b>$${opt.price.toLocaleString()}</b></div></div>
     <button class="btn-lg" id="goPassengers">Continue</button>`;
   v.querySelector('#goPassengers').addEventListener('click',()=>openPassengers());
   if(!stepStack.length) openSheet();
-  stepStack.push({title:'Your trip summary', html:v});
+  stepStack=[{title:'Your trip summary', html:v}];
   renderView('Your trip summary', v);
 }
 
@@ -540,8 +505,7 @@ function openPassengers(){
       </div>
       <div class="form-row half" style="margin-top:8px">
         <div class="field"><label>Date of birth •</label><input type="date" autocomplete="bday"></div>
-        <div class="field">
-          <label>Gender •</label>
+        <div class="field"><label>Gender •</label>
           <select autocomplete="sex"><option value="" disabled selected>Select</option><option>Female</option><option>Male</option><option>Unspecified</option></select>
         </div>
       </div>
@@ -555,7 +519,6 @@ function openPassengers(){
 
 function openReviewPay(){
   const v=document.createElement('div'); v.className='view';
-
   v.innerHTML=`
     <div class="panel">
       <div style="font-weight:800; margin-bottom:6px">Your trip</div>
@@ -563,10 +526,6 @@ function openReviewPay(){
       <div class="kv"><span><b>${lastSelection.depart}</b> → <b>${lastSelection.arrive}</b> ${lastSelection.plusOne?'<span class="muted">+1</span>':''}</span><span>${lastSelection.airlineCode}</span></div>
       <div class="kv"><span>Duration</span><b>${lastSelection.durationText}</b></div>
       <div class="kv"><span>Stops</span><b>Nonstop</b></div>
-      ${lastSelection.overnight?`<div style="margin-top:8px; color:#ffcc66; display:flex; align-items:center; gap:8px">
-        <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2z" stroke="#ffcc66" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Overnight flight or connection
-      </div>`:''}
     </div>
 
     <div class="panel">
@@ -580,27 +539,18 @@ function openReviewPay(){
     <div class="panel">
       <h3>Credit / debit card</h3>
       <div class="form-row">
-        <div class="field"><label>Card number •</label>
-          <input type="text" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456"></div>
+        <div class="field"><label>Card number •</label><input type="text" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456"></div>
         <div class="form-row half">
-          <div class="field"><label>Expiry date •</label>
-            <input type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY"></div>
-          <div class="field"><label>Security code •</label>
-            <input type="text" inputmode="numeric" autocomplete="cc-csc" placeholder="CVV" maxlength="4"></div>
+          <div class="field"><label>Expiry date •</label><input type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY"></div>
+          <div class="field"><label>Security code •</label><input type="text" inputmode="numeric" autocomplete="cc-csc" placeholder="CVV" maxlength="4"></div>
         </div>
-        <div class="field"><label>Billing address •</label>
-          <input type="text" autocomplete="address-line1" placeholder="Street address"></div>
+        <div class="field"><label>Billing address •</label><input type="text" autocomplete="address-line1" placeholder="Street address"></div>
         <div class="form-row half">
-          <div class="field"><label>Cardholder name •</label>
-            <input type="text" autocomplete="cc-name" placeholder="Full name"></div>
-          <div class="field"><label>Postal code •</label>
-            <input type="text" autocomplete="postal-code" placeholder="ZIP / Postal"></div>
+          <div class="field"><label>Cardholder name •</label><input type="text" autocomplete="cc-name" placeholder="Full name"></div>
+          <div class="field"><label>Postal code •</label><input type="text" autocomplete="postal-code" placeholder="ZIP / Postal"></div>
         </div>
       </div>
-
-      <label class="agree"><input type="checkbox">
-        <span>I agree to the terms and conditions, refund policy, and conditions of carriage.</span>
-      </label>
+      <label class="agree"><input type="checkbox"><span>I agree to the terms and conditions, refund policy, and conditions of carriage.</span></label>
       <button class="btn-lg">Pay now</button>
       <div class="muted" style="display:flex; align-items:center; gap:6px; margin-top:8px">
         <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.25 3.438 10.063 9 12 5.563-1.938 9-6.75 9-12V5l-9-4z" fill="none" stroke="#9aa3af" stroke-width="1.5"/></svg>
@@ -611,7 +561,7 @@ function openReviewPay(){
   renderView('Review and pay', v);
 }
 
-/* -------------------- Search: supported routes -------------------- */
+/* -------------------- Search handler -------------------- */
 document.getElementById('btnSearch').addEventListener('click', () => {
   const from = fromSel.value, to = toSel.value;
   const departDate = document.getElementById('depart').value;
@@ -630,12 +580,10 @@ document.getElementById('btnSearch').addEventListener('click', () => {
   else if (key==='LCA-RFD') list=buildRfdLcaResults(from,to);
   else if (key==='PHP-RFD') list=buildRfdPhpResults(from,to);
   else if (key==='HND-RFD') list=buildRfdHndResults(from,to);
-  else{
+  else {
     const v=document.createElement('div'); v.className='view';
     v.innerHTML=`<div class="panel"><div class="kv"><span>Route</span><b>${from} → ${to}</b></div>
-      <div class="muted">This prototype currently supports Rockford (RFD) ↔ Perth (PER),
-      Rockford (RFD) ↔ Izolirani (IZO), Rockford (RFD) ↔ Larnaca (LCA),
-      and Rockford (RFD) ↔ Phaphos (PHP).</div></div>`;
+      <div class="muted">This prototype currently supports Rockford (RFD) ↔ Perth (PER), Rockford (RFD) ↔ Izolirani (IZO), Rockford (RFD) ↔ Larnaca (LCA), Rockford (RFD) ↔ Phaphos (PHP), and Rockford (RFD) ↔ Tokyo (HND).</div></div>`;
     openSheet(); renderView('Choose departure', v); stepStack=[{title:'Choose departure', html:v}];
     return;
   }
