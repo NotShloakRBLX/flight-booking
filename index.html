@@ -322,6 +322,11 @@ const AIRCRAFT_RULES = {
     'Korean Air':['A380'],
     'Qatar Airways':['B777','A350','A380'],
     'Air France':['B777']
+  },
+  'MLR-RFD': {
+    'American Airlines':['CRJ700','E190'],
+    'JetBlue':['A320'],
+    'United':['CRJ700','E190']
   }
 };
 
@@ -421,6 +426,18 @@ function buildRfdHndResults(fromCode, toCode){
       aircraft: pickAircraft(fromCode,toCode,carrier)
     };
   });
+}
+
+  function buildRfdMlrResults(from,to){
+  const carriers=['American Airlines','JetBlue','United',...shuffle(['American Airlines','United','JetBlue'])];
+  const depTimes=randomUniqueTimes(6), durations=Array.from({length:6},()=>randInt(30,60)), prices=Array.from({length:6},()=>randInt(150,250));
+  return carriers.map((c,idx)=>{const d=depTimes[idx],du=durations[idx],a=d+du;return{
+    from,to,depart:minutesToTime(d),arrive:minutesToTime(a),
+    plusOne:Math.floor(a/1440)>Math.floor(d/1440)?'+1':'',
+    durationMin:du,durationText:`${Math.floor(du/60)}h ${String(du%60).padStart(2,'0')}m`,
+    nonstop:true,price:prices[idx],carrier:c,overnight:overnightFlag(d,a),
+    aircraft: pickAircraft(from,to,c)
+  }});
 }
 
 /* -------------------- Results list -------------------- */
@@ -580,6 +597,7 @@ document.getElementById('btnSearch').addEventListener('click', () => {
   else if (key==='LCA-RFD') list=buildRfdLcaResults(from,to);
   else if (key==='PHP-RFD') list=buildRfdPhpResults(from,to);
   else if (key==='HND-RFD') list=buildRfdHndResults(from,to);
+  else if (key==='MLR-RFD') list=buildRfdMlrResults(from,to);
   else {
     const v=document.createElement('div'); v.className='view';
     v.innerHTML=`<div class="panel"><div class="kv"><span>Route</span><b>${from} → ${to}</b></div>
