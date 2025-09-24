@@ -361,6 +361,12 @@ const AIRCRAFT_RULES = {
     'American Airlines': ['A320', 'B737'],
     'United': ['A320'],
     'Delta': ['A320']
+  },
+  'LCA-MLR': {
+    'Delta': ['A320', 'B737'],
+    'United': ['A320'],
+    'Spirit': ['A320'],
+    'American Airlines': ['A320']
   }
 };
 
@@ -696,6 +702,39 @@ function buildMlrIzoResults(from, to){
   });
 }
 
+function buildMlrLcaResults(from, to){
+  // 6 options:
+  // First 3: Delta (x2), United (x1)
+  // Last 3: Spirit, United, American
+  const carriers = [
+    'Delta', 'Delta', 'United',
+    'Spirit', 'United', 'American Airlines'
+  ];
+
+  const depTimes  = randomUniqueTimes(6);
+  const durations = Array.from({length:6}, () => randInt(90, 120)); // 1h30m–2h
+  const prices    = Array.from({length:6}, () => randInt(250, 550)); // $250–$550
+
+  return carriers.map((carrier, i) => {
+    const depMins = depTimes[i];
+    const dur     = durations[i];
+    const arrMins = depMins + dur;
+    return {
+      from, to,
+      depart: minutesToTime(depMins),
+      arrive: minutesToTime(arrMins),
+      plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
+      durationMin: dur,
+      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true,
+      price: prices[i],
+      carrier,
+      overnight: overnightFlag(depMins, arrMins),
+      aircraft: pickAircraft(from, to, carrier) // uses LCA-MLR rules above
+    };
+  });
+}
+
 /* -------------------- Results list -------------------- */
 function resultsView(list){
   const div=document.createElement('div'); div.className='results';
@@ -861,6 +900,7 @@ document.getElementById('btnSearch').addEventListener('click', () => {
   else if (key==='PER-PHP') list=buildPerPhpResults(from,to);
   else if (key==='GRV-PER') list=buildPerGrvResults(from,to);
   else if (key==='IZO-MLR') list=buildMlrIzoResults(from,to);
+  else if (key==='LCA-MLR') list=buildMlrLcaResults(from,to);
   else {
     const v=document.createElement('div'); v.className='view';
     v.innerHTML=`<div class="panel"><div class="kv"><span>Route</span><b>${from} → ${to}</b></div>
