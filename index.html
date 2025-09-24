@@ -315,7 +315,7 @@ const AIRCRAFT_RULES = {
     'Delta':['A350','B757'],
     'Emirates':['A380','B777','A350'],
     'Singapore Airlines':['A350','B777'],
-    'United':['B777'],
+    'British Airways':['B777', 'A380', 'A350'],
     'American Airlines':['B777','B787'],
     'KLM':['B777'],
     'SWISS':['A330','B777'],
@@ -465,7 +465,7 @@ function buildRfdPhpResults(from,to){
 
 /* RFD ↔ HND (Tokyo) */
 function buildRfdHndResults(fromCode, toCode){
-  const firstSix = shuffle(['American Airlines','Delta','Emirates','Singapore Airlines','United','Lufthansa']);
+  const firstSix = shuffle(['American Airlines','Delta','Emirates','Singapore Airlines','British Airways','Lufthansa']);
   const pool = ['SWISS','Korean Air','KLM','Qatar Airways','Air France'];
   const lastSix = shuffle((() => { const out=[...pool]; while(out.length<6) out.push(pool[randInt(0,pool.length-1)]); return out; })());
   const carriers = [...firstSix, ...lastSix];
