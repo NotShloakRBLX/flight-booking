@@ -269,7 +269,7 @@ function overnightFlag(depMins, arrMins){ const w=t=>t>=0&&t<360; return w(depMi
 /* Airline codes (used on Review & Pay) */
 const AIRLINE_CODES = {
   'American Airlines':'AA','JetBlue':'B6','Delta':'DL','United':'UA','Southwest':'WN','Spirit':'NK',
-  'Emirates':'EK','Singapore Airlines':'SQ','Lufthansa':'LH','SWISS':'LX','Korean Air':'KE','KLM':'KL','Qatar Airways':'QR','Air France':'AF'
+  'Emirates':'EK','Singapore Airlines':'SQ','Lufthansa':'LH','SWISS':'LX','Korean Air':'KE','KLM':'KL','Qatar Airways':'QR','Air France':'AF','Qantas':'QF'
 };
 
 /* Country mapping for INTL check */
@@ -353,6 +353,9 @@ const AIRCRAFT_RULES = {
     'United': ['A320'],
     'Spirit': ['A320'],
     'Southwest': ['B737']
+  },
+  'GRV-PER': {
+    'Qantas': ['A350']
   }
 };
 
@@ -625,6 +628,36 @@ function buildPerPhpResults(from, to){
   });
 }
 
+function buildPerGrvResults(from, to){
+  // 1 option, Qantas, A350, 10h–12h30m, $950–$1200
+  const carrier = 'Qantas';
+
+  const depMins  = randomUniqueTimes(1)[0];
+  const duration = randInt(600, 750); // 10h–12h30m (minutes)
+
+  // If you want the same US↔JP offset behavior as other JP routes:
+  const tzDelta =
+    (countryOf(from) === 'US' && countryOf(to) === 'JP') ? 360 :
+    (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
+
+  const arrMins = depMins + duration + tzDelta;
+  const price   = randInt(950, 1200);
+
+  return [{
+    from, to,
+    depart: minutesToTime(depMins),
+    arrive: minutesToTime(arrMins),
+    plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
+    durationMin: duration,
+    durationText: `${Math.floor(duration/60)}h ${String(duration%60).padStart(2,'0')}m`,
+    nonstop: true,
+    price,
+    carrier,
+    overnight: overnightFlag(depMins, arrMins),
+    aircraft: pickAircraft(from, to, carrier) // → 'A350' per GRV-PER rules
+  }];
+}
+
 /* -------------------- Results list -------------------- */
 function resultsView(list){
   const div=document.createElement('div'); div.className='results';
@@ -788,6 +821,7 @@ document.getElementById('btnSearch').addEventListener('click', () => {
   else if (key==='MLR-PER') list=buildPerMlrResults(from,to);
   else if (key==='LCA-PER') list=buildPerLcaResults(from,to);
   else if (key==='PER-PHP') list=buildPerPhpResults(from,to);
+  else if (key==='GRV-PER') list=buildPerGrvResults(from,to);
   else {
     const v=document.createElement('div'); v.className='view';
     v.innerHTML=`<div class="panel"><div class="kv"><span>Route</span><b>${from} → ${to}</b></div>
