@@ -333,6 +333,13 @@ const AIRCRAFT_RULES = {
   },
   'IZO-PER': {
     'American Airlines': ['CRJ700', 'E190']
+  },
+  'MLR-PER': {
+    'American Airlines': ['A320', 'B737'],
+    'JetBlue': ['A320'],
+    'Southwest': ['B737'],
+    'Delta': ['A320'],
+    'United': ['A320', 'B737']
   }
 };
 
@@ -508,6 +515,37 @@ function buildPerIzoResults(from, to){
   });
 }
 
+function buildPerMlrResults(from, to){
+  // 6 options: first 3 fixed order, last 3 fixed order
+  const carriers = [
+    'American Airlines', 'JetBlue', 'United',
+    'Southwest', 'Delta', 'United'
+  ];
+
+  const depTimes  = randomUniqueTimes(6);
+  const durations = Array.from({length:6}, () => randInt(120, 180)); // 2h–3h
+  const prices    = Array.from({length:6}, () => randInt(250, 600)); // $250–$600
+
+  return carriers.map((carrier, i) => {
+    const depMins = depTimes[i];
+    const dur     = durations[i];
+    const arrMins = depMins + dur;
+    return {
+      from, to,
+      depart: minutesToTime(depMins),
+      arrive: minutesToTime(arrMins),
+      plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
+      durationMin: dur,
+      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true,
+      price: prices[i],
+      carrier,
+      overnight: overnightFlag(depMins, arrMins),
+      aircraft: pickAircraft(from, to, carrier) // uses MLR-PER rules above
+    };
+  });
+}
+
 /* -------------------- Results list -------------------- */
 function resultsView(list){
   const div=document.createElement('div'); div.className='results';
@@ -668,6 +706,7 @@ document.getElementById('btnSearch').addEventListener('click', () => {
   else if (key==='MLR-RFD') list=buildRfdMlrResults(from,to);
   else if (key==='GRV-RFD') list=buildRfdGrvResults(from,to);
   else if (key==='IZO-PER') list=buildPerIzoResults(from,to);
+  else if (key==='MLR-PER') list=buildPerMlrResults(from,to);
   else {
     const v=document.createElement('div'); v.className='view';
     v.innerHTML=`<div class="panel"><div class="kv"><span>Route</span><b>${from} → ${to}</b></div>
