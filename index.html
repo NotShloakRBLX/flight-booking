@@ -543,7 +543,7 @@ document.getElementById('btnSearch').addEventListener('click', () => {
     list = buildRfdLcaResults(from, to);
   } else if (key === 'PHP-RFD') {
     list = buildRfdPhpResults(from, to);
-  }
+  } else {
     resultsEl.innerHTML = `
       <div class="card-result">
         <div class="row-top">
