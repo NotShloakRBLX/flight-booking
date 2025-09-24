@@ -406,6 +406,13 @@ const AIRCRAFT_RULES = {
     'Qatar Airways': ['A320'],
     'Condor': ['A320'],
     'easyJet': ['A320']
+  },
+  'HND-SAU': {
+    'SWISS': ['A320'],
+    'Qatar Airways': ['A320'],
+    'Lufthansa': ['A320'],
+    'British Airways': ['A320'],
+    'Condor': ['A320']
   }
 };
 
@@ -1078,6 +1085,45 @@ function buildHndGrvResults(from, to){
   });
 }
 
+function buildHndSauResults(from, to){
+  // 6 options in this fixed order:
+  // First 3: SWISS, Qatar, Lufthansa
+  // Last 3:  British Airways, Condor, SWISS
+  const carriers = [
+    'SWISS', 'Qatar Airways', 'Lufthansa',
+    'British Airways', 'Condor', 'SWISS'
+  ];
+
+  const depTimes  = randomUniqueTimes(6);
+  const durations = Array.from({length:6}, () => randInt(180, 240)); // 3h–4h
+  const prices    = Array.from({length:6}, () => randInt(250, 650)); // $250–$650
+
+  // SAU is +1h vs HND/GRV (both JP group). Apply within-JP offset here.
+  let tzDelta = 0;
+  if (from === 'HND' && to === 'SAU') tzDelta = 60;      // JP → SAU: +1h
+  else if (from === 'SAU' && to === 'HND') tzDelta = -60; // SAU → JP: -1h
+
+  return carriers.map((carrier, i) => {
+    const depMins = depTimes[i];
+    const dur     = durations[i];
+    const arrMins = depMins + dur + tzDelta;
+
+    return {
+      from, to,
+      depart: minutesToTime(depMins),
+      arrive: minutesToTime(arrMins),
+      plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
+      durationMin: dur,
+      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true,
+      price: prices[i],
+      carrier,
+      overnight: overnightFlag(depMins, arrMins),
+      aircraft: pickAircraft(from, to, carrier) // uses HND-SAU rules above
+    };
+  });
+}
+
 /* -------------------- Results list -------------------- */
 function resultsView(list){
   const div=document.createElement('div'); div.className='results';
@@ -1253,6 +1299,7 @@ document.getElementById('btnSearch').addEventListener('click', () => {
   else if (key==='HND-LCA') list=buildLcaHndResults(from,to);
   else if (key==='GRV-LCA') list=buildLcaGrvResults(from,to);
   else if (key==='GRV-HND') list=buildHndGrvResults(from,to);
+  else if (key==='HND-SAU') list=buildHndSauResults(from,to);
   else {
     const v=document.createElement('div'); v.className='view';
     v.innerHTML=`<div class="panel"><div class="kv"><span>Route</span><b>${from} → ${to}</b></div>
