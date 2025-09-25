@@ -1099,37 +1099,48 @@ function buildHndMlrResults(from, to){
 
 /* -------------------- Results list (nonstop) -------------------- */
 function resultsView(list){
-  const div=document.createElement('div'); div.className='results';
-  list.forEach(opt=>{
-    const card=document.createElement('div'); card.className='card-result';
-    card.innerHTML=`
-      <div class="row-top">
-        <div class="pair">
-          <div class="code">${opt.from}</div><div class="arrow">→</div><div class="code">${opt.to}</div>
+  const wrap = document.createElement('div');
+  wrap.className = 'results';
+
+  list.forEach(opt => {
+    const card = document.createElement('div');
+    card.className = 'card-result';
+
+    card.innerHTML = `
+      <div class="gf-head">
+        <div>
+          <div class="gf-times">
+            ${opt.depart} <span class="arrow">→</span> ${opt.arrive}
+            ${opt.plusOne ? '<sup>+1</sup>' : ''}
+          </div>
+          <div class="gf-iata">${opt.from} &nbsp;→&nbsp; ${opt.to}</div>
         </div>
-        <div class="right-price"><span>$${opt.price.toLocaleString()}</span>
-          <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
+        <div class="gf-price">$${opt.price.toLocaleString()}</div>
       </div>
 
-      <div class="row-top" style="margin-top:6px">
-        <div class="timepair">${opt.depart} &nbsp;→&nbsp; ${opt.arrive} ${opt.plusOne?`<span class="plus1">${opt.plusOne}</span>`:''}</div>
+      <div class="gf-meta">
+        Nonstop <span class="dot">•</span> ${opt.durationText}
       </div>
 
-      <div class="row-mid">
-        <div>${opt.durationText}</div>
-        <div>Nonstop</div>
-        <div style="color:#9aa3af;">${opt.carrier}</div>
-      </div>
+      <div class="gf-carrier">${opt.carrier}</div>
 
-      <div class="row-foot ${opt.overnight?'':'hide'}">
-        <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2z" stroke="#ffcc66" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span>Overnight flight</span>
-      </div>`;
-    card.addEventListener('click',()=>openSummary(opt));
-    div.appendChild(card);
+      ${opt.overnight ? `
+        <div class="gf-overnight">
+          <svg width="16" height="16" viewBox="0 0 24 24">
+            <path d="M12 9v4m0 4h.01M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2z"
+              stroke="currentColor" stroke-width="2" fill="none"
+              stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Overnight flight
+        </div>` : ''
+      }
+    `;
+
+    card.addEventListener('click', () => openSummary(opt));
+    wrap.appendChild(card);
   });
-  return div;
+
+  return wrap;
 }
 
 function renderView(title, node){
