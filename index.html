@@ -164,6 +164,54 @@
 .modal-open { overflow: hidden; }        /* no background scroll */
 .modal-open .page { pointer-events: none; } /* no background taps/clicks */
 
+  /* ---- Bottom Dock (tabs) ---- */
+.dock{
+  position:fixed;
+  left:50%;
+  bottom:calc(12px + env(safe-area-inset-bottom));
+  transform:translateX(-50%);
+  display:grid;
+  grid-auto-flow:column;
+  grid-auto-columns:1fr;
+  gap:6px;
+  padding:6px;
+  width:min(360px, 92vw);
+  border-radius:999px;
+  background:rgba(20,22,26,.72);
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 10px 30px rgba(0,0,0,.45);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  z-index:5; /* stays under the sheet/backdrop */
+}
+.dock-item{
+  position:relative; z-index:1;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  height:44px; padding:0 16px;
+  border:0; background:transparent; cursor:pointer;
+  color:var(--muted); font-weight:800; letter-spacing:.2px;
+  border-radius:999px; transition:color var(--t);
+}
+.dock-item.active{ color:#fff; }
+.dock-item svg{width:18px; height:18px}
+.dock-item svg *{stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+
+/* sliding highlight “pill” */
+.dock-indicator{
+  position:absolute; top:6px; bottom:6px; left:6px;
+  width:calc(50% - 3px);  /* two tabs → half width */
+  border-radius:999px;
+  background:rgba(30,139,255,.18);
+  border:1px solid rgba(30,139,255,.45);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+  transform:translateX(0%); transition:transform var(--t);
+  will-change:transform;
+}
+
+/* (optional) make sure sheet/backdrop are above the dock */
+.backdrop{ z-index:40; }
+.sheet{ z-index:50; }
+
 </style>
 </head>
 <body>
@@ -250,6 +298,27 @@
     </div>
     <div id="sheetBody" class="view"></div>
   </section>
+
+  <nav class="dock" id="dock" aria-label="Tabs">
+  <span class="dock-indicator" aria-hidden="true"></span>
+
+  <button class="dock-item active" data-tab="booking" aria-current="page">
+    <!-- airplane-ish icon (matches your style) -->
+    <svg viewBox="0 0 24 24">
+      <path d="M4.5 12.8l14.6-8.75c.5-.3 1.1.23.83.76L13.6 20.9a.7.7 0 0 1-1.31-.06l-1.24-5.17-5.17-1.24a.7.7 0 0 1 .06-1.31z"></path>
+    </svg>
+    <span>Booking</span>
+  </button>
+
+  <button class="dock-item" data-tab="trips">
+    <!-- “list/ticket” style icon -->
+    <svg viewBox="0 0 24 24">
+      <rect x="3" y="4" width="18" height="16" rx="3"></rect>
+      <path d="M7 8h10M7 12h10M7 16h7"></path>
+    </svg>
+    <span>Trips</span>
+  </button>
+</nav>
 
 <script>
 /* -------------------- Airports + form behavior -------------------- */
@@ -1237,7 +1306,7 @@ function showConfirmation(){
   const p = passengerData || {};
   const fullName = [p.first, p.middle, p.last].filter(Boolean).join(' ');
   const bookingRef = randDigits(6);
-  const ticketNo  = randDigits(23);
+  const ticketNo  = randDigits(13);
 
   const v = document.createElement('div'); v.className='view';
   v.innerHTML = `
@@ -1324,6 +1393,34 @@ document.getElementById('btnSearch').addEventListener('click', () => {
   const resNode = resultsView(list);
   openSheet(); renderView('Choose departure', resNode); stepStack=[{title:'Choose departure', html:resNode}];
 });
+
+  /* ---- Dock behavior ---- */
+const dock = document.getElementById('dock');
+const dockItems = dock.querySelectorAll('.dock-item');
+const dockIndicator = dock.querySelector('.dock-indicator');
+
+function setActiveTab(idx){
+  dockItems.forEach(b => {
+    b.classList.remove('active');
+    b.removeAttribute('aria-current');
+  });
+  dockItems[idx].classList.add('active');
+  dockItems[idx].setAttribute('aria-current','page');
+  dockIndicator.style.transform = `translateX(${idx*100}%)`;
+}
+
+// click to switch highlight
+dockItems.forEach((btn, idx) => {
+  btn.addEventListener('click', () => {
+    setActiveTab(idx);
+    // TODO: if you later add a Trips screen, navigate here.
+    // e.g., openTrips();
+  });
+});
+
+// default tab on load
+setActiveTab(0);
+
 </script>
 </body>
 </html>
