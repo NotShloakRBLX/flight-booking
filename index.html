@@ -1378,20 +1378,6 @@ function pickRandomNonstop(from, to){
   return { carrier, aircraft, durationMin: randInt(durLo, durHi) };
 }
 
-/* Pick one random nonstop option for from→to (carrier/aircraft/duration).
-   We ignore its random depart time; we’ll set times ourselves. */
-function pickRandomNonstop(from, to){
-  const fn = builderFor(from,to);
-  if (!fn) return null;
-  const list = fn(from,to);
-  if (!list || !list.length) return null;
-  const sample = list[randInt(0, list.length-1)];
-  return {
-    carrier: sample.carrier,
-    aircraft: sample.aircraft || pickAircraft(from,to,sample.carrier),
-    durationMin: sample.durationMin
-  };
-}
 
 /* Build one leg with a departure in [earliest, latest] (minutes from day 0). */
 function makeLeg(from, to, earliest, latest){
@@ -1419,6 +1405,15 @@ function makeLeg(from, to, earliest, latest){
   };
 }
 
+/* Format minutes as Hh Mm, including days if needed */
+function formatDuration(mins){
+  const m = Math.max(0, mins);
+  const d = Math.floor(m / 1440);
+  const h = Math.floor((m % 1440) / 60);
+  const mm = m % 60;
+  return (d ? `${d}d ` : '') + `${h}h ${String(mm).padStart(2,'0')}m`;
+}
+  
 /* Generic connection results builder for any route listed in CONNECTION_RULES */
 function buildConnectedResults(from, to){
   const key = routeKey(from, to);
@@ -1580,6 +1575,7 @@ function openPassengers(){
       <div class="title">Know before you go</div>
       <div class="muted">International travel requires a valid passport. Check visa and travel document requirements for your destination.</div>
     </div>`:'';
+}
 
   v.innerHTML=`
   ${info}
@@ -1618,21 +1614,70 @@ function openPassengers(){
 });
 
 function openReviewPay(){
-  const v=document.createElement('div'); v.className='view';
+  const v = document.createElement('div'); v.className='view';
 
-  // build connection details if present
   let connHTML = '';
-if (Array.isArray(lastSelection.segments) && lastSelection.segments.length){
-  connHTML = `<div class="hr"></div>` + lastSelection.segments.map(seg=>`
-    <div class="kv" style="color:#cfd6dd">
-      <span>${seg.from} → ${seg.to}</span>
-      <b>${seg.depart} → ${seg.arrive} ${seg.plusOne?'<span class="muted">+1</span>':''}</b>
+  if (Array.isArray(lastSelection.segments) && lastSelection.segments.length){
+    connHTML = `<div class="hr"></div>` + lastSelection.segments.map(seg=>`
+      <div class="kv" style="color:#cfd6dd">
+        <span>${seg.from} → ${seg.to}</span>
+        <b>${seg.depart} → ${seg.arrive} ${seg.plusOne?'<span class="muted">+1</span>':''}</b>
+      </div>
+      <div class="kv muted">
+        <span>${seg.carrier}</span><b>${seg.aircraft || '—'}</b>
+      </div>
+    `).join('');
+  }
+
+  const showStops = Array.isArray(lastSelection.connections) ? '' : '<div class="kv"><span>Stops</span><b>Nonstop</b></div>';
+
+  v.innerHTML = `
+    <div class="panel">
+      <div style="font-weight:800; margin-bottom:6px">Your trip</div>
+      <div style="font-size:16px; margin-bottom:6px">${lastSelection.from} → ${lastSelection.to}</div>
+      <div class="kv"><span><b>${lastSelection.depart}</b> → <b>${lastSelection.arrive}</b> ${lastSelection.plusOne?'<span class="muted">+1</span>':''}</span><span>${lastSelection.airlineCode||''}</span></div>
+      <div class="kv"><span>Duration</span><b>${lastSelection.durationText}</b></div>
+      ${showStops}
+      <div class="kv"><span>Aircraft</span><b>${lastSelection.aircraft || '—'}</b></div>
+      ${connHTML}
     </div>
-    <div class="kv muted">
-      <span>${seg.carrier}</span><b>${seg.aircraft || '—'}</b>
+
+    <div class="panel">
+      <h3>Cost summary</h3>
+      <div class="kv"><span>Economy</span><b>$${lastSelection.price.toLocaleString()}</b></div>
+      <div class="kv" style="border-top:1px solid rgba(255,255,255,.1); padding-top:8px; margin-top:8px;">
+        <span>Total amount due (All passengers)</span><b>$${lastSelection.price.toLocaleString()}</b>
+      </div>
     </div>
-  `).join('');
+
+    <div class="panel">
+      <h3>Credit / debit card</h3>
+      <div class="form-row">
+        <div class="field"><label>Card number •</label><input id="ccNumber" type="text" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456"></div>
+        <div class="form-row half">
+          <div class="field"><label>Expiry date •</label><input id="ccExp" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY"></div>
+          <div class="field"><label>Security code •</label><input id="ccCvv" type="text" inputmode="numeric" autocomplete="cc-csc" placeholder="CVV" maxlength="4"></div>
+        </div>
+        <div class="field"><label>Billing address •</label><input type="text" autocomplete="address-line1" placeholder="Street address"></div>
+        <div class="form-row half">
+          <div class="field"><label>Cardholder name •</label><input id="ccName" type="text" autocomplete="cc-name" placeholder="Full name"></div>
+          <div class="field"><label>Postal code •</label><input type="text" autocomplete="postal-code" placeholder="ZIP / Postal"></div>
+        </div>
+      </div>
+      <label class="agree"><input id="agreeCheckbox" type="checkbox"><span>I agree to the terms and conditions, refund policy, and conditions of carriage.</span></label>
+      <button class="btn-lg" id="btnPay">Pay now</button>
+      <div class="muted" style="display:flex; align-items:center; gap:6px; margin-top:8px">
+        <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.25 3.438 10.063 9 12 5.563-1.938 9-6.75 9-12V5l-9-4z" fill="none" stroke="#9aa3af" stroke-width="1.5"/></svg>
+        Secure checkout
+      </div>
+    </div>
+  `;
+
+  v.querySelector('#btnPay').addEventListener('click', handlePay);
+  stepStack.push({title:'Review and pay', html:v});
+  renderView('Review and pay', v);
 }
+
 
   const showStops = Array.isArray(lastSelection.connections) ? '' : '<div class="kv"><span>Stops</span><b>Nonstop</b></div>';
 
