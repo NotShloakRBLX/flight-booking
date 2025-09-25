@@ -1218,6 +1218,36 @@ function buildGrvSauResults(from, to){
   });
 }
 
+function buildHndMlrResults(from, to){
+  const carriers = ['Delta','American Airlines','United','Qatar Airways','Lufthansa'];
+  const depTimes  = randomUniqueTimes(5);
+  const durations = Array.from({length:5}, () => randInt(510, 720)); // 8.5–12h
+  const prices    = Array.from({length:5}, () => randInt(900, 1200));
+
+  const tzDelta =
+    (countryOf(from) === 'US' && countryOf(to) === 'JP') ? 360 :
+    (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
+
+  return carriers.map((carrier, i) => {
+    const depMins = depTimes[i];
+    const dur     = durations[i];
+    const arrMins = depMins + dur + tzDelta;
+    return {
+      from, to,
+      depart: minutesToTime(depMins),
+      arrive: minutesToTime(arrMins),
+      plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
+      durationMin: dur,
+      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true,
+      price: prices[i],
+      carrier,
+      overnight: overnightFlag(depMins, arrMins),
+      aircraft: pickAircraft(from, to, carrier)
+    };
+  });
+}
+
 /* Map of route builders we can sample from for connection legs */
 const BUILDER_MAP = {
   'PER-RFD': buildRfdPerResults,
@@ -1241,7 +1271,8 @@ const BUILDER_MAP = {
   'IZO-MLR': buildMlrIzoResults,     // (sorted)
   'LCA-MLR': buildMlrLcaResults,     // (sorted)
   'MLR-PHP': buildMlrPhpResults,
-  'HND-IZO': buildIzoHndResults      // (sorted)
+  'HND-IZO': buildIzoHndResults,
+  'HND-MLR': buildHndMlrResults      // (sorted)
 };
 
 function builderFor(a,b){
@@ -1249,12 +1280,48 @@ function builderFor(a,b){
 }
 
 /* Format minutes as Hh Mm, including days if needed */
-function formatDuration(mins){
-  const m = Math.max(0, mins);
-  const d = Math.floor(m / 1440);
-  const h = Math.floor((m % 1440) / 60);
-  const mm = m % 60;
-  return (d?`${d}d `:'') + `${h}h ${String(mm).padStart(2,'0')}m`;
+function pickRandomNonstop(from, to){
+  // Try a real builder first
+  const fn = builderFor(from,to);
+  if (fn) {
+    const list = fn(from,to);
+    if (list && list.length) {
+      const sample = list[randInt(0, list.length-1)];
+      return {
+        carrier: sample.carrier,
+        aircraft: sample.aircraft || pickAircraft(from,to,sample.carrier),
+        durationMin: sample.durationMin
+      };
+    }
+  }
+
+  // -------- Fallback (no builder available) --------
+  const a = countryOf(from), b = countryOf(to);
+  let durLo = 120, durHi = 240, pool = [];
+
+  if (a === b && a === 'US') {
+    // US ↔ US short haul
+    durLo = 60; durHi = 180;
+    pool = ['American Airlines','Delta','United','JetBlue','Southwest','Spirit'];
+  } else if (a === b && a === 'JP') {
+    // JP-group intra-region (HND/GRV/SAU)
+    durLo = 90; durHi = 240;
+    pool = ['Lufthansa','Qatar Airways','SWISS','British Airways','Condor','easyJet','CEBU Pacific'];
+  } else {
+    // Cross-group (US ↔ JP) long haul
+    durLo = 510; durHi = 720;   // ~8.5–12h
+    pool = ['Delta','American Airlines','United','Lufthansa','Air France','KLM',
+            'Qatar Airways','SWISS','British Airways','Emirates','Singapore','Korean Air'];
+  }
+
+  const carrier = pool[randInt(0, pool.length-1)];
+  const aircraft = pickAircraft(from, to, carrier) || '';
+
+  return {
+    carrier,
+    aircraft,
+    durationMin: randInt(durLo, durHi)
+  };
 }
 
 /* Pick one random nonstop option for from→to (carrier/aircraft/duration).
