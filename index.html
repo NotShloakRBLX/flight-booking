@@ -212,10 +212,20 @@
 .backdrop{ z-index:40; }
 .sheet{ z-index:50; }
 
+  /* Screens + simple fade/slide transition */
+.screen{
+  opacity:0; transform:translateY(8px);
+  transition:opacity var(--t), transform var(--t);
+}
+.screen.show{ opacity:1; transform:none; }
+
+/* small section header for "Previous Trips" */
+.subhead{ font-size:20px; font-weight:800; margin:8px 4px 0; }
+
 </style>
 </head>
 <body>
-  <main class="page">
+  <main id="screen-booking" class="page screen show">
     <h1>Book</h1>
 
     <section class="card" aria-label="Flight Search">
@@ -298,6 +308,16 @@
     </div>
     <div id="sheetBody" class="view"></div>
   </section>
+
+  <main id="screen-trips" class="page screen" style="display:none">
+  <h1>Upcoming Trips</h1>
+  <p class="muted" id="upcoming-empty" style="margin:4px 4px 14px">No upcoming trips</p>
+
+  <div class="hr" style="margin:10px 0 14px;"></div>
+
+  <h2 class="subhead">Previous Trips</h2>
+  <!-- You can list past trips here later -->
+</main>
 
   <nav class="dock" id="dock" aria-label="Tabs">
   <span class="dock-indicator" aria-hidden="true"></span>
@@ -1420,6 +1440,39 @@ dockItems.forEach((btn, idx) => {
 
 // default tab on load
 setActiveTab(0);
+
+  /* ---------- Simple screen switcher with a smooth fade ---------- */
+function showScreen(id){
+  const next = document.getElementById(id);
+  const curr = document.querySelector('.screen.show');
+
+  if (curr === next) return;
+
+  // show next
+  next.style.display = 'block';
+  // force reflow so transition runs
+  next.getBoundingClientRect();
+  next.classList.add('show');
+
+  // hide current after transition
+  if (curr){
+    curr.classList.remove('show');
+    setTimeout(()=>{ if(!curr.classList.contains('show')) curr.style.display = 'none'; }, 300);
+  }
+}
+
+// wire dock buttons to screens
+const dockBookingBtn = document.querySelector('.dock .dock-item[data-tab="booking"]');
+const dockTripsBtn   = document.querySelector('.dock .dock-item[data-tab="trips"]');
+
+function openBooking(){ setActiveTab(0); showScreen('screen-booking'); }
+function openTrips(){ setActiveTab(1); showScreen('screen-trips'); }
+
+dockBookingBtn.addEventListener('click', openBooking);
+dockTripsBtn.addEventListener('click', openTrips);
+
+// default
+showScreen('screen-booking');
 
 </script>
 </body>
