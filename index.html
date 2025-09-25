@@ -306,16 +306,6 @@
           </div>
         </div>
 
-        <section id="pageTrips">
-  <h1>Upcoming Trips</h1>
-  <div id="upcomingEmpty" class="muted" style="margin:2px 4px 12px">No upcoming trips</div>
-  <div id="upcomingList" class="trip-list"></div>
-
-  <div class="hr" style="margin:12px 0"></div>
-  <div class="subhead">Previous Trips</div>
-  <div id="previousList" class="trip-list"></div>
-</section>
-
         <div class="row">
           <div class="label">To</div>
           <div class="line-wrap select">
@@ -380,12 +370,12 @@
 
   <main id="screen-trips" class="page screen" style="display:none">
   <h1>Upcoming Trips</h1>
-  <p class="muted" id="upcoming-empty" style="margin:4px 4px 14px">No upcoming trips</p>
+  <div id="upcomingEmpty" class="muted" style="margin:2px 4px 12px">No upcoming trips</div>
+  <div id="upcomingList" class="trip-list"></div>
 
-  <div class="hr" style="margin:10px 0 14px;"></div>
-
-  <h2 class="subhead">Previous Trips</h2>
-  <!-- You can list past trips here later -->
+  <div class="hr" style="margin:12px 0"></div>
+  <div class="subhead">Previous Trips</div>
+  <div id="previousList" class="trip-list"></div>
 </main>
 
   <nav class="dock" id="dock" aria-label="Tabs">
@@ -1208,7 +1198,7 @@ function resultsView(list){
   div.className = 'results';
 
   list.forEach(opt => {
-    const logo = iconForCarrier(opt.carrier);
+    const logo = logoFor(opt.carrier);
     const logoHTML = logo
       ? `<img class="airlogo ${opt.carrier==='easyJet' ? 'is-u2' : ''}" src="${logo}" alt="${opt.carrier} logo">`
       : '';
