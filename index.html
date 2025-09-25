@@ -1300,56 +1300,59 @@ function makeLeg(from, to, earliest, latest){
 
 /* Generic connection results builder for any route listed in CONNECTION_RULES */
 function buildConnectedResults(from, to){
-  const rule = CONNECTION_RULES[[from,to].sort().join('-')];
+  const key = routeKey(from, to);
+  const rule = CONNECTION_RULES[key];
   if (!rule) return [];
 
-  const out = [];
-  // Always sort by fewest connections (patterns are already provided in that order)
-  rule.patterns.forEach(stops => {
-    // Build all legs: from→stops[0] → stops[1] ... → to
-    const allLegs = [];
-    // First leg: free departure
-    const leg1 = makeLeg(from, stops[0], null, null);
-    if (!leg1) return; // skip if unsupported
-    allLegs.push(leg1);
+  const options = [];
 
-    // Middle legs (respect layover 30m–8h)
-    for (let i=0; i<stops.length-1; i++){
-      const prevArr = allLegs[allLegs.length-1].arriveMins;
+  for (const stops of rule.patterns) {
+    const legs = [];
+
+    // first leg
+    const leg0 = makeLeg(from, stops[0], null, null);
+    if (!leg0) continue;
+    legs.push(leg0);
+
+    // middle legs (respect layover 30m–8h)
+    let ok = true;
+    for (let i = 0; i < stops.length - 1; i++){
+      const prevArr = legs[legs.length - 1].arriveMins;
       const leg = makeLeg(stops[i], stops[i+1], prevArr + 30, prevArr + 480);
-      if (!leg) return;
-      allLegs.push(leg);
+      if (!leg) { ok = false; break; }
+      legs.push(leg);
     }
-    // Final leg to destination
-    const prevArr = allLegs[allLegs.length-1].arriveMins;
-    const lastLeg = makeLeg(stops[stops.length-1], to, prevArr + 30, prevArr + 480);
-    if (!lastLeg) return;
-    allLegs.push(lastLeg);
+    if (!ok) continue;
 
-    const depart0 = allLegs[0].departMins;
-    const arriveN = allLegs[allLegs.length-1].arriveMins;
+    // final leg
+    const prevArr = legs[legs.length - 1].arriveMins;
+    const lastLeg = makeLeg(stops[stops.length - 1], to, prevArr + 30, prevArr + 480);
+    if (!lastLeg) continue;
+    legs.push(lastLeg);
+
+    const depart0 = legs[0].departMins;
+    const arriveN = legs[legs.length - 1].arriveMins;
     const elapsed = arriveN - depart0;
 
-    out.push({
+    options.push({
       from, to,
       price: randInt(rule.price[0], rule.price[1]),
-      // for list screens, show first carrier like real sites do
-      carrier: allLegs[0].carrier,
-      aircraft: allLegs[0].aircraft,
-      depart: allLegs[0].depart,
-      arrive: allLegs[allLegs.length-1].arrive,
+      carrier: legs[0].carrier,           // list card shows carrier of first leg
+      aircraft: legs[0].aircraft,
+      depart: legs[0].depart,
+      arrive: legs[legs.length-1].arrive,
       plusOne: Math.floor(arriveN/1440) > Math.floor(depart0/1440) ? '+1' : '',
       durationMin: elapsed,
       durationText: formatDuration(elapsed),
-      overnight: allLegs.some(l => l.overnight),
-      connections: stops.slice(),  // ['HND'] or ['IZO','GRV'] etc.
-      segments: allLegs            // full details for summary/pay
+      overnight: legs.some(l => l.overnight),
+      connections: stops.slice(),         // keep your declared order
+      segments: legs                      // every leg, including the first one
     });
-  });
+  }
 
-  // Sort by fewest → most connections
-  out.sort((a,b)=>a.connections.length - b.connections.length);
-  return out;
+  // fewest → most connections
+  options.sort((a,b)=>a.connections.length - b.connections.length);
+  return options;
 }
 
 /* -------------------- Results list -------------------- */
@@ -1406,19 +1409,17 @@ function openSummary(opt){
 
   // Connection leg lines (if any)
   let connHTML = '';
-  if (Array.isArray(opt.segments) && opt.segments.length > 1){
-    // Show the subsequent legs (start from leg 2)
-    const more = opt.segments.slice(1).map(seg => `
-      <div class="kv" style="color:#cfd6dd">
-        <span>${seg.from} → ${seg.to}</span>
-        <b>${seg.depart} → ${seg.arrive} ${seg.plusOne?'<span class="muted">+1</span>':''}</b>
-      </div>
-      <div class="kv muted">
-        <span>${seg.carrier}</span><b>${seg.aircraft || '—'}</b>
-      </div>
-    `).join('');
-    connHTML = `<div class="hr"></div>${more}`;
-  }
+if (Array.isArray(opt.segments) && opt.segments.length){
+  connHTML = `<div class="hr"></div>` + opt.segments.map(seg => `
+    <div class="kv" style="color:#cfd6dd">
+      <span>${seg.from} → ${seg.to}</span>
+      <b>${seg.depart} → ${seg.arrive} ${seg.plusOne?'<span class="muted">+1</span>':''}</b>
+    </div>
+    <div class="kv muted">
+      <span>${seg.carrier}</span><b>${seg.aircraft || '—'}</b>
+    </div>
+  `).join('');
+}
 
   const warn=opt.overnight?`
     <div class="panel" style="color:#ffcc66; display:flex; align-items:center; gap:8px">
@@ -1488,17 +1489,17 @@ function openReviewPay(){
 
   // build connection details if present
   let connHTML = '';
-  if (Array.isArray(lastSelection.segments) && lastSelection.segments.length > 1){
-    connHTML = `<div class="hr"></div>` + lastSelection.segments.slice(1).map(seg=>`
-      <div class="kv" style="color:#cfd6dd">
-        <span>${seg.from} → ${seg.to}</span>
-        <b>${seg.depart} → ${seg.arrive} ${seg.plusOne?'<span class="muted">+1</span>':''}</b>
-      </div>
-      <div class="kv muted">
-        <span>${seg.carrier}</span><b>${seg.aircraft || '—'}</b>
-      </div>
-    `).join('');
-  }
+if (Array.isArray(lastSelection.segments) && lastSelection.segments.length){
+  connHTML = `<div class="hr"></div>` + lastSelection.segments.map(seg=>`
+    <div class="kv" style="color:#cfd6dd">
+      <span>${seg.from} → ${seg.to}</span>
+      <b>${seg.depart} → ${seg.arrive} ${seg.plusOne?'<span class="muted">+1</span>':''}</b>
+    </div>
+    <div class="kv muted">
+      <span>${seg.carrier}</span><b>${seg.aircraft || '—'}</b>
+    </div>
+  `).join('');
+}
 
   const showStops = Array.isArray(lastSelection.connections) ? '' : '<div class="kv"><span>Stops</span><b>Nonstop</b></div>';
 
