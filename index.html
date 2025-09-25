@@ -340,6 +340,45 @@
 /* also block taps on the dock while any modal/action is open */
 .modal-open .dock{ pointer-events:none; }
 
+  /* ---- Delete button in archived cards ---- */
+.trip-right{ margin-left:auto; display:grid; gap:6px; align-items:center; justify-items:end }
+.mini-btn{
+  height:32px; padding:0 12px; border-radius:10px; border:1px solid rgba(255,255,255,.14);
+  background:#2a2d33; color:#fff; font-weight:700; cursor:pointer; transition:transform var(--t), background var(--t)
+}
+.mini-btn.red{ background:#5a1e1e; border-color:rgba(255,99,99,.45) }
+.mini-btn:active{ transform:translateY(1px) }
+
+/* ---- Centered confirm dialog ---- */
+.confirm-backdrop{
+  position:fixed; inset:0; background:rgba(0,0,0,.5);
+  opacity:0; pointer-events:none; transition:opacity var(--t); z-index:1200;
+}
+.confirm-backdrop.show{ opacity:1; pointer-events:auto }
+
+.confirm{
+  position:fixed; left:50%; top:50%;
+  transform:translate(-50%,-40%) scale(.96); opacity:0;
+  width:min(420px, 90vw); background:var(--card); border:1px solid var(--cardBorder);
+  border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,.6);
+  padding:16px; transition:transform var(--t), opacity var(--t); z-index:1201;
+}
+.confirm.show{ transform:translate(-50%,-50%) scale(1); opacity:1 }
+.confirm h3{ margin:6px 0 4px; font-size:18px; font-weight:800 }
+.confirm p{ margin:0 0 12px; color:#cfd6dd }
+.confirm .row-btns{ display:flex; gap:10px; margin-top:10px }
+.btn-outline{
+  flex:1; height:44px; border-radius:12px; border:1px solid rgba(255,255,255,.18);
+  background:#2a2d33; color:#fff; font-weight:700; cursor:pointer;
+}
+.btn-danger{
+  flex:1; height:44px; border-radius:12px; border:1px solid rgba(255,99,99,.45);
+  background:#5a1e1e; color:#fff; font-weight:800; cursor:pointer;
+}
+
+/* block dock while any modal is open (you already have .modal-open for sheets) */
+.modal-open .dock{ pointer-events:none; }
+
 </style>
 </head>
 <body>
@@ -1671,7 +1710,7 @@ dockTripsBtn.addEventListener('click', openTrips);
 showScreen('screen-booking');
 
   /* ---------- Trips list ---------- */
-function tripCardHTML(t){
+function tripCardHTML(t, isArchived = false){
   return `
     <div class="trip-card" data-id="${t.id}">
       <img class="trip-logo" alt="" src="${t.logo||''}">
@@ -1680,13 +1719,16 @@ function tripCardHTML(t){
         <div class="trip-route">${t.from} &nbsp;→&nbsp; ${t.to}</div>
         <div class="trip-date">${formatDate(t.date)}</div>
       </div>
-      <div style="margin-left:auto">
+
+      <div class="trip-right">
         <span class="pill ${t.status==='INFLIGHT'?'pill-inflight':t.status==='ARRIVED'?'pill-arrived':'pill-ontime'}">
           ${t.status==='INFLIGHT'?'INFLIGHT':t.status==='ARRIVED'?'ARRIVED':'ON TIME'}
         </span>
+        ${isArchived ? `<button class="mini-btn red btn-delete" type="button">Delete</button>` : ``}
       </div>
     </div>`;
 }
+
 function renderTrips(){
   const trips = getTrips();
   const upcoming = trips.filter(t => t.status !== 'ARCHIVED');
@@ -1696,16 +1738,25 @@ function renderTrips(){
   const prev = document.getElementById('previousList');
   const empty = document.getElementById('upcomingEmpty');
 
-  up.innerHTML = upcoming.map(tripCardHTML).join('');
-  prev.innerHTML = previous.map(tripCardHTML).join('');
+  up.innerHTML = upcoming.map(t => tripCardHTML(t, false)).join('');
+  prev.innerHTML = previous.map(t => tripCardHTML(t, true)).join('');
 
   empty.style.display = upcoming.length ? 'none' : '';
 }
+
 document.getElementById('upcomingList').addEventListener('click', e=>{
   const card = e.target.closest('.trip-card'); if(card) openTripDetail(card.dataset.id);
 });
 document.getElementById('previousList').addEventListener('click', e=>{
-  const card = e.target.closest('.trip-card'); if(card) openTripDetail(card.dataset.id);
+  const del = e.target.closest('.btn-delete');
+  if (del){
+    e.stopPropagation();
+    const card = e.target.closest('.trip-card');
+    if(card) confirmDelete(card.dataset.id);
+    return;
+  }
+  const card = e.target.closest('.trip-card');
+  if(card) openTripDetail(card.dataset.id);
 });
 
 /* ---------- Trip detail (in your existing sheet) ---------- */
@@ -1849,6 +1900,39 @@ function openStatusActions(trip){
 
 /* render Trips on load */
 renderTrips();
+
+  function confirmDelete(tripId){
+  const back = document.createElement('div'); back.className = 'confirm-backdrop';
+  const box  = document.createElement('div'); box.className  = 'confirm';
+
+  box.innerHTML = `
+    <h3>Delete this flight?</h3>
+    <p>This will permanently remove it from Previous Trips.</p>
+    <div class="row-btns">
+      <button class="btn-outline" id="delCancel" type="button">Cancel</button>
+      <button class="btn-danger"  id="delConfirm" type="button">Delete</button>
+    </div>
+  `;
+
+  function close(){
+    back.classList.remove('show'); box.classList.remove('show');
+    document.body.classList.remove('modal-open');
+    setTimeout(()=>{ back.remove(); box.remove(); }, 200);
+  }
+
+  back.addEventListener('click', close);
+  box.querySelector('#delCancel').addEventListener('click', close);
+  box.querySelector('#delConfirm').addEventListener('click', ()=>{
+    const arr = getTrips().filter(t => t.id !== tripId);
+    setTrips(arr);
+    close();
+    renderTrips();
+  });
+
+  document.body.append(back, box);
+  requestAnimationFrame(()=>{ back.classList.add('show'); box.classList.add('show'); });
+  document.body.classList.add('modal-open'); // locks background + dock
+}
 
 </script>
 </body>
