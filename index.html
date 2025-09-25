@@ -237,6 +237,50 @@
 .airlogo.is-u2{ width:26px; height:26px; }  /* easyJet slightly bigger */
 .row-mid-text .carrier-line{ color:#cfd6dd; font-size:14px; margin-top:2px; }
 
+  /* ------- Trips page ------- */
+.subhead{font-size:22px;font-weight:800;margin:14px 4px 10px}
+.trip-list{display:grid;gap:12px;padding:0 4px 24px}
+.trip-card{
+  display:flex;gap:12px;align-items:center;
+  background:#202329;border:1px solid rgba(255,255,255,.10);
+  border-radius:16px;padding:12px 12px;box-shadow:0 8px 22px rgba(0,0,0,.32);
+  transition:transform var(--t), box-shadow var(--t), background var(--t)
+}
+.trip-card:active{transform:translateY(1px);box-shadow:0 6px 18px rgba(0,0,0,.28);background:#1f2127}
+.trip-logo{width:34px;height:34px;border-radius:8px;object-fit:contain;background:#13151a;display:block}
+.trip-body{display:grid;gap:4px;min-width:0}
+.trip-times{font-size:18px;font-weight:800;letter-spacing:.2px}
+.trip-route{font-size:13px;color:#aab2ba}
+.trip-date{font-size:12px;color:#8f99a4}
+
+.pill{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:700;letter-spacing:.3px}
+.pill-ontime{background:rgba(33,208,122,.15);border:1px solid rgba(33,208,122,.35);color:#63d488}
+.pill-inflight{background:rgba(67,153,255,.15);border:1px solid rgba(67,153,255,.33);color:#2ea0ff}
+.pill-arrived{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);color:#d9dee3}
+
+.t-early{color:#63d488}
+.t-late{color:#ff6b6b}
+
+/* small action sheet used by Status button */
+.actions-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity var(--t)}
+.actions-backdrop.show{opacity:1;pointer-events:auto}
+.actions{
+  position:fixed;left:50%;bottom:0;transform:translate(-50%,20px);
+  width:min(420px,96vw);background:var(--card);border:1px solid var(--cardBorder);
+  border-radius:18px 18px 0 0;box-shadow:0 -16px 36px rgba(0,0,0,.55);padding:10px 12px 12px;
+  transition:transform var(--t)
+}
+.actions.show{transform:translate(-50%,0)}
+.actions .btn{width:100%;height:48px;border:0;border-radius:12px;background:#2a2d33;color:#fff;font-weight:700;margin:6px 0}
+.actions .btn.red{background:#5a1e1e}
+.actions .row{display:grid;gap:8px;margin:8px 0}
+.actions input[type="time"], .actions input[type="text"]{
+  width:100%;background:#121317;border:1px solid rgba(255,255,255,.16);color:#fff;border-radius:12px;padding:10px 12px;font-size:16px
+}
+
+/* Trips page container (hidden when on booking) */
+#pageTrips[hidden]{display:none}
+
 </style>
 </head>
 <body>
@@ -261,6 +305,16 @@
             <div class="focusbar"></div>
           </div>
         </div>
+
+        <section id="pageTrips">
+  <h1>Upcoming Trips</h1>
+  <div id="upcomingEmpty" class="muted" style="margin:2px 4px 12px">No upcoming trips</div>
+  <div id="upcomingList" class="trip-list"></div>
+
+  <div class="hr" style="margin:12px 0"></div>
+  <div class="subhead">Previous Trips</div>
+  <div id="previousList" class="trip-list"></div>
+</section>
 
         <div class="row">
           <div class="label">To</div>
@@ -443,30 +497,40 @@ const AIRLINE_CODES = {
   'Emirates':'EK','Singapore':'SQ','Lufthansa':'LH','SWISS':'LX','Korean Air':'KE','KLM':'KL','Qatar Airways':'QR','Air France':'AF','Qantas':'QF','CEBU Pacific':'5J','British Airways':'BA','Condor':'DE','easyJet':'U2'
 };
 
-/* Logo files for each carrier (in the same folder as the HTML) */
-const AIRLINE_ICONS = {
-  'JetBlue': 'jb-icon.png',
-  'American Airlines': 'aa-icon.png',
-  'Delta': 'dl-icon.png',
-  'United': 'ua-icon.png',
-  'Southwest': 'wn-icon.png',
-  'Spirit': 'nk-icon.png',            // if your file is actually "nk-icon-png", change this name
-  'Emirates': 'ek-icon.png',
-  'Singapore': 'sq-icon.png',
-  'Lufthansa': 'lh-icon.png',
-  'SWISS': 'lx-icon.png',
-  'Korean Air': 'ke-icon.png',
-  'KLM': 'kl-icon.png',
-  'Qatar Airways': 'qr-icon.png',
-  'Air France': 'af-icon.png',
-  'Qantas': 'qf-icon.png',
-  'CEBU Pacific': '5J-icon.png',
-  'British Airways': 'ba-icon.png',
-  'Condor': 'de-icon.png',
-  'easyJet': 'U2-icon.png'
+/* Airline logos in / (repo root). Adjust filenames if your paths differ */
+const LOGO_MAP = {
+  'JetBlue':'jb-icon.png',
+  'American Airlines':'aa-icon.png',
+  'Delta':'dl-icon.png',
+  'United':'ua-icon.png',
+  'Southwest':'wn-icon.png',
+  'Spirit':'nk-icon.png',
+  'Emirates':'ek-icon.png',
+  'Singapore':'sq-icon.png',
+  'Lufthansa':'lh-icon.png',
+  'SWISS':'lx-icon.png',
+  'Korean Air':'ke-icon.png',
+  'KLM':'kl-icon.png',
+  'Qatar Airways':'qr-icon.png',
+  'Air France':'af-icon.png',
+  'Qantas':'qf-icon.png',
+  'CEBU Pacific':'5J-icon.png',
+  'British Airways':'ba-icon.png',
+  'Condor':'de-icon.png',
+  'easyJet':'U2-icon.png'
 };
-function iconForCarrier(name){
-  return AIRLINE_ICONS[name] || null;
+const logoFor = carrier => LOGO_MAP[carrier] ? `./${LOGO_MAP[carrier]}` : '';
+
+/* very small localStorage wrapper */
+const getTrips = () => { try { return JSON.parse(localStorage.getItem('trips')||'[]'); } catch(e){ return []; } };
+const setTrips = (arr) => localStorage.setItem('trips', JSON.stringify(arr));
+const saveTrip = (trip) => { const arr=getTrips(); arr.unshift(trip); setTrips(arr); };
+
+/* time parsing for comparisons ("10:02 PM" → minutes) */
+function timeStrToMins(s){
+  if(!s) return 0;
+  const m=s.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i); if(!m) return 0;
+  let h=+m[1]%12, min=+m[2]; const pm=/PM/i.test(m[3]); if(pm) h+=12; return h*60+min;
 }
 
 /* Country mapping for INTL check */
@@ -1391,6 +1455,24 @@ function showConfirmation(){
   const bookingRef = randDigits(6);
   const ticketNo  = randDigits(13);
 
+  // Save to Trips
+saveTrip({
+  id: Date.now() + '-' + randDigits(4),
+  status: 'CONFIRMED',            // CONFIRMED → INFLIGHT → ARRIVED → ARCHIVED
+  carrier: lastSelection.carrier || '',
+  logo: logoFor(lastSelection.carrier || ''),
+  from: lastSelection.from,
+  to: lastSelection.to,
+  date: lastSelection.travelDate || '',           // ISO date from your form
+  schedDepart: lastSelection.depart,
+  schedArrive: lastSelection.arrive,
+  plusOne: !!lastSelection.plusOne,
+  aircraft: lastSelection.aircraft || '—',
+  price: lastSelection.price || 0,
+  passenger: fullName || 'Passenger 1'
+});
+renderTrips();    // refresh Trips page if it's open
+
   const v = document.createElement('div'); v.className='view';
   v.innerHTML = `
     <div class="glass" style="padding:18px 16px 14px;">
@@ -1536,6 +1618,159 @@ dockTripsBtn.addEventListener('click', openTrips);
 
 // default
 showScreen('screen-booking');
+
+  /* ---------- Trips list ---------- */
+function tripCardHTML(t){
+  return `
+    <div class="trip-card" data-id="${t.id}">
+      <img class="trip-logo" alt="" src="${t.logo||''}">
+      <div class="trip-body">
+        <div class="trip-times"><b>${t.schedDepart}</b> &nbsp;→&nbsp; <b>${t.schedArrive}${t.plusOne? ' <span class="muted">+1</span>':''}</b></div>
+        <div class="trip-route">${t.from} &nbsp;→&nbsp; ${t.to}</div>
+        <div class="trip-date">${formatDate(t.date)}</div>
+      </div>
+      <div style="margin-left:auto">
+        <span class="pill ${t.status==='INFLIGHT'?'pill-inflight':t.status==='ARRIVED'?'pill-arrived':'pill-ontime'}">
+          ${t.status==='INFLIGHT'?'INFLIGHT':t.status==='ARRIVED'?'ARRIVED':'ON TIME'}
+        </span>
+      </div>
+    </div>`;
+}
+function renderTrips(){
+  const trips = getTrips();
+  const upcoming = trips.filter(t => t.status !== 'ARCHIVED');
+  const previous = trips.filter(t => t.status === 'ARCHIVED');
+
+  const up = document.getElementById('upcomingList');
+  const prev = document.getElementById('previousList');
+  const empty = document.getElementById('upcomingEmpty');
+
+  up.innerHTML = upcoming.map(tripCardHTML).join('');
+  prev.innerHTML = previous.map(tripCardHTML).join('');
+
+  empty.style.display = upcoming.length ? 'none' : '';
+}
+document.getElementById('upcomingList').addEventListener('click', e=>{
+  const card = e.target.closest('.trip-card'); if(card) openTripDetail(card.dataset.id);
+});
+document.getElementById('previousList').addEventListener('click', e=>{
+  const card = e.target.closest('.trip-card'); if(card) openTripDetail(card.dataset.id);
+});
+
+/* ---------- Trip detail (in your existing sheet) ---------- */
+function openTripDetail(id){
+  const trips = getTrips();
+  const i = trips.findIndex(t => t.id===id); if(i<0) return;
+  const t = trips[i];
+
+  const depDisp = t.actualDepart || t.schedDepart;
+  const arrDisp = t.actualArrive || t.schedArrive;
+
+  const depClass = t.actualDepart ? (timeStrToMins(t.actualDepart) > timeStrToMins(t.schedDepart) ? 't-late':'t-early') : '';
+  const arrClass = t.actualArrive ? (timeStrToMins(t.actualArrive) > timeStrToMins(t.schedArrive) ? 't-late':'t-early') : '';
+
+  const v=document.createElement('div'); v.className='view';
+  v.innerHTML = `
+    <div class="panel" style="display:flex;align-items:center;gap:10px">
+      <img src="${t.logo||''}" class="trip-logo" alt="">
+      <div>
+        <div style="font-weight:800">${t.carrier||''}</div>
+        <div class="muted">${t.from} → ${t.to}</div>
+      </div>
+      <div style="margin-left:auto">
+        <span class="pill ${t.status==='INFLIGHT'?'pill-inflight':t.status==='ARRIVED'?'pill-arrived':'pill-ontime'}">
+          ${t.status==='INFLIGHT'?'INFLIGHT':t.status==='ARRIVED'?'ARRIVED':'ON TIME'}
+        </span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="kv"><span>Date</span><b>${formatDate(t.date)}</b></div>
+      <div class="kv"><span>Depart</span><b class="${depClass}">${depDisp}</b></div>
+      <div class="kv"><span>Arrive</span><b class="${arrClass}">${arrDisp}${t.plusOne? ' <span class="muted">+1</span>':''}</b></div>
+      <div class="kv"><span>Aircraft type</span><b>${t.aircraft||'—'}</b></div>
+      <div class="kv"><span>Passenger</span><b>${t.passenger||'Passenger 1'}</b></div>
+    </div>
+
+    <div style="display:flex; gap:10px">
+      <button class="btn-lg" style="flex:1" id="btnStatus">Status</button>
+    </div>
+  `;
+
+  v.querySelector('#btnStatus').addEventListener('click', ()=> openStatusActions(t));
+  openSheet(); renderView(`${t.from} → ${t.to}`, v);
+  stepStack=[{title:`${t.from} → ${t.to}`, html:v}];
+}
+
+/* ---------- Status Action Sheet ---------- */
+function openStatusActions(trip){
+  const back = document.createElement('div'); back.className='actions-backdrop';
+  const box  = document.createElement('div'); box.className='actions';
+
+  // helper to close
+  function close(){
+    back.classList.remove('show'); box.classList.remove('show');
+    setTimeout(()=>{ document.body.removeChild(back); document.body.removeChild(box); }, 200);
+  }
+  back.addEventListener('click', close);
+
+  // content by status
+  const st = trip.status;
+  if(st==='CONFIRMED'){
+    box.innerHTML = `
+      <div class="row"><button class="btn" id="toInflight">Change to INFLIGHT</button></div>
+      <div class="row" id="depRow" style="display:none">
+        <div class="muted">Enter actual departure time</div>
+        <input id="depTime" type="time">
+        <button class="btn" id="upd1">Update status</button>
+      </div>`;
+    box.querySelector('#toInflight').addEventListener('click', ()=>{
+      box.querySelector('#depRow').style.display='grid';
+    });
+    box.querySelector('#upd1').addEventListener('click', ()=>{
+      const v = box.querySelector('#depTime').value; if(!v) return;
+      // convert "HH:MM" (24h) to "h:mm AM/PM"
+      const [H,M]=v.split(':').map(Number); const ampm=H>=12?'PM':'AM';
+      const h12=((H+11)%12)+1; const disp=`${h12}:${String(M).padStart(2,'0')} ${ampm}`;
+      const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
+      if(i>-1){ trips[i].status='INFLIGHT'; trips[i].actualDepart=disp; setTrips(trips); }
+      close(); openTripDetail(trip.id); renderTrips();
+    });
+  } else if(st==='INFLIGHT'){
+    box.innerHTML = `
+      <div class="row"><button class="btn" id="toArrived">Change status to ARRIVED</button></div>
+      <div class="row" id="arrRow" style="display:none">
+        <div class="muted">Enter actual arrival time</div>
+        <input id="arrTime" type="time">
+        <button class="btn" id="upd2">Update status</button>
+      </div>`;
+    box.querySelector('#toArrived').addEventListener('click', ()=>{
+      box.querySelector('#arrRow').style.display='grid';
+    });
+    box.querySelector('#upd2').addEventListener('click', ()=>{
+      const v = box.querySelector('#arrTime').value; if(!v) return;
+      const [H,M]=v.split(':').map(Number); const ampm=H>=12?'PM':'AM';
+      const h12=((H+11)%12)+1; const disp=`${h12}:${String(M).padStart(2,'0')} ${ampm}`;
+      const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
+      if(i>-1){ trips[i].status='ARRIVED'; trips[i].actualArrive=disp; setTrips(trips); }
+      close(); openTripDetail(trip.id); renderTrips();
+    });
+  } else if(st==='ARRIVED'){
+    box.innerHTML = `
+      <div class="row"><button class="btn red" id="archive">Archive flight</button></div>`;
+    box.querySelector('#archive').addEventListener('click', ()=>{
+      const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
+      if(i>-1){ trips[i].status='ARCHIVED'; setTrips(trips); }
+      close(); closeSheet(); renderTrips();
+    });
+  }
+
+  document.body.appendChild(back); document.body.appendChild(box);
+  requestAnimationFrame(()=>{ back.classList.add('show'); box.classList.add('show'); });
+}
+
+/* render Trips on load */
+renderTrips();
 
 </script>
 </body>
