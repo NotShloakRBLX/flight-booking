@@ -156,6 +156,14 @@
     -webkit-appearance: none;
     appearance: none;
   }
+
+  /* modal layer order + lock the page when sheet is open */
+.backdrop { z-index: 999; }
+.sheet    { z-index: 1000; }
+
+.modal-open { overflow: hidden; }        /* no background scroll */
+.modal-open .page { pointer-events: none; } /* no background taps/clicks */
+
 </style>
 </head>
 <body>
@@ -292,8 +300,19 @@ const sheetBody = document.getElementById('sheetBody');
 const routeTitle = document.getElementById('routeTitle');
 let stepStack = [];
 
-function openSheet(){ backdrop.classList.add('show'); sheet.classList.add('show'); }
-function closeSheet(){ sheet.classList.remove('show'); backdrop.classList.remove('show'); stepStack = []; }
+function openSheet(){
+  backdrop.classList.add('show');
+  sheet.classList.add('show');
+  document.body.classList.add('modal-open');
+}
+
+function closeSheet(){
+  sheet.classList.remove('show');
+  backdrop.classList.remove('show');
+  document.body.classList.remove('modal-open');
+  stepStack = [];
+}
+  
 btnBack.addEventListener('click', () => {
   if (stepStack.length <= 1) { closeSheet(); return; }
   stepStack.pop();
@@ -1114,16 +1133,34 @@ function openPassengers(){
 }
 
 function openReviewPay(){
-  const v=document.createElement('div'); v.className='view';
+  const v = document.createElement('div'); 
+  v.className = 'view';
 
-  v.innerHTML=`
+  // build connection details if present
+  let connHTML = '';
+  if (Array.isArray(lastSelection.segments) && lastSelection.segments.length){
+    connHTML = `<div class="hr"></div>` + lastSelection.segments.map(seg=>`
+      <div class="kv" style="color:#cfd6dd">
+        <span>${seg.from} → ${seg.to}</span>
+        <b>${seg.depart} → ${seg.arrive} ${seg.plusOne?'<span class="muted">+1</span>':''}</b>
+      </div>
+      <div class="kv muted">
+        <span>${seg.carrier}</span><b>${seg.aircraft || '—'}</b>
+      </div>
+    `).join('');
+  }
+
+  const showStops = Array.isArray(lastSelection.connections) ? '' : '<div class="kv"><span>Stops</span><b>Nonstop</b></div>';
+
+  v.innerHTML = `
     <div class="panel">
       <div style="font-weight:800; margin-bottom:6px">Your trip</div>
       <div style="font-size:16px; margin-bottom:6px">${lastSelection.from} → ${lastSelection.to}</div>
       <div class="kv"><span><b>${lastSelection.depart}</b> → <b>${lastSelection.arrive}</b> ${lastSelection.plusOne?'<span class="muted">+1</span>':''}</span><span>${lastSelection.airlineCode||''}</span></div>
       <div class="kv"><span>Duration</span><b>${lastSelection.durationText}</b></div>
-      <div class="kv"><span>Stops</span><b>Nonstop</b></div>
+      ${showStops}
       <div class="kv"><span>Aircraft</span><b>${lastSelection.aircraft || '—'}</b></div>
+      ${connHTML}
     </div>
 
     <div class="panel">
@@ -1157,6 +1194,7 @@ function openReviewPay(){
     </div>
   `;
 
+  /* <-- attach the handler AFTER setting innerHTML */
   v.querySelector('#btnPay').addEventListener('click', handlePay);
 
   stepStack.push({title:'Review and pay', html:v});
