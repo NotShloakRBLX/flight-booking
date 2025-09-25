@@ -306,6 +306,40 @@
 
 /* reuse your .kv rows */
 
+  /* small action sheet used by Status button */
+.actions-backdrop{
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.45);
+  opacity:0; pointer-events:none; transition:opacity var(--t);
+  z-index:1100;                    /* ABOVE the dock */
+}
+.actions-backdrop.show{ opacity:1; pointer-events:auto }
+
+.actions{
+  position:fixed; left:50%; bottom:0;
+  transform:translate(-50%, 100%); /* start fully off-screen */
+  width:min(420px,96vw);
+  background:var(--card); border:1px solid var(--cardBorder);
+  border-radius:18px 18px 0 0; box-shadow:0 -16px 36px rgba(0,0,0,.55);
+  padding:10px 12px calc(12px + env(safe-area-inset-bottom)); /* clear iOS bar */
+  transition:transform var(--t);
+  z-index:1101;                    /* ABOVE the backdrop & dock */
+}
+.actions.show{ transform:translate(-50%, 0) }
+
+.actions .btn{ width:100%; height:48px; border:0; border-radius:12px;
+  background:#2a2d33; color:#fff; font-weight:700; margin:6px 0 }
+.actions .btn.red{ background:#5a1e1e }
+
+.actions .row{ display:grid; gap:8px; margin:8px 0 }
+.actions input[type="time"], .actions input[type="text"]{
+  width:100%; background:#121317; border:1px solid rgba(255,255,255,.16);
+  color:#fff; border-radius:12px; padding:10px 12px; font-size:16px
+}
+
+/* also block taps on the dock while any modal/action is open */
+.modal-open .dock{ pointer-events:none; }
+
 </style>
 </head>
 <body>
@@ -1741,12 +1775,22 @@ function openStatusActions(trip){
   const back = document.createElement('div'); back.className='actions-backdrop';
   const box  = document.createElement('div'); box.className='actions';
 
-  // helper to close
   function close(){
     back.classList.remove('show'); box.classList.remove('show');
-    setTimeout(()=>{ document.body.removeChild(back); document.body.removeChild(box); }, 200);
+    document.body.classList.remove('modal-open');        // unlock page + dock
+    setTimeout(()=>{ back.remove(); box.remove(); }, 200);
   }
   back.addEventListener('click', close);
+
+  document.body.appendChild(back);
+  document.body.appendChild(box);
+
+  // show (above dock) and lock background
+  requestAnimationFrame(()=>{
+    back.classList.add('show');
+    box.classList.add('show');
+    document.body.classList.add('modal-open');           // reuse your lock class
+  });
 
   // content by status
   const st = trip.status;
