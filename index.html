@@ -281,6 +281,31 @@
 /* Trips page container (hidden when on booking) */
 #pageTrips[hidden]{display:none}
 
+  /* ---- Trip detail (full page) ---- */
+.btn-page-back{
+  position:absolute; left:12px; top:12px; width:36px; height:36px;
+  border-radius:50%; border:1px solid var(--cardBorder);
+  background:#2a2d33; display:grid; place-items:center; z-index:2
+}
+.btn-page-back svg{width:18px;height:18px}
+
+.td-topnote{color:#9aa3af; font-size:12px; margin:0 4px 4px}
+.td-title{font-size:44px; font-weight:800; letter-spacing:.3px; margin:22px 4px 12px}
+@media (max-width:380px){ .td-title{font-size:38px} }
+
+.td-card{
+  background:#202329; border:1px solid rgba(255,255,255,.10);
+  border-radius:18px; padding:14px 14px 12px; margin:10px 0;
+  box-shadow:0 8px 22px rgba(0,0,0,.32);
+}
+.td-airlineRow{display:flex; align-items:center; justify-content:space-between; gap:12px}
+.td-left{display:flex; align-items:center; gap:12px}
+.td-logo{width:40px; height:40px; border-radius:10px; background:#13151a; object-fit:contain}
+.td-airlineName{font-weight:800; font-size:18px}
+.td-route{font-size:13px; color:#aab2ba}
+
+/* reuse your .kv rows */
+
 </style>
 </head>
 <body>
@@ -377,6 +402,8 @@
   <div class="subhead">Previous Trips</div>
   <div id="previousList" class="trip-list"></div>
 </main>
+
+  <main id="screen-trip-detail" class="page screen" style="display:none"></main>
 
   <nav class="dock" id="dock" aria-label="Tabs">
   <span class="dock-indicator" aria-hidden="true"></span>
@@ -1650,46 +1677,63 @@ document.getElementById('previousList').addEventListener('click', e=>{
 /* ---------- Trip detail (in your existing sheet) ---------- */
 function openTripDetail(id){
   const trips = getTrips();
-  const i = trips.findIndex(t => t.id===id); if(i<0) return;
-  const t = trips[i];
+  const t = trips.find(x => x.id === id);
+  if(!t) return;
 
   const depDisp = t.actualDepart || t.schedDepart;
   const arrDisp = t.actualArrive || t.schedArrive;
 
-  const depClass = t.actualDepart ? (timeStrToMins(t.actualDepart) > timeStrToMins(t.schedDepart) ? 't-late':'t-early') : '';
-  const arrClass = t.actualArrive ? (timeStrToMins(t.actualArrive) > timeStrToMins(t.schedArrive) ? 't-late':'t-early') : '';
+  const depClass = t.actualDepart
+    ? (timeStrToMins(t.actualDepart) > timeStrToMins(t.schedDepart) ? 't-late' : 't-early') : '';
+  const arrClass = t.actualArrive
+    ? (timeStrToMins(t.actualArrive) > timeStrToMins(t.schedArrive) ? 't-late' : 't-early') : '';
 
-  const v=document.createElement('div'); v.className='view';
-  v.innerHTML = `
-    <div class="panel" style="display:flex;align-items:center;gap:10px">
-      <img src="${t.logo||''}" class="trip-logo" alt="">
-      <div>
-        <div style="font-weight:800">${t.carrier||''}</div>
-        <div class="muted">${t.from} → ${t.to}</div>
-      </div>
-      <div style="margin-left:auto">
-        <span class="pill ${t.status==='INFLIGHT'?'pill-inflight':t.status==='ARRIVED'?'pill-arrived':'pill-ontime'}">
-          ${t.status==='INFLIGHT'?'INFLIGHT':t.status==='ARRIVED'?'ARRIVED':'ON TIME'}
-        </span>
-      </div>
-    </div>
+  const statusText = t.status === 'INFLIGHT' ? 'INFLIGHT' : (t.status === 'ARRIVED' ? 'ARRIVED' : 'ON TIME');
+  const pillClass  = t.status === 'INFLIGHT' ? 'pill-inflight' : (t.status === 'ARRIVED' ? 'pill-arrived' : 'pill-ontime');
 
-    <div class="panel">
+  const page = document.getElementById('screen-trip-detail');
+  page.innerHTML = `
+    <button class="btn-page-back" id="tdBack" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" stroke="#9aa3af" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+    <div class="td-topnote">Updated now</div>
+    <div class="td-title">${t.from} → ${t.to}</div>
+
+    <section class="td-card">
+      <div class="td-airlineRow">
+        <div class="td-left">
+          <img class="td-logo" src="${t.logo||''}" alt="">
+          <div>
+            <div class="td-airlineName">${t.carrier||''}</div>
+            <div class="td-route">${t.from} → ${t.to}</div>
+          </div>
+        </div>
+        <span class="pill ${pillClass}">${statusText}</span>
+      </div>
+    </section>
+
+    <section class="td-card">
       <div class="kv"><span>Date</span><b>${formatDate(t.date)}</b></div>
       <div class="kv"><span>Depart</span><b class="${depClass}">${depDisp}</b></div>
       <div class="kv"><span>Arrive</span><b class="${arrClass}">${arrDisp}${t.plusOne? ' <span class="muted">+1</span>':''}</b></div>
       <div class="kv"><span>Aircraft type</span><b>${t.aircraft||'—'}</b></div>
       <div class="kv"><span>Passenger</span><b>${t.passenger||'Passenger 1'}</b></div>
-    </div>
+    </section>
 
     <div style="display:flex; gap:10px">
-      <button class="btn-lg" style="flex:1" id="btnStatus">Status</button>
+      <button class="btn-lg" style="flex:1" id="tdStatus">Status</button>
     </div>
   `;
 
-  v.querySelector('#btnStatus').addEventListener('click', ()=> openStatusActions(t));
-  openSheet(); renderView(`${t.from} → ${t.to}`, v);
-  stepStack=[{title:`${t.from} → ${t.to}`, html:v}];
+  // back to Trips
+  page.querySelector('#tdBack').addEventListener('click', openTrips);
+  // same Status flow you already have (keeps the smooth action sheet)
+  page.querySelector('#tdStatus').addEventListener('click', () => openStatusActions(t));
+
+  // show the new page (no sheet)
+  showScreen('screen-trip-detail');
+  window.scrollTo({top: 0, behavior: 'auto'});
 }
 
 /* ---------- Status Action Sheet ---------- */
