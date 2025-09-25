@@ -133,6 +133,47 @@
 .gf-price{font-weight:800;font-size:20px;color:var(--priceGreen)}
 
 .gf-overnight{margin-top:8px;color:#ffcc66;font-size:14px;display:flex;align-items:center;gap:6px}
+
+  /* ---- Processing / Confirmation bits ---- */
+.processing {
+  display:grid; gap:14px; place-items:center; padding:40px 8px;
+  text-align:center;
+}
+.spinner {
+  width:52px; height:52px; border-radius:50%;
+  border:4px solid rgba(255,255,255,.18);
+  border-top-color: var(--accent);
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.glass {
+  background: rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius: 18px;
+  padding:16px 14px 12px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.35);
+  backdrop-filter: blur(6px);
+}
+
+.check-wrap{
+  width:72px;height:72px; border-radius:50%;
+  background: rgba(68, 185, 119, .15);
+  display:grid; place-items:center; margin:0 auto 10px;
+  border:1px solid rgba(68,185,119,.25);
+}
+.check-wrap svg{width:40px;height:40px}
+.check-wrap svg *{stroke:#63d488; stroke-width:3; fill:none; stroke-linecap:round; stroke-linejoin:round}
+
+.confirm-title{font-weight:800; font-size:20px; text-align:center; margin:6px 0 2px}
+.confirm-sub{color:#cfd6dd; text-align:center; margin-bottom:10px}
+
+.badge {
+  display:inline-block; padding:6px 10px; border-radius:999px;
+  background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);
+  font-weight:700; letter-spacing:.3px;
+}
+.mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
   
 </style>
 </head>
@@ -234,6 +275,10 @@ const AIRPORTS = [
   { code:'GRV', name:'Grindavik Intl Airport (GRV)' },
   { code:'SAU', name:'Sauthemptona Airport (SAU)' }
 ];
+
+let passengerData = {};  // will hold name/DOB/gender
+function randDigits(n){ let s=''; for(let i=0;i<n;i++) s += Math.floor(Math.random()*10); return s; }
+function formatDate(iso){ if(!iso) return ''; const d=new Date(iso); return d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}); }
 
 const fromSel = document.getElementById('from');
 const toSel   = document.getElementById('to');
@@ -1468,6 +1513,7 @@ let lastSelection=null;
 
 function openSummary(opt){
   lastSelection = {...opt, airlineCode: AIRLINE_CODES[opt.carrier] || ''};
+  lastSelection.travelDate = document.getElementById('depart').value || '';
   const v=document.createElement('div'); v.className='view';
 
   // Connection leg lines (if any)
@@ -1523,29 +1569,40 @@ function openPassengers(){
     </div>`:'';
 
   v.innerHTML=`
-    ${info}
-    <div class="panel"><div class="kv"><span>Your trip total</span><b>$${lastSelection.price.toLocaleString()}</b></div></div>
+  ${info}
+  <div class="panel"><div class="kv"><span>Your trip total</span><b>$${lastSelection.price.toLocaleString()}</b></div></div>
 
-    <div class="panel">
-      <h3>Passenger 1</h3>
-      <div class="form-row">
-        <div class="field"><label>First name •</label><input type="text" placeholder="As on ID" autocomplete="given-name"></div>
-        <div class="field"><label>Middle name</label><input type="text" placeholder="Optional" autocomplete="additional-name"></div>
-        <div class="field"><label>Last name •</label><input type="text" placeholder="As on ID" autocomplete="family-name"></div>
-      </div>
-      <div class="form-row half" style="margin-top:8px">
-        <div class="field"><label>Date of birth •</label><input type="date" autocomplete="bday"></div>
-        <div class="field"><label>Gender •</label>
-          <select autocomplete="sex"><option value="" disabled selected>Select</option><option>Female</option><option>Male</option><option>Unspecified</option></select>
-        </div>
+  <div class="panel">
+    <h3>Passenger 1</h3>
+    <div class="form-row">
+      <div class="field"><label>First name •</label><input id="p1First" required type="text" placeholder="As on ID" autocomplete="given-name"></div>
+      <div class="field"><label>Middle name</label><input id="p1Middle" type="text" placeholder="Optional" autocomplete="additional-name"></div>
+      <div class="field"><label>Last name •</label><input id="p1Last" required type="text" placeholder="As on ID" autocomplete="family-name"></div>
+    </div>
+    <div class="form-row half" style="margin-top:8px">
+      <div class="field"><label>Date of birth •</label><input id="p1Dob" required type="date" autocomplete="bday"></div>
+      <div class="field"><label>Gender •</label>
+        <select id="p1Gender" required autocomplete="sex"><option value="" disabled selected>Select</option><option>Female</option><option>Male</option><option>Unspecified</option></select>
       </div>
     </div>
+  </div>
 
-    <button class="btn-lg" id="goPay">Continue</button>`;
-  v.querySelector('#goPay').addEventListener('click',()=>openReviewPay());
-  stepStack.push({title:'Passengers', html:v});
-  renderView('Passengers', v);
-}
+  <button class="btn-lg" id="goPay">Continue</button>`;
+  
+  v.querySelector('#goPay').addEventListener('click', () => {
+  const first = (document.getElementById('p1First').value || '').trim();
+  const middle = (document.getElementById('p1Middle').value || '').trim();
+  const last = (document.getElementById('p1Last').value || '').trim();
+  const dob = document.getElementById('p1Dob').value || '';
+  const gender = document.getElementById('p1Gender').value || '';
+
+  if(!first || !last || !dob || !gender){
+    alert('Please complete required passenger fields.');
+    return;
+  }
+  passengerData = { first, middle, last, dob, gender };
+  openReviewPay();
+});
 
 function openReviewPay(){
   const v=document.createElement('div'); v.className='view';
@@ -1567,6 +1624,7 @@ if (Array.isArray(lastSelection.segments) && lastSelection.segments.length){
   const showStops = Array.isArray(lastSelection.connections) ? '' : '<div class="kv"><span>Stops</span><b>Nonstop</b></div>';
 
   v.innerHTML=`
+  v.querySelector('#btnPay').addEventListener('click', handlePay);
     <div class="panel">
       <div style="font-weight:800; margin-bottom:6px">Your trip</div>
       <div style="font-size:16px; margin-bottom:6px">${lastSelection.from} → ${lastSelection.to}</div>
@@ -1586,28 +1644,99 @@ if (Array.isArray(lastSelection.segments) && lastSelection.segments.length){
     </div>
 
     <div class="panel">
-      <h3>Credit / debit card</h3>
-      <div class="form-row">
-        <div class="field"><label>Card number •</label><input type="text" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456"></div>
-        <div class="form-row half">
-          <div class="field"><label>Expiry date •</label><input type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY"></div>
-          <div class="field"><label>Security code •</label><input type="text" inputmode="numeric" autocomplete="cc-csc" placeholder="CVV" maxlength="4"></div>
-        </div>
-        <div class="field"><label>Billing address •</label><input type="text" autocomplete="address-line1" placeholder="Street address"></div>
-        <div class="form-row half">
-          <div class="field"><label>Cardholder name •</label><input type="text" autocomplete="cc-name" placeholder="Full name"></div>
-          <div class="field"><label>Postal code •</label><input type="text" autocomplete="postal-code" placeholder="ZIP / Postal"></div>
-        </div>
-      </div>
-      <label class="agree"><input type="checkbox"><span>I agree to the terms and conditions, refund policy, and conditions of carriage.</span></label>
-      <button class="btn-lg">Pay now</button>
-      <div class="muted" style="display:flex; align-items:center; gap:6px; margin-top:8px">
-        <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.25 3.438 10.063 9 12 5.563-1.938 9-6.75 9-12V5l-9-4z" fill="none" stroke="#9aa3af" stroke-width="1.5"/></svg>
-        Secure checkout
-      </div>
-    </div>`;
+  <h3>Credit / debit card</h3>
+  <div class="form-row">
+    <div class="field"><label>Card number •</label><input id="ccNumber" type="text" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456"></div>
+    <div class="form-row half">
+      <div class="field"><label>Expiry date •</label><input id="ccExp" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY"></div>
+      <div class="field"><label>Security code •</label><input id="ccCvv" type="text" inputmode="numeric" autocomplete="cc-csc" placeholder="CVV" maxlength="4"></div>
+    </div>
+    <div class="field"><label>Billing address •</label><input type="text" autocomplete="address-line1" placeholder="Street address"></div>
+    <div class="form-row half">
+      <div class="field"><label>Cardholder name •</label><input id="ccName" type="text" autocomplete="cc-name" placeholder="Full name"></div>
+      <div class="field"><label>Postal code •</label><input type="text" autocomplete="postal-code" placeholder="ZIP / Postal"></div>
+    </div>
+  </div>
+  <label class="agree"><input id="agreeCheckbox" type="checkbox"><span>I agree to the terms and conditions, refund policy, and conditions of carriage.</span></label>
+  <button class="btn-lg" id="btnPay">Pay now</button>
+  <div class="muted" style="display:flex; align-items:center; gap:6px; margin-top:8px">
+    <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.25 3.438 10.063 9 12 5.563-1.938 9-6.75 9-12V5l-9-4z" fill="none" stroke="#9aa3af" stroke-width="1.5"/></svg>
+    Secure checkout
+  </div>
+</div>
   stepStack.push({title:'Review and pay', html:v});
   renderView('Review and pay', v);
+}
+
+function handlePay(){
+  const agree = document.getElementById('agreeCheckbox')?.checked;
+  const ccNumber = (document.getElementById('ccNumber')?.value || '').replace(/\s+/g,'');
+  const ccExp = (document.getElementById('ccExp')?.value || '').trim();
+  const ccCvv = (document.getElementById('ccCvv')?.value || '').trim();
+  const ccName = (document.getElementById('ccName')?.value || '').trim();
+
+  if(!ccNumber || !ccExp || !ccCvv || !ccName){
+    alert('Please complete card details.');
+    return;
+  }
+  if(!agree){
+    alert('Please agree to the terms.');
+    return;
+  }
+  showProcessing();
+  setTimeout(showConfirmation, 5000);  // 5 seconds
+}
+
+function showProcessing(){
+  const v = document.createElement('div'); v.className='view';
+  v.innerHTML = `
+    <div class="glass processing">
+      <div class="spinner" aria-hidden="true"></div>
+      <div style="font-weight:800; font-size:18px">Processing transaction</div>
+      <div class="muted">Booking… please wait</div>
+    </div>
+  `;
+  stepStack.push({title:'Processing…', html:v});
+  renderView('Processing…', v);
+}
+
+function showConfirmation(){
+  const p = passengerData || {};
+  const fullName = [p.first, p.middle, p.last].filter(Boolean).join(' ');
+  const bookingRef = randDigits(6);
+  const ticketNo  = randDigits(23);
+
+  const v = document.createElement('div'); v.className='view';
+  v.innerHTML = `
+    <div class="glass" style="padding:18px 16px 14px;">
+      <div class="check-wrap" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <div class="confirm-title" style="color:#63d488">Thank you for your purchase</div>
+      <div class="confirm-sub">Your booking is confirmed</div>
+
+      <div class="panel" style="margin-top:12px">
+        <div class="kv"><span>Booking reference</span><b class="mono">${bookingRef}</b></div>
+        <div class="kv"><span>e-Ticket number</span><b class="mono">${ticketNo}</b></div>
+      </div>
+
+      <div class="panel">
+        <div class="kv"><span>Passenger</span><b>${fullName || 'Passenger 1'}</b></div>
+        <div class="kv"><span>Route</span><b>${lastSelection.from} → ${lastSelection.to}</b></div>
+        <div class="kv"><span>Date</span><b>${formatDate(lastSelection.travelDate)}</b></div>
+        <div class="kv"><span>Times</span><b>${lastSelection.depart} → ${lastSelection.arrive} ${lastSelection.plusOne?'<span class="muted">+1</span>':''}</b></div>
+        <div class="kv"><span>Carrier</span><b>${lastSelection.carrier || ''}</b></div>
+        <div class="kv"><span>Amount paid</span><b>$${lastSelection.price.toLocaleString()}</b></div>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:8px">
+        <button class="btn-lg" style="flex:1" id="btnDone">Done</button>
+      </div>
+    </div>
+  `;
+  v.querySelector('#btnDone').addEventListener('click', () => { closeSheet(); });
+  stepStack.push({title:'Booking confirmed', html:v});
+  renderView('Booking confirmed', v);
 }
 
 /* -------------------- Search handler -------------------- */
