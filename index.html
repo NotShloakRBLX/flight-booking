@@ -80,7 +80,7 @@
   @keyframes fadeSlideIn {from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none}}
 
   .results{padding:10px 12px 18px;}
-  .card-result{background:#22252a; border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:14px 14px 10px; margin:12px 4px; box-shadow:0 8px 24px rgba(0,0,0,.35); transition:transform var(--t), box-shadow var(--t), background var(--t)}
+  .card-result{background:#22252a; border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:16px 16px 14px; margin:12px 4px; box-shadow:0 8px 24px rgba(0,0,0,.35); transition:transform var(--t), box-shadow var(--t), background var(--t)}
   .card-result:active{transform:translateY(1px); box-shadow:0 6px 18px rgba(0,0,0,.28); background:#202228}
   .row-top{display:flex; align-items:center; justify-content:space-between; gap:8px}
   .pair{display:flex; align-items:baseline; gap:10px}
@@ -118,65 +118,35 @@
 
   :root { --priceGreen:#63d488; }
 
-.card-result { padding:16px 16px 14px; }  /* reuse your existing card; tighter padding */
-
-.gf-head{display:flex;align-items:center;justify-content:space-between}
-.gf-times{font-size:20px;font-weight:800;letter-spacing:.2px}
-.gf-times .arrow{opacity:.6;margin:0 8px}
-.gf-times sup{font-size:12px; color:var(--muted); margin-left:4px}
-
-.gf-iata{margin-top:2px;font-size:12px;color:#9aa3af;letter-spacing:.2px}
-.gf-meta{margin-top:6px;font-size:14px;color:#cfd6dd}
-.gf-meta .dot{opacity:.6;margin:0 6px}
-.gf-carrier{margin-top:2px;font-size:14px;color:#aab2ba}
-
-.gf-price{font-weight:800;font-size:20px;color:var(--priceGreen)}
-
-.gf-overnight{margin-top:8px;color:#ffcc66;font-size:14px;display:flex;align-items:center;gap:6px}
+  .gf-head{display:flex;align-items:center;justify-content:space-between}
+  .gf-times{font-size:20px;font-weight:800;letter-spacing:.2px}
+  .gf-times .arrow{opacity:.6;margin:0 8px}
+  .gf-times sup{font-size:12px; color:var(--muted); margin-left:4px}
+  .gf-iata{margin-top:2px;font-size:12px;color:#9aa3af;letter-spacing:.2px}
+  .gf-meta{margin-top:6px;font-size:14px;color:#cfd6dd}
+  .gf-meta .dot{opacity:.6;margin:0 6px}
+  .gf-carrier{margin-top:2px;font-size:14px;color:#aab2ba}
+  .gf-price{font-weight:800;font-size:20px;color:var(--priceGreen)}
+  .gf-overnight{margin-top:8px;color:#ffcc66;font-size:14px;display:flex;align-items:center;gap:6px}
 
   /* ---- Processing / Confirmation bits ---- */
-.processing {
-  display:grid; gap:14px; place-items:center; padding:40px 8px;
-  text-align:center;
-}
-.spinner {
-  width:52px; height:52px; border-radius:50%;
-  border:4px solid rgba(255,255,255,.18);
-  border-top-color: var(--accent);
-  animation: spin 1s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+  .processing { display:grid; gap:14px; place-items:center; padding:40px 8px; text-align:center; }
+  .spinner { width:52px; height:52px; border-radius:50%; border:4px solid rgba(255,255,255,.18); border-top-color: var(--accent); animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-.glass {
-  background: rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.14);
-  border-radius: 18px;
-  padding:16px 14px 12px;
-  box-shadow: 0 10px 28px rgba(0,0,0,.35);
-  backdrop-filter: blur(6px);
-}
+  .glass { background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); border-radius: 18px; padding:16px 14px 12px; box-shadow: 0 10px 28px rgba(0,0,0,.35); backdrop-filter: blur(6px); }
 
-.check-wrap{
-  width:72px;height:72px; border-radius:50%;
-  background: rgba(68, 185, 119, .15);
-  display:grid; place-items:center; margin:0 auto 10px;
-  border:1px solid rgba(68,185,119,.25);
-}
-.check-wrap svg{width:40px;height:40px}
-.check-wrap svg *{stroke:#63d488; stroke-width:3; fill:none; stroke-linecap:round; stroke-linejoin:round}
+  .check-wrap{ width:72px;height:72px; border-radius:50%; background: rgba(68, 185, 119, .15); display:grid; place-items:center; margin:0 auto 10px; border:1px solid rgba(68,185,119,.25); }
+  .check-wrap svg{width:40px;height:40px}
+  .check-wrap svg *{stroke:#63d488; stroke-width:3; fill:none; stroke-linecap:round; stroke-linejoin:round}
 
-.confirm-title{font-weight:800; font-size:20px; text-align:center; margin:6px 0 2px}
-.confirm-sub{color:#cfd6dd; text-align:center; margin-bottom:10px}
+  .confirm-title{font-weight:800; font-size:20px; text-align:center; margin:6px 0 2px}
+  .confirm-sub{color:#cfd6dd; text-align:center; margin-bottom:10px}
 
-.badge {
-  display:inline-block; padding:6px 10px; border-radius:999px;
-  background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);
-  font-weight:700; letter-spacing:.3px;
-}
-.mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+  .badge { display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); font-weight:700; letter-spacing:.3px; }
+  .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
 
   .icon { pointer-events: none; }
-
   .select .icon { pointer-events: none; }
   .swap { pointer-events: none; }
 
@@ -186,7 +156,6 @@
     -webkit-appearance: none;
     appearance: none;
   }
-  
 </style>
 </head>
 <body>
@@ -288,7 +257,7 @@ const AIRPORTS = [
   { code:'SAU', name:'Sauthemptona Airport (SAU)' }
 ];
 
-let passengerData = {};  // will hold name/DOB/gender
+let passengerData = {};
 function randDigits(n){ let s=''; for(let i=0;i<n;i++) s += Math.floor(Math.random()*10); return s; }
 function formatDate(iso){ if(!iso) return ''; const d=new Date(iso); return d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}); }
 
@@ -343,21 +312,6 @@ function minutesToTime(mins){
   const ampm = h24 < 12 ? 'AM' : 'PM';
   return `${h12}:${m.toString().padStart(2,'0')} ${ampm}`;
 }
-
-/* One place to compute per-leg timezone offsets (minutes) */
-function tzOffsetMinutes(from, to){
-  // Base: US ↔ JP is ±6h
-  const a = countryOf(from), b = countryOf(to);
-  if (a==='US' && b==='JP') return 360;
-  if (a==='JP' && b==='US') return -360;
-
-  // Within JP group: SAU is +1h vs HND/GRV
-  if ((from==='HND' || from==='GRV') && to==='SAU') return 60;
-  if (from==='SAU' && (to==='HND' || to==='GRV')) return -60;
-
-  return 0;
-}
-  
 function overnightFlag(depMins, arrMins){ const w=t=>t>=0&&t<360; return w(depMins%1440)||w(arrMins%1440); }
 
 /* Airline codes (used on Review & Pay) */
@@ -374,7 +328,7 @@ function countryOf(code){
 }
 function isIntl(a,b){ return countryOf(a) !== countryOf(b); }
 
-/* -------------------- NEW: Aircraft rules per route+airline -------------------- */
+/* -------------------- Aircraft rules -------------------- */
 const AIRCRAFT_RULES = {
   'PER-RFD': {
     'American Airlines':['A320','B737'],
@@ -514,26 +468,6 @@ const AIRCRAFT_RULES = {
   }
 };
 
-/* Which routes require connections + their allowed connection patterns and price ranges */
-const CONNECTION_RULES = {
-  'RFD-SAU': { price:[1000,1300], patterns:[ ['HND'] ] },
-
-  'HND-PER': { price:[900,1300], patterns:[ ['RFD'], ['IZO'], ['GRV'] ] },
-  'PER-SAU': { price:[1100,1350], patterns:[ ['GRV'], ['IZO','HND'], ['IZO','GRV'] ] },
-
-  'HND-MLR': { price:[950,1150], patterns:[ ['RFD'], ['IZO'], ['LCA'] ] },
-  'GRV-MLR': { price:[1000,1250], patterns:[ ['RFD'], ['RFD','HND'], ['IZO','HND'], ['IZO'], ['LCA'] ] },
-  'MLR-SAU': { price:[1150,1350], patterns:[ ['RFD','HND'], ['IZO','GRV'], ['LCA','GRV'] ] },
-
-  'IZO-SAU': { price:[1000,1150], patterns:[ ['GRV'], ['HND','GRV'] ] },
-
-  'HND-PHP': { price:[1100,1250], patterns:[ ['LCA'], ['RFD'], ['IZO'] ] },
-  'GRV-PHP': { price:[1100,1350], patterns:[ ['LCA'], ['RFD'], ['IZO'] ] },
-  'PHP-SAU': { price:[1250,1400], patterns:[ ['LCA','GRV'], ['LCA','HND'], ['RFD','HND','GRV'], ['IZO','GRV'] ] },
-
-  'LCA-SAU': { price:[950,1250], patterns:[ ['GRV'], ['HND'], ['IZO','HND'] ] }
-};
-
 function routeKey(a,b){ return [a,b].sort().join('-'); }
 function pickAircraft(fromCode,toCode,carrier){
   const rules = AIRCRAFT_RULES[routeKey(fromCode,toCode)];
@@ -542,7 +476,7 @@ function pickAircraft(fromCode,toCode,carrier){
   return list[randInt(0, list.length-1)];
 }
 
-/* -------------------- Route generators -------------------- */
+/* -------------------- Route builders (NONSTOP ONLY) -------------------- */
 function buildRfdPerResults(from,to){
   const carriers=['American Airlines','JetBlue',...shuffle(['United','Spirit','Southwest','Delta'])];
   const depTimes=randomUniqueTimes(6);
@@ -604,7 +538,7 @@ function buildRfdHndResults(fromCode, toCode){
   const carriers = [...firstSix, ...lastSix];
 
   const depTimes  = randomUniqueTimes(12);
-  const durations = Array.from({length:12}, () => randInt(510, 720));  // 8h30–12h
+  const durations = Array.from({length:12}, () => randInt(510, 720));  // 8.5–12h
   const prices    = Array.from({length:12}, () => randInt(900, 1100));
 
   const tzDelta =
@@ -616,23 +550,19 @@ function buildRfdHndResults(fromCode, toCode){
     const dur     = durations[i];
     const arrMins = depMins + dur + tzDelta;
     return {
-      from: fromCode,
-      to: toCode,
-      depart: minutesToTime(depMins),
-      arrive: minutesToTime(arrMins),
+      from: fromCode, to: toCode,
+      depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
       plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
       durationMin: dur,
       durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop: true,
-      price: prices[i],
-      carrier,
+      nonstop: true, price: prices[i], carrier,
       overnight: overnightFlag(depMins, arrMins),
       aircraft: pickAircraft(fromCode,toCode,carrier)
     };
   });
 }
 
-  function buildRfdMlrResults(from,to){
+function buildRfdMlrResults(from,to){
   const carriers=['American Airlines','JetBlue','United',...shuffle(['American Airlines','United','JetBlue'])];
   const depTimes=randomUniqueTimes(6), durations=Array.from({length:6},()=>randInt(30,60)), prices=Array.from({length:6},()=>randInt(150,250));
   return carriers.map((c,idx)=>{const d=depTimes[idx],du=durations[idx],a=d+du;return{
@@ -644,17 +574,10 @@ function buildRfdHndResults(fromCode, toCode){
   }});
 }
 
-/* RFD ↔ GRV (Grindavik)
-   - 1 option
-   - Airline: United
-   - Aircraft: B787 (from AIRCRAFT_RULES)
-   - Price: $850–$1100
-   - Duration: 6h–8h (360–480 min)
-   - Time zone: JP is +6h vs US (apply ±360 min)
-*/
+/* RFD ↔ GRV (Grindavik) */
 function buildRfdGrvResults(fromCode, toCode){
-  const depMins = randInt(0, 1439);            // random departure time (min-of-day)
-  const dur     = randInt(360, 480);           // 6–8 hours
+  const depMins = randInt(0, 1439);
+  const dur     = randInt(360, 480); // 6–8h
   const tzDelta =
     (countryOf(fromCode) === 'US' && countryOf(toCode) === 'JP') ? 360 :
     (countryOf(fromCode) === 'JP' && countryOf(toCode) === 'US') ? -360 : 0;
@@ -663,615 +586,383 @@ function buildRfdGrvResults(fromCode, toCode){
   const price   = randInt(850, 1100);
 
   return [{
-    from: fromCode,
-    to: toCode,
-    depart: minutesToTime(depMins),
-    arrive: minutesToTime(arrMins),
+    from: fromCode, to: toCode,
+    depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
     plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
-    durationMin: dur,
-    durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-    nonstop: true,
-    price,
-    carrier: 'United',
+    durationMin: dur, durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+    nonstop: true, price, carrier: 'United',
     overnight: overnightFlag(depMins, arrMins),
-    aircraft: pickAircraft(fromCode, toCode, 'United') // → 'B787'
+    aircraft: pickAircraft(fromCode, toCode, 'United')
   }];
 }
 
 function buildPerIzoResults(from, to){
-  // 4 American Airlines options
   const carriers = Array(4).fill('American Airlines');
-
-  const depTimes  = randomUniqueTimes(4);                     // unique dep times
-  const durations = Array.from({length:4}, () => randInt(30, 60)); // 30–60 min
-  const prices    = Array.from({length:4}, () => randInt(150, 250)); // $150–$250
-
+  const depTimes  = randomUniqueTimes(4);
+  const durations = Array.from({length:4}, () => randInt(30, 60));
+  const prices    = Array.from({length:4}, () => randInt(150, 250));
   return carriers.map((carrier, i) => {
-    const depMins = depTimes[i];
-    const dur     = durations[i];
-    const arrMins = depMins + dur;
+    const depMins = depTimes[i], dur = durations[i], arrMins = depMins + dur;
     return {
       from, to,
-      depart: minutesToTime(depMins),
-      arrive: minutesToTime(arrMins),
+      depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
       plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
       durationMin: dur,
       durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop: true,
-      price: prices[i],
-      carrier,
+      nonstop: true, price: prices[i], carrier,
       overnight: overnightFlag(depMins, arrMins),
-      aircraft: pickAircraft(from, to, carrier)  // → CRJ700 or E190 (random)
+      aircraft: pickAircraft(from, to, carrier)
     };
   });
 }
 
 function buildPerMlrResults(from, to){
-  // 6 options: first 3 fixed order, last 3 fixed order
-  const carriers = [
-    'American Airlines', 'JetBlue', 'United',
-    'Southwest', 'Delta', 'United'
-  ];
-
+  const carriers = ['American Airlines', 'JetBlue', 'United','Southwest', 'Delta', 'United'];
   const depTimes  = randomUniqueTimes(6);
-  const durations = Array.from({length:6}, () => randInt(120, 180)); // 2h–3h
-  const prices    = Array.from({length:6}, () => randInt(250, 600)); // $250–$600
-
+  const durations = Array.from({length:6}, () => randInt(120, 180));
+  const prices    = Array.from({length:6}, () => randInt(250, 600));
   return carriers.map((carrier, i) => {
-    const depMins = depTimes[i];
-    const dur     = durations[i];
-    const arrMins = depMins + dur;
+    const depMins = depTimes[i], dur = durations[i], arrMins = depMins + dur;
     return {
       from, to,
-      depart: minutesToTime(depMins),
-      arrive: minutesToTime(arrMins),
+      depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
       plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
       durationMin: dur,
       durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop: true,
-      price: prices[i],
-      carrier,
+      nonstop: true, price: prices[i], carrier,
       overnight: overnightFlag(depMins, arrMins),
-      aircraft: pickAircraft(from, to, carrier) // uses MLR-PER rules above
+      aircraft: pickAircraft(from, to, carrier)
     };
   });
 }
 
- function buildPerLcaResults(from, to){
-  // 6 options:
-  // First 3 fixed: American, Delta, Delta
-  // Remaining 3 fixed: Spirit, United, American
-  const carriers = [
-    'American Airlines', 'Delta', 'Delta',
-    'Spirit', 'United', 'American Airlines'
-  ];
-
+function buildPerLcaResults(from, to){
+  const carriers = ['American Airlines', 'Delta', 'Delta','Spirit', 'United', 'American Airlines'];
   const depTimes  = randomUniqueTimes(6);
-  const durations = Array.from({length:6}, () => randInt(120, 180)); // 2h–3h
-  const prices    = Array.from({length:6}, () => randInt(250, 550)); // $250–$550
-
+  const durations = Array.from({length:6}, () => randInt(120, 180));
+  const prices    = Array.from({length:6}, () => randInt(250, 550));
   return carriers.map((carrier, i) => {
-    const depMins = depTimes[i];
-    const dur     = durations[i];
-    const arrMins = depMins + dur;
+    const depMins = depTimes[i], dur = durations[i], arrMins = depMins + dur;
     return {
       from, to,
-      depart: minutesToTime(depMins),
-      arrive: minutesToTime(arrMins),
+      depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
       plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
       durationMin: dur,
       durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop: true,
-      price: prices[i],
-      carrier,
+      nonstop: true, price: prices[i], carrier,
       overnight: overnightFlag(depMins, arrMins),
-      aircraft: pickAircraft(from, to, carrier) // uses LCA-PER rules above
+      aircraft: pickAircraft(from, to, carrier)
     };
   });
 }
 
 function buildPerPhpResults(from, to){
-  // 5 options:
-  // First 3 fixed: American, Delta, United
-  // Remaining 2 fixed: Spirit, Southwest
-  const carriers = [
-    'American Airlines', 'Delta', 'United',
-    'Spirit', 'Southwest'
-  ];
-
+  const carriers = ['American Airlines', 'Delta', 'United','Spirit', 'Southwest'];
   const depTimes  = randomUniqueTimes(5);
-  const durations = Array.from({length:5}, () => randInt(120, 180)); // 2h–3h
-  const prices    = Array.from({length:5}, () => randInt(250, 550)); // $250–$550
-
+  const durations = Array.from({length:5}, () => randInt(120, 180));
+  const prices    = Array.from({length:5}, () => randInt(250, 550));
   return carriers.map((carrier, i) => {
-    const depMins = depTimes[i];
-    const dur     = durations[i];
-    const arrMins = depMins + dur;
+    const depMins = depTimes[i], dur = durations[i], arrMins = depMins + dur;
     return {
       from, to,
-      depart: minutesToTime(depMins),
-      arrive: minutesToTime(arrMins),
+      depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
       plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
       durationMin: dur,
       durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop: true,
-      price: prices[i],
-      carrier,
+      nonstop: true, price: prices[i], carrier,
       overnight: overnightFlag(depMins, arrMins),
-      aircraft: pickAircraft(from, to, carrier) // uses PER-PHP rules above
+      aircraft: pickAircraft(from, to, carrier)
     };
   });
 }
 
 function buildPerGrvResults(from, to){
-  // 1 option, Qantas, A350, 10h–12h30m, $950–$1200
   const carrier = 'Qantas';
-
   const depMins  = randomUniqueTimes(1)[0];
-  const duration = randInt(600, 750); // 10h–12h30m (minutes)
-
-  // If you want the same US↔JP offset behavior as other JP routes:
+  const duration = randInt(600, 750);
   const tzDelta =
     (countryOf(from) === 'US' && countryOf(to) === 'JP') ? 360 :
     (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
-
   const arrMins = depMins + duration + tzDelta;
   const price   = randInt(950, 1200);
-
   return [{
     from, to,
-    depart: minutesToTime(depMins),
-    arrive: minutesToTime(arrMins),
+    depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
     plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
     durationMin: duration,
     durationText: `${Math.floor(duration/60)}h ${String(duration%60).padStart(2,'0')}m`,
-    nonstop: true,
-    price,
-    carrier,
+    nonstop: true, price, carrier,
     overnight: overnightFlag(depMins, arrMins),
-    aircraft: pickAircraft(from, to, carrier) // → 'A350' per GRV-PER rules
+    aircraft: pickAircraft(from, to, carrier)
   }];
 }
 
 function buildMlrIzoResults(from, to){
-  // 6 options:
-  // First 3: American (x3)
-  // Last 3: United (x2), Delta (x1)
-  const carriers = [
-    'American Airlines', 'American Airlines', 'American Airlines',
-    'United', 'United', 'Delta'
-  ];
-
+  const carriers = ['American Airlines', 'American Airlines', 'American Airlines','United', 'United', 'Delta'];
   const depTimes  = randomUniqueTimes(6);
-  const durations = Array.from({length:6}, () => randInt(120, 180)); // 2–3h
-  const prices    = Array.from({length:6}, () => randInt(250, 600)); // $250–$600
-
+  const durations = Array.from({length:6}, () => randInt(120, 180));
+  const prices    = Array.from({length:6}, () => randInt(250, 600));
   return carriers.map((carrier, i) => {
-    const depMins = depTimes[i];
-    const dur     = durations[i];
-    const arrMins = depMins + dur;
+    const depMins = depTimes[i], dur = durations[i], arrMins = depMins + dur;
     return {
       from, to,
-      depart: minutesToTime(depMins),
-      arrive: minutesToTime(arrMins),
+      depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
       plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
       durationMin: dur,
       durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop: true,
-      price: prices[i],
-      carrier,
+      nonstop: true, price: prices[i], carrier,
       overnight: overnightFlag(depMins, arrMins),
-      aircraft: pickAircraft(from, to, carrier) // uses IZO-MLR rules above
+      aircraft: pickAircraft(from, to, carrier)
     };
   });
 }
 
 function buildMlrLcaResults(from, to){
-  // 6 options:
-  // First 3: Delta (x2), United (x1)
-  // Last 3: Spirit, United, American
-  const carriers = [
-    'Delta', 'Delta', 'United',
-    'Spirit', 'United', 'American Airlines'
-  ];
-
+  const carriers = ['Delta', 'Delta', 'United','Spirit', 'United', 'American Airlines'];
   const depTimes  = randomUniqueTimes(6);
-  const durations = Array.from({length:6}, () => randInt(90, 120)); // 1h30m–2h
-  const prices    = Array.from({length:6}, () => randInt(250, 550)); // $250–$550
-
+  const durations = Array.from({length:6}, () => randInt(90, 120));
+  const prices    = Array.from({length:6}, () => randInt(250, 550));
   return carriers.map((carrier, i) => {
-    const depMins = depTimes[i];
-    const dur     = durations[i];
-    const arrMins = depMins + dur;
+    const depMins = depTimes[i], dur = durations[i], arrMins = depMins + dur;
     return {
       from, to,
-      depart: minutesToTime(depMins),
-      arrive: minutesToTime(arrMins),
+      depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
       plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
       durationMin: dur,
       durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop: true,
-      price: prices[i],
-      carrier,
+      nonstop: true, price: prices[i], carrier,
       overnight: overnightFlag(depMins, arrMins),
-      aircraft: pickAircraft(from, to, carrier) // uses LCA-MLR rules above
+      aircraft: pickAircraft(from, to, carrier)
     };
   });
 }
 
 function buildMlrPhpResults(from, to){
-  // 4 options:
-  // First 2: American, United
-  // Last 2:  Delta,   United
-  const carriers = [
-    'American Airlines', 'United',
-    'Delta', 'United'
-  ];
-
+  const carriers = ['American Airlines', 'United','Delta', 'United'];
   const depTimes  = randomUniqueTimes(4);
-  const durations = Array.from({length:4}, () => randInt(90, 120)); // 1h30m–2h
-  const prices    = Array.from({length:4}, () => randInt(250, 550)); // $250–$550
-
+  const durations = Array.from({length:4}, () => randInt(90, 120));
+  const prices    = Array.from({length:4}, () => randInt(250, 550));
   return carriers.map((carrier, i) => {
-    const depMins = depTimes[i];
-    const dur     = durations[i];
-    const arrMins = depMins + dur;
+    const depMins = depTimes[i], dur = durations[i], arrMins = depMins + dur;
     return {
       from, to,
-      depart: minutesToTime(depMins),
-      arrive: minutesToTime(arrMins),
+      depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
       plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
       durationMin: dur,
       durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop: true,
-      price: prices[i],
-      carrier,
+      nonstop: true, price: prices[i], carrier,
       overnight: overnightFlag(depMins, arrMins),
-      aircraft: pickAircraft(from, to, carrier) // uses MLR-PHP rules above
+      aircraft: pickAircraft(from, to, carrier)
     };
   });
 }
 
 function buildIzoLcaResults(from, to){
-  // 6 options:
-  // First 3: American (x2), Delta (x1)
-  // Last 3:  Delta   (x2), United (x1)
-  const carriers = [
-    'American Airlines', 'American Airlines', 'Delta',
-    'Delta', 'Delta', 'United'
-  ];
-
+  const carriers = ['American Airlines', 'American Airlines', 'Delta','Delta', 'Delta', 'United'];
   const depTimes  = randomUniqueTimes(6);
-  const durations = Array.from({length:6}, () => randInt(90, 120)); // 1h30m–2h
-  const prices    = Array.from({length:6}, () => randInt(250, 550)); // $250–$550
-
+  const durations = Array.from({length:6}, () => randInt(90, 120));
+  const prices    = Array.from({length:6}, () => randInt(250, 550));
   return carriers.map((carrier, i) => {
-    const depMins = depTimes[i];
-    const dur     = durations[i];
-    const arrMins = depMins + dur;
+    const depMins = depTimes[i], dur = durations[i], arrMins = depMins + dur;
     return {
       from, to,
-      depart: minutesToTime(depMins),
-      arrive: minutesToTime(arrMins),
+      depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
       plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
       durationMin: dur,
       durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop: true,
-      price: prices[i],
-      carrier,
+      nonstop: true, price: prices[i], carrier,
       overnight: overnightFlag(depMins, arrMins),
-      aircraft: pickAircraft(from, to, carrier) // uses IZO-LCA rules above
+      aircraft: pickAircraft(from, to, carrier)
     };
   });
 }
 
 function buildIzoPhpResults(from, to){
-  // 4 options: American (x2), Spirit (x2)
-  const carriers = [
-    'American Airlines', 'American Airlines',
-    'Spirit', 'Spirit'
-  ];
-
+  const carriers = ['American Airlines', 'American Airlines','Spirit', 'Spirit'];
   const depTimes  = randomUniqueTimes(4);
-  const durations = Array.from({length:4}, () => randInt(90, 120)); // 1h30m–2h
-  const prices    = Array.from({length:4}, () => randInt(250, 550)); // $250–$550
-
+  const durations = Array.from({length:4}, () => randInt(90, 120));
+  const prices    = Array.from({length:4}, () => randInt(250, 550));
   return carriers.map((carrier, i) => {
-    const depMins = depTimes[i];
-    const dur     = durations[i];
-    const arrMins = depMins + dur;
+    const depMins = depTimes[i], dur = durations[i], arrMins = depMins + dur;
     return {
       from, to,
-      depart: minutesToTime(depMins),
-      arrive: minutesToTime(arrMins),
+      depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
       plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
       durationMin: dur,
       durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop: true,
-      price: prices[i],
-      carrier,
+      nonstop: true, price: prices[i], carrier,
       overnight: overnightFlag(depMins, arrMins),
-      aircraft: pickAircraft(from, to, carrier) // uses IZO-PHP rules above
+      aircraft: pickAircraft(from, to, carrier)
     };
   });
 }
 
 function buildIzoHndResults(from, to){
-  // 3 options — all American; aircraft B777 via AIRCRAFT_RULES
   const carriers = ['American Airlines','American Airlines','American Airlines'];
-
-  // Fixed departure times (local): 6:45 PM, 8:20 PM, 11:40 PM
-  const fixedDepTimes = [
-    18*60 + 45,  // 6:45 PM → 1125
-    20*60 + 20,  // 8:20 PM → 1220
-    23*60 + 40   // 11:40 PM → 1420
-  ];
-
-  // Randomized durations 7h–8h30m (420–510 min)
+  const fixedDepTimes = [18*60 + 45, 20*60 + 20, 23*60 + 40];
   const durations = Array.from({length:3}, () => randInt(420, 510));
-
-  // Randomized prices $850–$1100
   const prices = Array.from({length:3}, () => randInt(850, 1100));
-
-  // Timezone offset per your rule: HND is +6h vs US airports
   const tzDelta =
     (countryOf(from) === 'US' && countryOf(to) === 'JP') ? 360 :
     (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
-
   return carriers.map((carrier, i) => {
-    const depMins = fixedDepTimes[i];      // NOT randomized
-    const dur     = durations[i];          // randomized
-    const arrMins = depMins + dur + tzDelta;
-
+    const depMins = fixedDepTimes[i], dur = durations[i], arrMins = depMins + dur + tzDelta;
     return {
       from, to,
-      depart: minutesToTime(depMins),
-      arrive: minutesToTime(arrMins),
+      depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
       plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
-      durationMin: dur,
-      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop: true,
-      price: prices[i],
-      carrier,
+      durationMin: dur, durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true, price: prices[i], carrier,
       overnight: overnightFlag(depMins, arrMins),
-      aircraft: pickAircraft(from, to, carrier) // → B777
+      aircraft: pickAircraft(from, to, carrier)
     };
   });
 }
 
 function buildIzoGrvResults(from, to){
-  // 1 option — Lufthansa (A350), 11h–12h30m, $900–$1200
   const carrier = 'Lufthansa';
-
-  // Fixed departure time: 6:40 PM
-  const depMins  = 18*60 + 40;   // 1120
-
-  // Random duration: 11h–12h30m (660–750 min)
+  const depMins  = 18*60 + 40;
   const dur      = randInt(660, 750);
-
-  // Timezone: GRV is JP group; IZO is US group → +6h when US→JP, -6h when JP→US
   const tzDelta =
     (countryOf(from) === 'US' && countryOf(to) === 'JP') ? 360 :
     (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
-
   const arrMins = depMins + dur + tzDelta;
   const price   = randInt(900, 1200);
-
   return [{
     from, to,
-    depart: minutesToTime(depMins),                  // fixed dep time
-    arrive: minutesToTime(arrMins),                  // calculated from dur + tz
+    depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
     plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
     durationMin: dur,
     durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-    nonstop: true,
-    price,
-    carrier,
+    nonstop: true, price, carrier,
     overnight: overnightFlag(depMins, arrMins),
-    aircraft: pickAircraft(from, to, carrier)       // → 'A350' per GRV-IZO rules
+    aircraft: pickAircraft(from, to, carrier)
   }];
 }
 
 function buildLcaPhpResults(from, to){
-  // 6 options — all Delta
   const carriers = Array(6).fill('Delta');
-
   const depTimes  = randomUniqueTimes(6);
-  const durations = Array.from({length:6}, () => randInt(30, 60));  // 30m–1h
-  const prices    = Array.from({length:6}, () => randInt(100, 250)); // $100–$250
-
+  const durations = Array.from({length:6}, () => randInt(30, 60));
+  const prices    = Array.from({length:6}, () => randInt(100, 250));
   return carriers.map((carrier, i) => {
-    const depMins = depTimes[i];
-    const dur     = durations[i];
-    const arrMins = depMins + dur;
-
+    const depMins = depTimes[i], dur = durations[i], arrMins = depMins + dur;
     return {
       from, to,
-      depart: minutesToTime(depMins),
-      arrive: minutesToTime(arrMins),
+      depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
       plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
-      durationMin: dur,
-      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop: true,
-      price: prices[i],
-      carrier,
+      durationMin: dur, durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true, price: prices[i], carrier,
       overnight: overnightFlag(depMins, arrMins),
-      aircraft: pickAircraft(from, to, carrier)   // → CRJ700 or E190
+      aircraft: pickAircraft(from, to, carrier)
     };
   });
 }
 
 function buildLcaHndResults(from, to){
-  // 3 options in this order: Delta, Singapore, Emirates
   const carriers = ['Delta', 'Singapore', 'Emirates'];
-
   const depTimes  = randomUniqueTimes(3);
-  const durations = Array.from({length:3}, () => randInt(720, 960));   // 12h–16h
-  const prices    = Array.from({length:3}, () => randInt(950, 1250));  // $950–$1,250
-
-  // HND is JP group; LCA is US group in your mapping → +6h US→JP, -6h JP→US
+  const durations = Array.from({length:3}, () => randInt(720, 960));
+  const prices    = Array.from({length:3}, () => randInt(950, 1250));
   const tzDelta =
     (countryOf(from) === 'US' && countryOf(to) === 'JP') ? 360 :
     (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
-
   return carriers.map((carrier, i) => {
-    const depMins = depTimes[i];
-    const dur     = durations[i];
-    const arrMins = depMins + dur + tzDelta;
-
+    const depMins = depTimes[i], dur = durations[i], arrMins = depMins + dur + tzDelta;
     return {
       from, to,
-      depart: minutesToTime(depMins),
-      arrive: minutesToTime(arrMins),
+      depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
       plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
-      durationMin: dur,
-      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop: true,
-      price: prices[i],
-      carrier,
+      durationMin: dur, durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true, price: prices[i], carrier,
       overnight: overnightFlag(depMins, arrMins),
-      aircraft: pickAircraft(from, to, carrier) // uses HND-LCA rules above
+      aircraft: pickAircraft(from, to, carrier)
     };
   });
 }
 
 function buildLcaGrvResults(from, to){
-  // 1 option — Delta (A350), 10h–11h, $900–$1,150
   const carrier = 'Delta';
-
   const depMins  = randomUniqueTimes(1)[0];
-  const dur      = randInt(600, 660); // 10h–11h
-  // GRV is JP group, LCA is US group → ±6h offset
+  const dur      = randInt(600, 660);
   const tzDelta =
     (countryOf(from) === 'US' && countryOf(to) === 'JP') ? 360 :
     (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
-
   const arrMins  = depMins + dur + tzDelta;
   const price    = randInt(900, 1150);
-
   return [{
     from, to,
-    depart: minutesToTime(depMins),
-    arrive: minutesToTime(arrMins),
+    depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
     plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
-    durationMin: dur,
-    durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-    nonstop: true,
-    price,
-    carrier,
+    durationMin: dur, durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+    nonstop: true, price, carrier,
     overnight: overnightFlag(depMins, arrMins),
-    aircraft: pickAircraft(from, to, carrier) // → A350 per GRV-LCA rules
+    aircraft: pickAircraft(from, to, carrier)
   }];
 }
 
 function buildHndGrvResults(from, to){
-  // 6 options in this fixed order:
-  // First 3: Lufthansa, CEBU Pacific, British Airways
-  // Last 3:  Qatar Airways, Condor, easyJet
-  const carriers = [
-    'Lufthansa', 'CEBU Pacific', 'British Airways',
-    'Qatar Airways', 'Condor', 'easyJet'
-  ];
-
+  const carriers = ['Lufthansa', 'CEBU Pacific', 'British Airways','Qatar Airways', 'Condor', 'easyJet'];
   const depTimes  = randomUniqueTimes(6);
-  const durations = Array.from({length:6}, () => randInt(120, 180)); // 2h–3h
-  const prices    = Array.from({length:6}, () => randInt(250, 600)); // $250–$600
-
-  // Both HND and GRV are in the JP group per your country mapping → tzDelta = 0
+  const durations = Array.from({length:6}, () => randInt(120, 180));
+  const prices    = Array.from({length:6}, () => randInt(250, 600));
   const tzDelta =
     (countryOf(from) === 'US' && countryOf(to) === 'JP') ? 360 :
     (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
-
   return carriers.map((carrier, i) => {
-    const depMins = depTimes[i];
-    const dur     = durations[i];
-    const arrMins = depMins + dur + tzDelta;
-
+    const depMins = depTimes[i], dur = durations[i], arrMins = depMins + dur + tzDelta;
     return {
       from, to,
-      depart: minutesToTime(depMins),
-      arrive: minutesToTime(arrMins),
+      depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
       plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
-      durationMin: dur,
-      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop: true,
-      price: prices[i],
-      carrier,
+      durationMin: dur, durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true, price: prices[i], carrier,
       overnight: overnightFlag(depMins, arrMins),
-      aircraft: pickAircraft(from, to, carrier) // uses GRV-HND rules above
+      aircraft: pickAircraft(from, to, carrier)
     };
   });
 }
 
 function buildHndSauResults(from, to){
-  // 6 options in this fixed order:
-  // First 3: SWISS, Qatar, Lufthansa
-  // Last 3:  British Airways, Condor, SWISS
-  const carriers = [
-    'SWISS', 'Qatar Airways', 'Lufthansa',
-    'British Airways', 'Condor', 'SWISS'
-  ];
-
+  const carriers = ['SWISS', 'Qatar Airways', 'Lufthansa','British Airways', 'Condor', 'SWISS'];
   const depTimes  = randomUniqueTimes(6);
-  const durations = Array.from({length:6}, () => randInt(180, 240)); // 3h–4h
-  const prices    = Array.from({length:6}, () => randInt(250, 650)); // $250–$650
-
-  // SAU is +1h vs HND/GRV (both JP group). Apply within-JP offset here.
+  const durations = Array.from({length:6}, () => randInt(180, 240));
+  const prices    = Array.from({length:6}, () => randInt(250, 650));
   let tzDelta = 0;
-  if (from === 'HND' && to === 'SAU') tzDelta = 60;      // JP → SAU: +1h
-  else if (from === 'SAU' && to === 'HND') tzDelta = -60; // SAU → JP: -1h
-
+  if (from === 'HND' && to === 'SAU') tzDelta = 60;
+  else if (from === 'SAU' && to === 'HND') tzDelta = -60;
   return carriers.map((carrier, i) => {
-    const depMins = depTimes[i];
-    const dur     = durations[i];
-    const arrMins = depMins + dur + tzDelta;
-
+    const depMins = depTimes[i], dur = durations[i], arrMins = depMins + dur + tzDelta;
     return {
       from, to,
-      depart: minutesToTime(depMins),
-      arrive: minutesToTime(arrMins),
+      depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
       plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
-      durationMin: dur,
-      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop: true,
-      price: prices[i],
-      carrier,
+      durationMin: dur, durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true, price: prices[i], carrier,
       overnight: overnightFlag(depMins, arrMins),
-      aircraft: pickAircraft(from, to, carrier) // uses HND-SAU rules above
+      aircraft: pickAircraft(from, to, carrier)
     };
   });
 }
 
 function buildGrvSauResults(from, to){
-  // 4 options: SWISS (2), easyJet (2)
   const carriers = ['SWISS','SWISS','easyJet','easyJet'];
-
   const depTimes  = randomUniqueTimes(4);
-  const durations = Array.from({length:4}, () => randInt(90, 150));   // 1h30m–2h30m
-  const prices    = Array.from({length:4}, () => randInt(250, 550));  // $250–$550
-
-  // SAU is +1h vs GRV (both "JP group"); apply within-JP offset
+  const durations = Array.from({length:4}, () => randInt(90, 150));
+  const prices    = Array.from({length:4}, () => randInt(250, 550));
   let tzDelta = 0;
-  if (from === 'GRV' && to === 'SAU') tzDelta = 60;       // GRV → SAU: +1h
-  else if (from === 'SAU' && to === 'GRV') tzDelta = -60; // SAU → GRV: -1h
-
+  if (from === 'GRV' && to === 'SAU') tzDelta = 60;
+  else if (from === 'SAU' && to === 'GRV') tzDelta = -60;
   return carriers.map((carrier, i) => {
-    const depMins = depTimes[i];
-    const dur     = durations[i];
-    const arrMins = depMins + dur + tzDelta;
-
+    const depMins = depTimes[i], dur = durations[i], arrMins = depMins + dur + tzDelta;
     return {
       from, to,
-      depart: minutesToTime(depMins),
-      arrive: minutesToTime(arrMins),
+      depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
       plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
-      durationMin: dur,
-      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop: true,
-      price: prices[i],
-      carrier,
+      durationMin: dur, durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true, price: prices[i], carrier,
       overnight: overnightFlag(depMins, arrMins),
-      aircraft: pickAircraft(from, to, carrier) // uses GRV-SAU rules above
+      aircraft: pickAircraft(from, to, carrier)
     };
   });
 }
@@ -1279,212 +970,35 @@ function buildGrvSauResults(from, to){
 function buildHndMlrResults(from, to){
   const carriers = ['Delta','American Airlines','United','Qatar Airways','Lufthansa'];
   const depTimes  = randomUniqueTimes(5);
-  const durations = Array.from({length:5}, () => randInt(510, 720)); // 8.5–12h
+  const durations = Array.from({length:5}, () => randInt(510, 720));
   const prices    = Array.from({length:5}, () => randInt(900, 1200));
-
   const tzDelta =
     (countryOf(from) === 'US' && countryOf(to) === 'JP') ? 360 :
     (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
-
   return carriers.map((carrier, i) => {
-    const depMins = depTimes[i];
-    const dur     = durations[i];
-    const arrMins = depMins + dur + tzDelta;
+    const depMins = depTimes[i], dur = durations[i], arrMins = depMins + dur + tzDelta;
     return {
       from, to,
-      depart: minutesToTime(depMins),
-      arrive: minutesToTime(arrMins),
+      depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
       plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
-      durationMin: dur,
-      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop: true,
-      price: prices[i],
-      carrier,
+      durationMin: dur, durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true, price: prices[i], carrier,
       overnight: overnightFlag(depMins, arrMins),
       aircraft: pickAircraft(from, to, carrier)
     };
   });
 }
 
-/* Map of route builders we can sample from for connection legs */
-const BUILDER_MAP = {
-  'PER-RFD': buildRfdPerResults,
-  'IZO-RFD': buildRfdIzoResults,
-  'LCA-RFD': buildRfdLcaResults,
-  'PHP-RFD': buildRfdPhpResults,
-  'HND-RFD': buildRfdHndResults,
-  'MLR-RFD': buildRfdMlrResults,
-  'GRV-RFD': buildRfdGrvResults,
-
-  'IZO-PER': buildPerIzoResults,
-  'GRV-HND': buildHndGrvResults,     // (sorted)
-  'HND-SAU': buildHndSauResults,
-  'GRV-SAU': buildGrvSauResults,
-  'HND-LCA': buildLcaHndResults,
-  'GRV-LCA': buildLcaGrvResults,
-
-  'MLR-PER': buildPerMlrResults,     // (sorted)
-  'LCA-PER': buildPerLcaResults,     // (sorted)
-  'PER-PHP': buildPerPhpResults,
-  'IZO-MLR': buildMlrIzoResults,     // (sorted)
-  'LCA-MLR': buildMlrLcaResults,     // (sorted)
-  'MLR-PHP': buildMlrPhpResults,
-  'HND-IZO': buildIzoHndResults,
-  'HND-MLR': buildHndMlrResults,
-  'GRV-PER': buildPerGrvResults  // (sorted)
-};
-
-function builderFor(a,b){
-  return BUILDER_MAP[[a,b].sort().join('-')];
-}
-
-/* Format minutes as Hh Mm, including days if needed */
-function pickRandomNonstop(from, to){
-  // Try a real builder first
-  const fn = builderFor(from,to);
-  if (fn) {
-    const list = fn(from,to);
-    if (list && list.length) {
-      const sample = list[randInt(0, list.length-1)];
-      return {
-        carrier: sample.carrier,
-        aircraft: sample.aircraft || pickAircraft(from,to,sample.carrier),
-        durationMin: sample.durationMin
-      };
-    }
-  }
-
-  // -------- Fallback if no builder exists --------
-  const a = countryOf(from), b = countryOf(to);
-  let durLo = 120, durHi = 240, pool = [];
-
-  if (a === b && a === 'US') {
-    // US–US short/medium haul
-    durLo = 60; durHi = 180;
-    pool = ['American Airlines','Delta','United','JetBlue','Southwest','Spirit'];
-  } else if (a === b && a === 'JP') {
-    // HND/GRV/SAU intra-region
-    durLo = 90; durHi = 240;
-    pool = ['Lufthansa','Qatar Airways','SWISS','British Airways','Condor','easyJet','CEBU Pacific'];
-  } else {
-    // Cross-group (US ↔ JP) long haul
-    durLo = 510; durHi = 720;   // ~8.5–12h
-    pool = ['Delta','American Airlines','United','Lufthansa','Air France','KLM',
-            'Qatar Airways','SWISS','British Airways','Emirates','Singapore','Korean Air'];
-  }
-
-  const carrier = pool[randInt(0, pool.length-1)];
-  const aircraft = pickAircraft(from, to, carrier) || '';
-  return { carrier, aircraft, durationMin: randInt(durLo, durHi) };
-}
-
-
-/* Build one leg with a departure in [earliest, latest] (minutes from day 0). */
-function makeLeg(from, to, earliest, latest){
-  const base = pickRandomNonstop(from, to);
-  if (!base) return null;
-
-  // Window defaults
-  const lo = (typeof earliest === 'number') ? earliest : randInt(0, 1200);
-  const hi = (typeof latest === 'number') ? latest   : (lo + 480); // +8h max
-
-  const departMins = randInt(lo, Math.max(lo, hi));
-  const arrMins = departMins + base.durationMin + tzOffsetMinutes(from,to);
-
-  return {
-    from, to,
-    departMins, arriveMins: arrMins,
-    depart: minutesToTime(departMins),
-    arrive: minutesToTime(arrMins),
-    plusOne: Math.floor(arrMins/1440) > Math.floor(departMins/1440) ? '+1':'',
-    durationMin: base.durationMin,
-    durationText: `${Math.floor(base.durationMin/60)}h ${String(base.durationMin%60).padStart(2,'0')}m`,
-    carrier: base.carrier,
-    aircraft: base.aircraft,
-    overnight: overnightFlag(departMins, arrMins)
-  };
-}
-
-/* Format minutes as Hh Mm, including days if needed */
-function formatDuration(mins){
-  const m = Math.max(0, mins);
-  const d = Math.floor(m / 1440);
-  const h = Math.floor((m % 1440) / 60);
-  const mm = m % 60;
-  return (d ? `${d}d ` : '') + `${h}h ${String(mm).padStart(2,'0')}m`;
-}
-  
-/* Generic connection results builder for any route listed in CONNECTION_RULES */
-function buildConnectedResults(from, to){
-  const key = routeKey(from, to);
-  const rule = CONNECTION_RULES[key];
-  if (!rule) return [];
-
-  const options = [];
-
-  for (const stops of rule.patterns) {
-    const legs = [];
-
-    // first leg
-    const leg0 = makeLeg(from, stops[0], null, null);
-    if (!leg0) continue;
-    legs.push(leg0);
-
-    // middle legs (respect layover 30m–8h)
-    let ok = true;
-    for (let i = 0; i < stops.length - 1; i++){
-      const prevArr = legs[legs.length - 1].arriveMins;
-      const leg = makeLeg(stops[i], stops[i+1], prevArr + 30, prevArr + 480);
-      if (!leg) { ok = false; break; }
-      legs.push(leg);
-    }
-    if (!ok) continue;
-
-    // final leg
-    const prevArr = legs[legs.length - 1].arriveMins;
-    const lastLeg = makeLeg(stops[stops.length - 1], to, prevArr + 30, prevArr + 480);
-    if (!lastLeg) continue;
-    legs.push(lastLeg);
-
-    const depart0 = legs[0].departMins;
-    const arriveN = legs[legs.length - 1].arriveMins;
-    const elapsed = arriveN - depart0;
-
-    options.push({
-      from, to,
-      price: randInt(rule.price[0], rule.price[1]),
-      carrier: legs[0].carrier,           // list card shows carrier of first leg
-      aircraft: legs[0].aircraft,
-      depart: legs[0].depart,
-      arrive: legs[legs.length-1].arrive,
-      plusOne: Math.floor(arriveN/1440) > Math.floor(depart0/1440) ? '+1' : '',
-      durationMin: elapsed,
-      durationText: formatDuration(elapsed),
-      overnight: legs.some(l => l.overnight),
-      connections: stops.slice(),         // keep your declared order
-      segments: legs                      // every leg, including the first one
-    });
-  }
-
-  // fewest → most connections
-  options.sort((a,b)=>a.connections.length - b.connections.length);
-  return options;
-}
-
-/* -------------------- Results list -------------------- */
+/* -------------------- Results list (nonstop) -------------------- */
 function resultsView(list){
   const div=document.createElement('div'); div.className='results';
   list.forEach(opt=>{
-    const labelStops = Array.isArray(opt.connections)
-      ? (opt.connections.length===1
-          ? `1 connection in ${opt.connections[0]}`
-          : `${opt.connections.length} connections`)
-      : 'Nonstop';
-
     const card=document.createElement('div'); card.className='card-result';
     card.innerHTML=`
       <div class="row-top">
-        <div class="pair"><div class="code">${opt.from}</div><div class="arrow">→</div><div class="code">${opt.to}</div></div>
+        <div class="pair">
+          <div class="code">${opt.from}</div><div class="arrow">→</div><div class="code">${opt.to}</div>
+        </div>
         <div class="right-price"><span>$${opt.price.toLocaleString()}</span>
           <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
@@ -1496,13 +1010,13 @@ function resultsView(list){
 
       <div class="row-mid">
         <div>${opt.durationText}</div>
-        <div>${labelStops}</div>
+        <div>Nonstop</div>
         <div style="color:#9aa3af;">${opt.carrier}</div>
       </div>
 
       <div class="row-foot ${opt.overnight?'':'hide'}">
         <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2z" stroke="#ffcc66" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span>Overnight flight or connection</span>
+        <span>Overnight flight</span>
       </div>`;
     card.addEventListener('click',()=>openSummary(opt));
     div.appendChild(card);
@@ -1524,37 +1038,20 @@ function openSummary(opt){
   lastSelection.travelDate = document.getElementById('depart').value || '';
   const v=document.createElement('div'); v.className='view';
 
-  // Connection leg lines (if any)
-  let connHTML = '';
-if (Array.isArray(opt.segments) && opt.segments.length){
-  connHTML = `<div class="hr"></div>` + opt.segments.map(seg => `
-    <div class="kv" style="color:#cfd6dd">
-      <span>${seg.from} → ${seg.to}</span>
-      <b>${seg.depart} → ${seg.arrive} ${seg.plusOne?'<span class="muted">+1</span>':''}</b>
-    </div>
-    <div class="kv muted">
-      <span>${seg.carrier}</span><b>${seg.aircraft || '—'}</b>
-    </div>
-  `).join('');
-}
-
   const warn=opt.overnight?`
     <div class="panel" style="color:#ffcc66; display:flex; align-items:center; gap:8px">
       <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2z" stroke="#ffcc66" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Overnight flight or connection
+      Overnight flight
     </div>`:'';
-
-  const stopsRight = Array.isArray(opt.connections) ? '' : '<span>Nonstop</span>';
 
   v.innerHTML=`
     <div class="panel">
       <div style="font-weight:800; color:#21d07a; margin-bottom:6px">DEPART</div>
       <div style="font-size:17px; color:#e9eef4; margin-bottom:6px">${opt.from} to ${opt.to}</div>
 
-      <div class="kv"><span><b>${opt.depart}</b> → <b>${opt.arrive}</b> ${opt.plusOne?'<span class="muted">+1</span>':''}</span>${stopsRight}</div>
+      <div class="kv"><span><b>${opt.depart}</b> → <b>${opt.arrive}</b> ${opt.plusOne?'<span class="muted">+1</span>':''}</span><span>Nonstop</span></div>
       <div class="kv"><span>Duration</span><b>${opt.durationText}</b></div>
       <div class="kv"><span>Aircraft</span><b>${opt.aircraft || '—'}</b></div>
-      ${connHTML}
     </div>
 
     ${warn}
@@ -1575,7 +1072,6 @@ function openPassengers(){
       <div class="title">Know before you go</div>
       <div class="muted">International travel requires a valid passport. Check visa and travel document requirements for your destination.</div>
     </div>`:'';
-}
 
   v.innerHTML=`
   ${info}
@@ -1599,47 +1095,35 @@ function openPassengers(){
   <button class="btn-lg" id="goPay">Continue</button>`;
   
   v.querySelector('#goPay').addEventListener('click', () => {
-  const first = (document.getElementById('p1First').value || '').trim();
-  const middle = (document.getElementById('p1Middle').value || '').trim();
-  const last = (document.getElementById('p1Last').value || '').trim();
-  const dob = document.getElementById('p1Dob').value || '';
-  const gender = document.getElementById('p1Gender').value || '';
+    const first = (document.getElementById('p1First').value || '').trim();
+    const middle = (document.getElementById('p1Middle').value || '').trim();
+    const last = (document.getElementById('p1Last').value || '').trim();
+    const dob = document.getElementById('p1Dob').value || '';
+    const gender = document.getElementById('p1Gender').value || '';
 
-  if(!first || !last || !dob || !gender){
-    alert('Please complete required passenger fields.');
-    return;
-  }
-  passengerData = { first, middle, last, dob, gender };
-  openReviewPay();
-});
+    if(!first || !last || !dob || !gender){
+      alert('Please complete required passenger fields.');
+      return;
+    }
+    passengerData = { first, middle, last, dob, gender };
+    openReviewPay();
+  });
+
+  stepStack.push({title:'Passenger details', html:v});
+  renderView('Passenger details', v);
+}
 
 function openReviewPay(){
-  const v = document.createElement('div'); v.className='view';
+  const v=document.createElement('div'); v.className='view';
 
-  let connHTML = '';
-  if (Array.isArray(lastSelection.segments) && lastSelection.segments.length){
-    connHTML = `<div class="hr"></div>` + lastSelection.segments.map(seg=>`
-      <div class="kv" style="color:#cfd6dd">
-        <span>${seg.from} → ${seg.to}</span>
-        <b>${seg.depart} → ${seg.arrive} ${seg.plusOne?'<span class="muted">+1</span>':''}</b>
-      </div>
-      <div class="kv muted">
-        <span>${seg.carrier}</span><b>${seg.aircraft || '—'}</b>
-      </div>
-    `).join('');
-  }
-
-  const showStops = Array.isArray(lastSelection.connections) ? '' : '<div class="kv"><span>Stops</span><b>Nonstop</b></div>';
-
-  v.innerHTML = `
+  v.innerHTML=`
     <div class="panel">
       <div style="font-weight:800; margin-bottom:6px">Your trip</div>
       <div style="font-size:16px; margin-bottom:6px">${lastSelection.from} → ${lastSelection.to}</div>
       <div class="kv"><span><b>${lastSelection.depart}</b> → <b>${lastSelection.arrive}</b> ${lastSelection.plusOne?'<span class="muted">+1</span>':''}</span><span>${lastSelection.airlineCode||''}</span></div>
       <div class="kv"><span>Duration</span><b>${lastSelection.durationText}</b></div>
-      ${showStops}
+      <div class="kv"><span>Stops</span><b>Nonstop</b></div>
       <div class="kv"><span>Aircraft</span><b>${lastSelection.aircraft || '—'}</b></div>
-      ${connHTML}
     </div>
 
     <div class="panel">
@@ -1674,54 +1158,7 @@ function openReviewPay(){
   `;
 
   v.querySelector('#btnPay').addEventListener('click', handlePay);
-  stepStack.push({title:'Review and pay', html:v});
-  renderView('Review and pay', v);
-}
 
-
-  const showStops = Array.isArray(lastSelection.connections) ? '' : '<div class="kv"><span>Stops</span><b>Nonstop</b></div>';
-
-  v.innerHTML=`
-  v.querySelector('#btnPay').addEventListener('click', handlePay);
-    <div class="panel">
-      <div style="font-weight:800; margin-bottom:6px">Your trip</div>
-      <div style="font-size:16px; margin-bottom:6px">${lastSelection.from} → ${lastSelection.to}</div>
-      <div class="kv"><span><b>${lastSelection.depart}</b> → <b>${lastSelection.arrive}</b> ${lastSelection.plusOne?'<span class="muted">+1</span>':''}</span><span>${lastSelection.airlineCode||''}</span></div>
-      <div class="kv"><span>Duration</span><b>${lastSelection.durationText}</b></div>
-      ${showStops}
-      <div class="kv"><span>Aircraft</span><b>${lastSelection.aircraft || '—'}</b></div>
-      ${connHTML}
-    </div>
-
-    <div class="panel">
-      <h3>Cost summary</h3>
-      <div class="kv"><span>Economy</span><b>$${lastSelection.price.toLocaleString()}</b></div>
-      <div class="kv" style="border-top:1px solid rgba(255,255,255,.1); padding-top:8px; margin-top:8px;">
-        <span>Total amount due (All passengers)</span><b>$${lastSelection.price.toLocaleString()}</b>
-      </div>
-    </div>
-
-    <div class="panel">
-  <h3>Credit / debit card</h3>
-  <div class="form-row">
-    <div class="field"><label>Card number •</label><input id="ccNumber" type="text" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456"></div>
-    <div class="form-row half">
-      <div class="field"><label>Expiry date •</label><input id="ccExp" type="text" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY"></div>
-      <div class="field"><label>Security code •</label><input id="ccCvv" type="text" inputmode="numeric" autocomplete="cc-csc" placeholder="CVV" maxlength="4"></div>
-    </div>
-    <div class="field"><label>Billing address •</label><input type="text" autocomplete="address-line1" placeholder="Street address"></div>
-    <div class="form-row half">
-      <div class="field"><label>Cardholder name •</label><input id="ccName" type="text" autocomplete="cc-name" placeholder="Full name"></div>
-      <div class="field"><label>Postal code •</label><input type="text" autocomplete="postal-code" placeholder="ZIP / Postal"></div>
-    </div>
-  </div>
-  <label class="agree"><input id="agreeCheckbox" type="checkbox"><span>I agree to the terms and conditions, refund policy, and conditions of carriage.</span></label>
-  <button class="btn-lg" id="btnPay">Pay now</button>
-  <div class="muted" style="display:flex; align-items:center; gap:6px; margin-top:8px">
-    <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.25 3.438 10.063 9 12 5.563-1.938 9-6.75 9-12V5l-9-4z" fill="none" stroke="#9aa3af" stroke-width="1.5"/></svg>
-    Secure checkout
-  </div>
-</div>
   stepStack.push({title:'Review and pay', html:v});
   renderView('Review and pay', v);
 }
@@ -1742,7 +1179,7 @@ function handlePay(){
     return;
   }
   showProcessing();
-  setTimeout(showConfirmation, 5000);  // 5 seconds
+  setTimeout(showConfirmation, 3000);
 }
 
 function showProcessing(){
@@ -1768,7 +1205,7 @@ function showConfirmation(){
   v.innerHTML = `
     <div class="glass" style="padding:18px 16px 14px;">
       <div class="check-wrap" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <div class="confirm-title" style="color:#63d488">Thank you for your purchase</div>
       <div class="confirm-sub">Your booking is confirmed</div>
@@ -1797,7 +1234,7 @@ function showConfirmation(){
   renderView('Booking confirmed', v);
 }
 
-/* -------------------- Search handler -------------------- */
+/* -------------------- Search handler (nonstop routes only) -------------------- */
 document.getElementById('btnSearch').addEventListener('click', () => {
   const from = fromSel.value, to = toSel.value;
   const departDate = document.getElementById('depart').value;
@@ -1809,17 +1246,8 @@ document.getElementById('btnSearch').addEventListener('click', () => {
     return;
   }
 
-  const key = [from, to].sort().join('-');   // <-- move this up
+  const key = [from, to].sort().join('-');
 
-  // If this route requires connections, build those results and show
-  if (CONNECTION_RULES[key]) {
-    const list = buildConnectedResults(from, to);
-    const resNode = resultsView(list);
-    openSheet(); renderView('Choose departure', resNode);
-    stepStack=[{title:'Choose departure', html:resNode}];
-    return;
-  }
-  
   let list;
   if (key==='PER-RFD') list=buildRfdPerResults(from,to);
   else if (key==='IZO-RFD') list=buildRfdIzoResults(from,to);
@@ -1846,6 +1274,7 @@ document.getElementById('btnSearch').addEventListener('click', () => {
   else if (key==='GRV-HND') list=buildHndGrvResults(from,to);
   else if (key==='HND-SAU') list=buildHndSauResults(from,to);
   else if (key==='GRV-SAU') list=buildGrvSauResults(from,to);
+  else if (key==='HND-MLR') list=buildHndMlrResults(from,to);
   else {
     const v=document.createElement('div'); v.className='view';
     v.innerHTML=`<div class="panel"><div class="kv"><span>Route</span><b>${from} → ${to}</b></div>
