@@ -225,6 +225,18 @@
   .gf-times{font-size:18px; line-height:1.15; font-weight:800; letter-spacing:.2px}
   .gf-times sup{font-size:11px}
 
+  /* Airline logo row */
+.row-mid{
+  display:flex; align-items:center; gap:10px;
+  color:var(--muted); margin:6px 0 0; font-size:15px;
+}
+.airlogo{
+  width:22px; height:22px; object-fit:contain; flex:0 0 22px;
+  filter: drop-shadow(0 1px 0 rgba(0,0,0,.35));
+}
+.airlogo.is-u2{ width:26px; height:26px; }  /* easyJet slightly bigger */
+.row-mid-text .carrier-line{ color:#cfd6dd; font-size:14px; margin-top:2px; }
+
 </style>
 </head>
 <body>
@@ -430,6 +442,32 @@ const AIRLINE_CODES = {
   'American Airlines':'AA','JetBlue':'B6','Delta':'DL','United':'UA','Southwest':'WN','Spirit':'NK',
   'Emirates':'EK','Singapore':'SQ','Lufthansa':'LH','SWISS':'LX','Korean Air':'KE','KLM':'KL','Qatar Airways':'QR','Air France':'AF','Qantas':'QF','CEBU Pacific':'5J','British Airways':'BA','Condor':'DE','easyJet':'U2'
 };
+
+/* Logo files for each carrier (in the same folder as the HTML) */
+const AIRLINE_ICONS = {
+  'JetBlue': 'jb-icon.png',
+  'American Airlines': 'aa-icon.png',
+  'Delta': 'dl-icon.png',
+  'United': 'ua-icon.png',
+  'Southwest': 'wn-icon.png',
+  'Spirit': 'nk-icon.png',            // if your file is actually "nk-icon-png", change this name
+  'Emirates': 'ek-icon.png',
+  'Singapore': 'sq-icon.png',
+  'Lufthansa': 'lh-icon.png',
+  'SWISS': 'lx-icon.png',
+  'Korean Air': 'ke-icon.png',
+  'KLM': 'kl-icon.png',
+  'Qatar Airways': 'qr-icon.png',
+  'Air France': 'af-icon.png',
+  'Qantas': 'qf-icon.png',
+  'CEBU Pacific': '5J-icon.png',
+  'British Airways': 'ba-icon.png',
+  'Condor': 'de-icon.png',
+  'easyJet': 'U2-icon.png'
+};
+function iconForCarrier(name){
+  return AIRLINE_ICONS[name] || null;
+}
 
 /* Country mapping for INTL check */
 function countryOf(code){
@@ -1102,48 +1140,59 @@ function buildHndMlrResults(from, to){
 
 /* -------------------- Results list (nonstop) -------------------- */
 function resultsView(list){
-  const wrap = document.createElement('div');
-  wrap.className = 'results';
+  const div = document.createElement('div');
+  div.className = 'results';
 
   list.forEach(opt => {
+    const logo = iconForCarrier(opt.carrier);
+    const logoHTML = logo
+      ? `<img class="airlogo ${opt.carrier==='easyJet' ? 'is-u2' : ''}" src="${logo}" alt="${opt.carrier} logo">`
+      : '';
+
     const card = document.createElement('div');
     card.className = 'card-result';
-
     card.innerHTML = `
-      <div class="gf-head">
-        <div>
-          <div class="gf-times">
-            ${opt.depart} <span class="arrow">→</span> ${opt.arrive}
-            ${opt.plusOne ? '<sup>+1</sup>' : ''}
-          </div>
-          <div class="gf-iata">${opt.from} &nbsp;→&nbsp; ${opt.to}</div>
+      <div class="row-top">
+        <div class="pair">
+          <div class="code">${opt.from}</div>
+          <div class="arrow">→</div>
+          <div class="code">${opt.to}</div>
         </div>
-        <div class="gf-price">$${opt.price.toLocaleString()}</div>
-      </div>
-
-      <div class="gf-meta">
-        Nonstop <span class="dot">•</span> ${opt.durationText}
-      </div>
-
-      <div class="gf-carrier">${opt.carrier}</div>
-
-      ${opt.overnight ? `
-        <div class="gf-overnight">
-          <svg width="16" height="16" viewBox="0 0 24 24">
-            <path d="M12 9v4m0 4h.01M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2z"
-              stroke="currentColor" stroke-width="2" fill="none"
-              stroke-linecap="round" stroke-linejoin="round"/>
+        <div class="right-price">
+          <span>$${opt.price.toLocaleString()}</span>
+          <svg viewBox="0 0 24 24">
+            <path d="M9 6l6 6-6 6" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          Overnight flight
-        </div>` : ''
-      }
-    `;
+        </div>
+      </div>
 
+      <div class="row-top" style="margin-top:6px">
+        <div class="timepair">
+          ${opt.depart} &nbsp;→&nbsp; ${opt.arrive}
+          ${opt.plusOne ? `<span class="plus1">${opt.plusOne}</span>` : ''}
+        </div>
+      </div>
+
+      <div class="row-mid">
+        ${logoHTML}
+        <div class="row-mid-text">
+          <div>Nonstop &nbsp;•&nbsp; ${opt.durationText}</div>
+          <div class="carrier-line">${opt.carrier}</div>
+        </div>
+      </div>
+
+      <div class="row-foot ${opt.overnight ? '' : 'hide'}">
+        <svg width="16" height="16" viewBox="0 0 24 24">
+          <path d="M12 9v4m0 4h.01M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2z" stroke="#ffcc66" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Overnight flight</span>
+      </div>
+    `;
     card.addEventListener('click', () => openSummary(opt));
-    wrap.appendChild(card);
+    div.appendChild(card);
   });
 
-  return wrap;
+  return div;
 }
 
 function renderView(title, node){
