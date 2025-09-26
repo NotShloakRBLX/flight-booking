@@ -1598,6 +1598,7 @@ saveTrip({
   plusOne: !!lastSelection.plusOne,
   aircraft: lastSelection.aircraft || '—',
   price: lastSelection.price || 0,
+  durationText: lastSelection.durationText || '',
   passenger: fullName || 'Passenger 1',
 
   depGate: '', depTerminal: '',
@@ -2032,29 +2033,6 @@ function openStatusActions(trip){
       close(); closeSheet(); renderTrips();
     });
   }
-
-  // gate handlers
-  const gateMode = box.querySelector('#gateMode');
-  const gateForm = box.querySelector('#gateForm');
-  box.querySelector('#chgGate').addEventListener('click', ()=> gateMode.style.display='grid');
-
-  let gateKind = ''; // 'dep' or 'arr'
-  box.querySelector('#gateDep').addEventListener('click', ()=> { gateKind='dep'; gateForm.style.display='grid'; });
-  box.querySelector('#gateArr').addEventListener('click', ()=> { gateKind='arr'; gateForm.style.display='grid'; });
-
-  box.querySelector('#saveGate').addEventListener('click', ()=>{
-    const gate = box.querySelector('#gateInput').value.trim();
-    const term = box.querySelector('#termInput').value.trim();
-    if(!gate && !term) return;
-    const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
-    if(i>-1){
-      if(gateKind==='dep'){ trips[i].depGate = gate; trips[i].depTerminal = term; }
-      else                { trips[i].arrGate = gate; trips[i].arrTerminal = term; }
-      setTrips(trips);
-    }
-    close(); openTripDetail(trip.id); renderTrips();
-  });
-}
 
   // --- NEW: change gate handlers
   const gateMode = box.querySelector('#gateMode');
