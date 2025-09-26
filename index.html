@@ -1210,7 +1210,7 @@ function buildIzoGrvResults(from, to){
   // GRV → IZO should depart 10:30 PM; IZO → GRV stays 6:40 PM
   // (times are minutes after midnight)
   const depMins = (from === 'GRV' && to === 'IZO')
-    ? (22*60 + 30)   // 10:30 PM
+    ? (10*60 + 30)   // 10:30 AM
     : (18*60 + 40);  // 6:40 PM
 
   const dur      = randInt(660, 750);
