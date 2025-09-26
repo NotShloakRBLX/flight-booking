@@ -405,6 +405,19 @@
 .tfooter{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .tfooter .kv{margin:0}
 
+/* gate badge + terminal label */
+.headrow{display:flex;align-items:center;justify-content:space-between}
+.gatebox{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.gatepill{
+  display:inline-block; padding:6px 10px; border-radius:10px;
+  background:#ffd54a; color:#111; font-weight:900; letter-spacing:.2px;
+}
+.term{font-size:12px; color:#cfd6dd}
+
+/* color the NEW time when early/late (not the crossed-out one) */
+.time-early{color:#63d488; font-weight:900}
+.time-late {color:#ff6b6b; font-weight:900}
+
 </style>
 </head>
 <body>
@@ -1585,7 +1598,11 @@ saveTrip({
   plusOne: !!lastSelection.plusOne,
   aircraft: lastSelection.aircraft || '—',
   price: lastSelection.price || 0,
-  passenger: fullName || 'Passenger 1'
+  passenger: fullName || 'Passenger 1',
+
+  depGate: '', depTerminal: '',
+  arrGate: '', arrTerminal: '',
+  isArchived: false
 });
 renderTrips();    // refresh Trips page if it's open
 
@@ -1737,19 +1754,29 @@ showScreen('screen-booking');
 
   /* ---------- Trips list ---------- */
 function tripCardHTML(t, isArchived = false){
+  const pillLabel = t.status === 'INFLIGHT' ? 'INFLIGHT'
+                  : t.status === 'ARRIVED'  ? 'ARRIVED'
+                  : 'ON TIME';
+
+  const pillClass = t.status === 'INFLIGHT' ? 'pill-inflight'
+                   : t.status === 'ARRIVED'  ? 'pill-arrived'
+                   : 'pill-ontime';
+
   return `
     <div class="trip-card" data-id="${t.id}">
-      <img class="trip-logo" alt="" src="${t.logo||''}">
+      <img class="trip-logo" alt="" src="${t.logo || ''}">
       <div class="trip-body">
-        <div class="trip-times"><b>${t.schedDepart}</b> &nbsp;→&nbsp; <b>${t.schedArrive}${t.plusOne? ' <span class="muted">+1</span>':''}</b></div>
+        <div class="trip-times">
+          <b>${t.schedDepart}</b>
+          &nbsp;→&nbsp;
+          <b>${t.schedArrive}${t.plusOne ? ' <span class="muted">+1</span>' : ''}</b>
+        </div>
         <div class="trip-route">${t.from} &nbsp;→&nbsp; ${t.to}</div>
         <div class="trip-date">${formatDate(t.date)}</div>
       </div>
 
       <div class="trip-right">
-        <span class="pill ${t.status==='INFLIGHT'?'pill-inflight':t.status==='ARRIVED'?'pill-arrived':'pill-ontime'}">
-          ${t.status==='INFLIGHT'?'INFLIGHT':t.status==='ARRIVED'?'ARRIVED':'ON TIME'}
-        </span>
+        <span class="pill ${pillClass}">${pillLabel}</span>
         ${isArchived ? `<button class="mini-btn red btn-delete" type="button">Delete</button>` : ``}
       </div>
     </div>`;
@@ -1757,8 +1784,8 @@ function tripCardHTML(t, isArchived = false){
 
 function renderTrips(){
   const trips = getTrips();
-  const upcoming = trips.filter(t => t.status !== 'ARCHIVED');
-  const previous = trips.filter(t => t.status === 'ARCHIVED');
+  const upcoming = trips.filter(t => !t.isArchived);
+  const previous = trips.filter(t => t.isArchived);
 
   const up = document.getElementById('upcomingList');
   const prev = document.getElementById('previousList');
@@ -1799,23 +1826,25 @@ function openTripDetail(id){
   if (i < 0) return;
   const t = trips[i];
 
-  // display times (actual if present, otherwise scheduled)
+  // helpers local to this view
+  function airportTitle(code){
+    const a = AIRPORTS.find(x => x.code === code);
+    const n = (a?.name || code).replace(/\s*\([A-Z]{3}\)\s*$/,'');
+    return `${code} • ${n}`;
+  }
+  function diffMins(a, b){ return timeStrToMins(a) - timeStrToMins(b); } // + late, - early
+
+  // which time to show (actual overrides scheduled)
   const depShown = t.actualDepart || t.schedDepart;
   const arrShown = t.actualArrive || t.schedArrive;
 
-  // delta labels
+  // minute deltas when actuals exist
   const dDiff = t.actualDepart ? diffMins(t.actualDepart, t.schedDepart) : 0;
   const aDiff = t.actualArrive ? diffMins(t.actualArrive, t.schedArrive) : 0;
 
-  const depDelta = t.actualDepart
-    ? `<div class="delta ${dDiff>0?'late':dDiff<0?'early':''}">
-         ${dDiff===0 ? 'On Time' : `${Math.abs(dDiff)}m ${dDiff>0?'Late':'Early'}`}
-       </div>` : '';
-
-  const arrDelta = t.actualArrive
-    ? `<div class="delta ${aDiff>0?'late':aDiff<0?'early':''}">
-         ${aDiff===0 ? 'On Time' : `${Math.abs(aDiff)}m ${aDiff>0?'Late':'Early'}`}
-       </div>` : '';
+  // color classes for NEW times only
+  const depClass = t.actualDepart ? (dDiff < 0 ? 'time-early' : dDiff > 0 ? 'time-late' : '') : '';
+  const arrClass = t.actualArrive ? (aDiff < 0 ? 'time-early' : aDiff > 0 ? 'time-late' : '') : '';
 
   const v = document.createElement('div');
   v.className = 'view tdetail';
@@ -1824,12 +1853,12 @@ function openTripDetail(id){
     <div class="updated">Updated now</div>
     <div class="route">${t.from} &nbsp;→&nbsp; ${t.to}</div>
 
-    <!-- Airline header card -->
+    <!-- Airline header -->
     <div class="tcard">
       <div class="trow">
-        <img src="${t.logo||''}" alt="" class="trip-logo" style="width:38px;height:38px;border-radius:10px;background:#13151a">
+        <img src="${t.logo || ''}" alt="" class="trip-logo" style="width:38px;height:38px;border-radius:10px;background:#13151a">
         <div>
-          <div class="airline">${t.carrier||''}</div>
+          <div class="airline">${t.carrier || ''}</div>
           <div class="sub">${t.from} → ${t.to}</div>
         </div>
         <span class="pill ${t.status==='INFLIGHT'?'pill-inflight':t.status==='ARRIVED'?'pill-arrived':'pill-ontime'}">
@@ -1838,27 +1867,63 @@ function openTripDetail(id){
       </div>
     </div>
 
-    <!-- Depart section -->
+    <!-- Depart -->
     <div class="tcard section">
-      <div class="airport">⦿ ${airportTitle(t.from)}</div>
+      <div class="headrow" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <div class="airport">⦿ ${airportTitle(t.from)}</div>
+        ${
+          (t.depGate || t.depTerminal)
+          ? `<div class="gatebox">
+               ${t.depGate ? `<span class="gatepill">${t.depGate}</span>` : ``}
+               ${t.depTerminal ? `<div class="term">${/^terminal/i.test(t.depTerminal) ? t.depTerminal : 'Terminal ' + t.depTerminal}</div>` : ``}
+             </div>`
+          : ``
+        }
+      </div>
+
       <div class="bigtime">
-        ${depShown}
+        <span class="${depClass}">${depShown}</span>
         ${t.actualDepart ? `<span class="sched-old">${t.schedDepart}</span>` : ''}
       </div>
-      ${depDelta}
+
+      ${
+        t.actualDepart
+          ? `<div class="delta ${dDiff>0?'late':dDiff<0?'early':''}">
+               ${dDiff===0 ? 'On Time' : `${Math.abs(dDiff)}m ${dDiff>0?'Late':'Early'}`}
+             </div>`
+          : ''
+      }
+
       <div class="sub" style="margin-top:10px">${t.durationText ? `${t.durationText} • Nonstop` : ''}</div>
     </div>
 
-    <!-- Arrive section -->
+    <!-- Arrive -->
     <div class="tcard section">
-      <div class="airport">⦿ ${airportTitle(t.to)}</div>
+      <div class="headrow" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <div class="airport">⦿ ${airportTitle(t.to)}</div>
+        ${
+          (t.arrGate || t.arrTerminal)
+          ? `<div class="gatebox">
+               ${t.arrGate ? `<span class="gatepill">${t.arrGate}</span>` : ``}
+               ${t.arrTerminal ? `<div class="term">${/^terminal/i.test(t.arrTerminal) ? t.arrTerminal : 'Terminal ' + t.arrTerminal}</div>` : ``}
+             </div>`
+          : ``
+        }
+      </div>
+
       <div class="bigtime">
-        ${arrShown}${t.plusOne ? ' <sup class="muted">+1</sup>' : ''}
+        <span class="${arrClass}">${arrShown}${t.plusOne ? ' <sup class="muted">+1</sup>' : ''}</span>
         ${t.actualArrive ? `<span class="sched-old">${t.schedArrive}${t.plusOne ? ' +1':''}</span>` : ''}
       </div>
-      ${arrDelta}
 
-      <!-- Footer info: aircraft + passenger (right below the times as requested) -->
+      ${
+        t.actualArrive
+          ? `<div class="delta ${aDiff>0?'late':aDiff<0?'early':''}">
+               ${aDiff===0 ? 'On Time' : `${Math.abs(aDiff)}m ${aDiff>0?'Late':'Early'}`}
+             </div>`
+          : ''
+      }
+
       <div class="tfooter">
         <div class="kv"><span>Aircraft</span><b>${t.aircraft || '—'}</b></div>
         <div class="kv"><span>Passenger</span><b>${t.passenger || 'Passenger 1'}</b></div>
@@ -1869,9 +1934,8 @@ function openTripDetail(id){
     <button class="btn-lg" id="btnStatus">Status</button>
   `;
 
-  v.querySelector('#btnStatus').addEventListener('click', ()=> openStatusActions(t));
+  v.querySelector('#btnStatus').addEventListener('click', () => openStatusActions(t));
 
-  // show in your existing sheet
   openSheet();
   renderView(`${t.from} → ${t.to}`, v);
   stepStack = [{ title: `${t.from} → ${t.to}`, html: v }];
@@ -1884,71 +1948,109 @@ function openStatusActions(trip){
 
   function close(){
     back.classList.remove('show'); box.classList.remove('show');
-    document.body.classList.remove('modal-open');        // unlock page + dock
+    document.body.classList.remove('modal-open');
     setTimeout(()=>{ back.remove(); box.remove(); }, 200);
   }
   back.addEventListener('click', close);
 
-  document.body.appendChild(back);
-  document.body.appendChild(box);
+  document.body.append(back, box);
+  requestAnimationFrame(()=>{ back.classList.add('show'); box.classList.add('show'); document.body.classList.add('modal-open'); });
 
-  // show (above dock) and lock background
-  requestAnimationFrame(()=>{
-    back.classList.add('show');
-    box.classList.add('show');
-    document.body.classList.add('modal-open');           // reuse your lock class
-  });
-
-  // content by status
   const st = trip.status;
+  let html = '';
+
+  // --- status-changing rows (same as before)
   if(st==='CONFIRMED'){
-    box.innerHTML = `
+    html += `
       <div class="row"><button class="btn" id="toInflight">Change to INFLIGHT</button></div>
       <div class="row" id="depRow" style="display:none">
         <div class="muted">Enter actual departure time</div>
         <input id="depTime" type="time">
         <button class="btn" id="upd1">Update status</button>
       </div>`;
-    box.querySelector('#toInflight').addEventListener('click', ()=>{
-      box.querySelector('#depRow').style.display='grid';
-    });
-    box.querySelector('#upd1').addEventListener('click', ()=>{
-      const v = box.querySelector('#depTime').value; if(!v) return;
-      // convert "HH:MM" (24h) to "h:mm AM/PM"
-      const [H,M]=v.split(':').map(Number); const ampm=H>=12?'PM':'AM';
-      const h12=((H+11)%12)+1; const disp=`${h12}:${String(M).padStart(2,'0')} ${ampm}`;
-      const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
-      if(i>-1){ trips[i].status='INFLIGHT'; trips[i].actualDepart=disp; setTrips(trips); }
-      close(); openTripDetail(trip.id); renderTrips();
-    });
   } else if(st==='INFLIGHT'){
-    box.innerHTML = `
+    html += `
       <div class="row"><button class="btn" id="toArrived">Change status to ARRIVED</button></div>
       <div class="row" id="arrRow" style="display:none">
         <div class="muted">Enter actual arrival time</div>
         <input id="arrTime" type="time">
         <button class="btn" id="upd2">Update status</button>
       </div>`;
-    box.querySelector('#toArrived').addEventListener('click', ()=>{
-      box.querySelector('#arrRow').style.display='grid';
+  } else if(st==='ARRIVED'){
+    html += `<div class="row"><button class="btn red" id="archive">Archive flight</button></div>`;
+  }
+
+  // --- NEW: Change gate flow (always present)
+  html += `
+    <div class="row"><button class="btn" id="chgGate">Change gate</button></div>
+    <div class="row" id="gateMode" style="display:none">
+      <div style="display:flex; gap:8px">
+        <button class="btn" id="gateDep">Departure</button>
+        <button class="btn" id="gateArr">Arrival</button>
+      </div>
+      <div id="gateForm" style="display:none">
+        <input id="gateInput" type="text" placeholder="Gate (e.g., D12)">
+        <input id="termInput" type="text" placeholder="Terminal (e.g., Main)">
+        <button class="btn" id="saveGate">Save</button>
+      </div>
+    </div>
+  `;
+
+  box.innerHTML = html;
+
+  // status handlers (unchanged behavior)
+  if(st==='CONFIRMED'){
+    box.querySelector('#toInflight').addEventListener('click', ()=> box.querySelector('#depRow').style.display='grid');
+    box.querySelector('#upd1').addEventListener('click', ()=>{
+      const v = box.querySelector('#depTime').value; if(!v) return;
+      const [H,M]=v.split(':').map(Number); const ampm=H>=12?'PM':'AM'; const h12=((H+11)%12)+1; const disp=`${h12}:${String(M).padStart(2,'0')} ${ampm}`;
+      const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
+      if(i>-1){ trips[i].status='INFLIGHT'; trips[i].actualDepart=disp; setTrips(trips); }
+      close(); openTripDetail(trip.id); renderTrips();
     });
+  } else if(st==='INFLIGHT'){
+    box.querySelector('#toArrived').addEventListener('click', ()=> box.querySelector('#arrRow').style.display='grid');
     box.querySelector('#upd2').addEventListener('click', ()=>{
       const v = box.querySelector('#arrTime').value; if(!v) return;
-      const [H,M]=v.split(':').map(Number); const ampm=H>=12?'PM':'AM';
-      const h12=((H+11)%12)+1; const disp=`${h12}:${String(M).padStart(2,'0')} ${ampm}`;
+      const [H,M]=v.split(':').map(Number); const ampm=H>=12?'PM':'AM'; const h12=((H+11)%12)+1; const disp=`${h12}:${String(M).padStart(2,'0')} ${ampm}`;
       const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
       if(i>-1){ trips[i].status='ARRIVED'; trips[i].actualArrive=disp; setTrips(trips); }
       close(); openTripDetail(trip.id); renderTrips();
     });
   } else if(st==='ARRIVED'){
-    box.innerHTML = `
-      <div class="row"><button class="btn red" id="archive">Archive flight</button></div>`;
     box.querySelector('#archive').addEventListener('click', ()=>{
       const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
-      if(i>-1){ trips[i].status='ARCHIVED'; setTrips(trips); }
+      if(i>-1){
+        trips[i].status = 'ARRIVED';     // <— keep ARRIVED label
+        trips[i].isArchived = true;      // <— move to Previous Trips
+        setTrips(trips);
+      }
       close(); closeSheet(); renderTrips();
     });
   }
+
+  // --- NEW: change gate handlers
+  const gateMode = box.querySelector('#gateMode');
+  const gateForm = box.querySelector('#gateForm');
+  box.querySelector('#chgGate').addEventListener('click', ()=> gateMode.style.display='grid');
+
+  let gateKind = ''; // 'dep' or 'arr'
+  box.querySelector('#gateDep').addEventListener('click', ()=> { gateKind='dep'; gateForm.style.display='grid'; });
+  box.querySelector('#gateArr').addEventListener('click', ()=> { gateKind='arr'; gateForm.style.display='grid'; });
+
+  box.querySelector('#saveGate').addEventListener('click', ()=>{
+    const gate = box.querySelector('#gateInput').value.trim();
+    const term = box.querySelector('#termInput').value.trim();
+    if(!gate && !term) return;
+    const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
+    if(i>-1){
+      if(gateKind==='dep'){ trips[i].depGate = gate; trips[i].depTerminal = term; }
+      else                { trips[i].arrGate = gate; trips[i].arrTerminal = term; }
+      setTrips(trips);
+    }
+    close(); openTripDetail(trip.id); renderTrips();
+  });
+}
 
   document.body.appendChild(back); document.body.appendChild(box);
   requestAnimationFrame(()=>{ back.classList.add('show'); box.classList.add('show'); });
