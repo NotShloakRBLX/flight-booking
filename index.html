@@ -418,12 +418,6 @@
 .time-early{color:#63d488; font-weight:900}
 .time-late {color:#ff6b6b; font-weight:900}
 
-  .timer{
-  font-size:12px; color:#9aa3af; margin-top:6px;
-  display:flex; align-items:center; gap:6px; justify-content:flex-end;
-}
-.timer svg{width:14px;height:14px}
-
 </style>
 </head>
 <body>
@@ -456,7 +450,7 @@
               <option value="" selected disabled>City / airport</option>
             </select>
             <div class="icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M4.5 12.8l14.6-8.75c.5-.3 1.1.23.83.76L13.6 20.9a.7.7 0 0 1-1.31-.06l-1.24-5.17-5.17-1.24a.7.7 0 0 1 .06-1.31z"></path></svg>
+              <svg viewBox="0 0 24 24"><path d="M4.5 12.8l14.6-8.75c.5-.3 1.1.23. .83.76L13.6 20.9a.7.7 0 0 1-1.31-.06l-1.24-5.17-5.17-1.24a.7.7 0 0 1 .06-1.31z"></path></svg>
             </div>
             <div class="focusbar"></div>
           </div>
@@ -593,22 +587,48 @@ const sheetBody = document.getElementById('sheetBody');
 const routeTitle = document.getElementById('routeTitle');
 let stepStack = [];
 
-  // ---- inflight timer helpers (global) ----
+/* ---- inflight stopwatch (persists in localStorage) ---- */
 let inflightInterval = null;
 
-function formatDuration(ms){
-  ms = Math.max(0, ms|0);
-  const s = Math.floor(ms/1000);
+function formatHMS(ms){
+  const s = Math.max(0, Math.floor(ms/1000));
   const hh = Math.floor(s/3600);
   const mm = Math.floor((s%3600)/60);
   const ss = s%60;
   return `${hh}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
 }
-
-const CLOCK_SVG = `<svg viewBox="0 0 24 24" aria-hidden="true">
+const CLOCK_SVG = `<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
   <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
   <path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`;
+
+function renderInflightTimer(slotEl, trip){
+  if(!slotEl) return;
+  slotEl.innerHTML = '';
+  if(!trip.inflightStart) return;
+
+  const wrap = document.createElement('span');
+  wrap.className = 'badge';
+  wrap.style.display = 'inline-flex';
+  wrap.style.alignItems = 'center';
+  wrap.style.gap = '6px';
+  wrap.innerHTML = `${CLOCK_SVG}<span class="mono" id="sw-${trip.id}"></span>`;
+  slotEl.appendChild(wrap);
+
+  const label = wrap.querySelector(`#sw-${trip.id}`);
+  const tick = ()=>{
+    const end = trip.inflightEnd || Date.now();
+    label.textContent = formatHMS(end - trip.inflightStart);
+    if(trip.inflightEnd && inflightInterval){
+      clearInterval(inflightInterval); inflightInterval = null;
+    }
+  };
+  tick();
+  if(!trip.inflightEnd){
+    if(inflightInterval) clearInterval(inflightInterval);
+    inflightInterval = setInterval(tick, 1000);
+  }
+}
 
 function openSheet(){
   backdrop.classList.add('show');
@@ -1411,38 +1431,6 @@ function resultsView(list){
   return div;
 }
 
-  // live/finished stopwatch renderer
-function setupTripTimer(container, trip){
-  const el = container.querySelector('#inflightTimer');
-  if (!el) return;
-
-  // stop any previous timer loop
-  if (inflightInterval){ clearInterval(inflightInterval); inflightInterval = null; }
-
-  if (trip.status === 'INFLIGHT'){
-    // if somehow missing, set a start time now and persist
-    if (!trip.inflightStartTs){
-      const all = getTrips(); const idx = all.findIndex(t=>t.id===trip.id);
-      if (idx>-1){ all[idx].inflightStartTs = Date.now(); setTrips(all); trip.inflightStartTs = all[idx].inflightStartTs; }
-    }
-    const tick = ()=>{
-      const ms = Date.now() - trip.inflightStartTs;
-      el.innerHTML = `${CLOCK_SVG}<span>${formatDuration(ms)}</span>`;
-    };
-    tick();
-    inflightInterval = setInterval(tick, 1000);
-
-  } else if (trip.status === 'ARRIVED'){
-    const ms = trip.inflightElapsedMs || 0;
-    el.innerHTML = `${CLOCK_SVG}<span>${formatDuration(ms)}</span>`;
-  } else {
-    el.innerHTML = ''; // no timer for CONFIRMED/ARCHIVED (pre-flight)
-  }
-}
-
-// call it for this view
-setupTripTimer(v, t);
-
 function renderView(title, node){
   routeTitle.textContent = title;
   sheetBody.innerHTML = '';
@@ -1653,7 +1641,6 @@ saveTrip({
   plusOne: !!lastSelection.plusOne,
   aircraft: lastSelection.aircraft || '—',
   price: lastSelection.price || 0,
-  durationText: lastSelection.durationText || '',
   passenger: fullName || 'Passenger 1',
 
   depGate: '', depTerminal: '',
@@ -1921,7 +1908,8 @@ function openTripDetail(id){
           ${t.status==='INFLIGHT'?'INFLIGHT':t.status==='ARRIVED'?'ARRIVED':'ON TIME'}
         </span>
       </div>
-      <div class="timer" id="inflightTimer"></div>
+      <!-- Stopwatch slot -->
+      <div id="timerSlot" style="display:flex;justify-content:flex-end;margin-top:6px"></div>
     </div>
 
     <!-- Depart -->
@@ -1990,6 +1978,9 @@ function openTripDetail(id){
     <div style="height:6px"></div>
     <button class="btn-lg" id="btnStatus">Status</button>
   `;
+
+  // render stopwatch (if any)
+  renderInflightTimer(v.querySelector('#timerSlot'), t);
 
   v.querySelector('#btnStatus').addEventListener('click', () => openStatusActions(t));
 
@@ -2066,7 +2057,13 @@ function openStatusActions(trip){
       const v = box.querySelector('#depTime').value; if(!v) return;
       const [H,M]=v.split(':').map(Number); const ampm=H>=12?'PM':'AM'; const h12=((H+11)%12)+1; const disp=`${h12}:${String(M).padStart(2,'0')} ${ampm}`;
       const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
-      if(i>-1){ trips[i].status='INFLIGHT'; trips[i].actualDepart=disp; trips[i].inflightStartTs = Date.now(); trips[i].inflightElapsedMs = 0; setTrips(trips); }
+      if(i>-1){
+        trips[i].status='INFLIGHT';
+        trips[i].actualDepart=disp;
+        trips[i].inflightStart = Date.now(); // start stopwatch
+        delete trips[i].inflightEnd;
+        setTrips(trips);
+      }
       close(); openTripDetail(trip.id); renderTrips();
     });
   } else if(st==='INFLIGHT'){
@@ -2075,7 +2072,12 @@ function openStatusActions(trip){
       const v = box.querySelector('#arrTime').value; if(!v) return;
       const [H,M]=v.split(':').map(Number); const ampm=H>=12?'PM':'AM'; const h12=((H+11)%12)+1; const disp=`${h12}:${String(M).padStart(2,'0')} ${ampm}`;
       const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
-      if(i>-1){ trips[i].status='ARRIVED'; trips[i].actualArrive=disp; setTrips(trips); }
+      if(i>-1){
+        trips[i].status='ARRIVED';
+        trips[i].actualArrive=disp;
+        trips[i].inflightEnd = Date.now(); // stop stopwatch
+        setTrips(trips);
+      }
       close(); openTripDetail(trip.id); renderTrips();
     });
   } else if(st==='ARRIVED'){
@@ -2083,18 +2085,14 @@ function openStatusActions(trip){
       const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
       if(i>-1){
         trips[i].status='ARRIVED';   // keep ARRIVED label
-        trips[i].isArchived=true;
-        const start = trips[i].inflightStartTs;
-        if (start) {
-          trips[i].inflightElapsedMs = Math.max(0, Date.now() - start);
-        }// move to Previous Trips
+        trips[i].isArchived=true;    // move to Previous Trips
         setTrips(trips);
       }
       close(); closeSheet(); renderTrips();
     });
   }
 
-  // --- NEW: change gate handlers
+  // gate handlers
   const gateMode = box.querySelector('#gateMode');
   const gateForm = box.querySelector('#gateForm');
   box.querySelector('#chgGate').addEventListener('click', ()=> gateMode.style.display='grid');
