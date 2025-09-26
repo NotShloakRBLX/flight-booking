@@ -960,8 +960,9 @@ function buildRfdMlrResults(from,to){
 }
 
 /* RFD ↔ GRV (Grindavik) */
+// RFD ↔ GRV: RFD departs 4:00 PM; GRV departs 8:30 AM
 function buildRfdGrvResults(fromCode, toCode){
-  const depMins = randInt(0, 1439);
+  const depMins = (fromCode === 'RFD') ? (16*60) : (8*60 + 30); // 4:00 PM or 8:30 AM
   const dur     = randInt(360, 480); // 6–8h
   const tzDelta =
     (countryOf(fromCode) === 'US' && countryOf(toCode) === 'JP') ? 360 :
@@ -1061,15 +1062,17 @@ function buildPerPhpResults(from, to){
   });
 }
 
+// PER ↔ GRV: PER departs 5:00 AM; GRV departs 12:00 AM
 function buildPerGrvResults(from, to){
   const carrier = 'Qantas';
-  const depMins  = randomUniqueTimes(1)[0];
-  const duration = randInt(600, 750);
+  const depMins  = (from === 'PER') ? (5*60) : 0; // 5:00 AM or 12:00 AM
+  const duration = randInt(480, 540);
   const tzDelta =
     (countryOf(from) === 'US' && countryOf(to) === 'JP') ? 360 :
     (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
   const arrMins = depMins + duration + tzDelta;
   const price   = randInt(950, 1200);
+
   return [{
     from, to,
     depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
@@ -1273,15 +1276,17 @@ function buildLcaHndResults(from, to){
   });
 }
 
+// LCA ↔ GRV: LCA departs 1:30 AM; GRV departs 6:00 PM
 function buildLcaGrvResults(from, to){
   const carrier = 'Delta';
-  const depMins  = randomUniqueTimes(1)[0];
-  const dur      = randInt(600, 660);
+  const depMins = (from === 'LCA') ? (1*60 + 30) : (18*60); // 1:30 AM or 6:00 PM
+  const dur      = randInt(360, 480);
   const tzDelta =
     (countryOf(from) === 'US' && countryOf(to) === 'JP') ? 360 :
     (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
   const arrMins  = depMins + dur + tzDelta;
   const price    = randInt(900, 1150);
+
   return [{
     from, to,
     depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
