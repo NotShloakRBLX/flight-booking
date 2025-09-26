@@ -1482,14 +1482,6 @@ function openReviewPay(){
     `).join('');
   }
 
-  function airportTitle(code){
-  const a = AIRPORTS.find(x=>x.code===code);
-  // strip "(XXX)" from the end
-  const n = (a?.name || code).replace(/\s*\([A-Z]{3}\)\s*$/,'');
-  return `${code} • ${n}`;
-}
-function diffMins(a, b){ return timeStrToMins(a) - timeStrToMins(b); } // + = late, - = early
-
   const showStops = Array.isArray(lastSelection.connections) ? '' : '<div class="kv"><span>Stops</span><b>Nonstop</b></div>';
 
   v.innerHTML = `
@@ -1792,6 +1784,14 @@ document.getElementById('previousList').addEventListener('click', e=>{
   const card = e.target.closest('.trip-card');
   if(card) openTripDetail(card.dataset.id);
 });
+
+  function airportTitle(code){
+  const a = AIRPORTS.find(x=>x.code===code);
+  // strip "(XXX)" from the end
+  const n = (a?.name || code).replace(/\s*\([A-Z]{3}\)\s*$/,'');
+  return `${code} • ${n}`;
+}
+function diffMins(a, b){ return timeStrToMins(a) - timeStrToMins(b); } // + = late, - = early
 
 function openTripDetail(id){
   const trips = getTrips();
