@@ -379,6 +379,32 @@
 /* block dock while any modal is open (you already have .modal-open for sheets) */
 .modal-open .dock{ pointer-events:none; }
 
+  /* ---- Trip detail (large-times design) ---- */
+.tdetail .updated{color:#8f99a4;font-size:12px;margin:2px 4px 12px}
+.tdetail .route{font-size:40px;line-height:1.05;font-weight:800;letter-spacing:.4px;margin:0 4px 14px}
+
+.tcard{
+  background:#202329;border:1px solid rgba(255,255,255,.10);
+  border-radius:20px;padding:14px 14px;box-shadow:0 10px 28px rgba(0,0,0,.35);
+  margin:10px 0
+}
+.trow{display:flex;align-items:center;gap:12px}
+.trow .airline{font-weight:800;font-size:20px}
+.trow .sub{color:#aab2ba;font-size:13px;margin-top:2px}
+.trow .pill{margin-left:auto}
+
+.section{padding:14px 14px 12px}
+.airport{font-weight:700}
+.airport small{color:#9aa3af;font-weight:600}
+.bigtime{font-size:44px;line-height:1.02;font-weight:900;letter-spacing:.4px;margin:8px 0 0}
+.sched-old{margin-left:10px;text-decoration:line-through;opacity:.45;font-weight:700}
+.delta{font-weight:800;margin-top:4px}
+.delta.late{color:#ff6b6b}
+.delta.early{color:#63d488}
+
+.tfooter{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.tfooter .kv{margin:0}
+
 </style>
 </head>
 <body>
@@ -1456,6 +1482,14 @@ function openReviewPay(){
     `).join('');
   }
 
+  function airportTitle(code){
+  const a = AIRPORTS.find(x=>x.code===code);
+  // strip "(XXX)" from the end
+  const n = (a?.name || code).replace(/\s*\([A-Z]{3}\)\s*$/,'');
+  return `${code} • ${n}`;
+}
+function diffMins(a, b){ return timeStrToMins(a) - timeStrToMins(b); } // + = late, - = early
+
   const showStops = Array.isArray(lastSelection.connections) ? '' : '<div class="kv"><span>Stops</span><b>Nonstop</b></div>';
 
   v.innerHTML = `
@@ -1759,66 +1793,88 @@ document.getElementById('previousList').addEventListener('click', e=>{
   if(card) openTripDetail(card.dataset.id);
 });
 
-/* ---------- Trip detail (in your existing sheet) ---------- */
 function openTripDetail(id){
   const trips = getTrips();
-  const t = trips.find(x => x.id === id);
-  if(!t) return;
+  const i = trips.findIndex(t => t.id === id);
+  if (i < 0) return;
+  const t = trips[i];
 
-  const depDisp = t.actualDepart || t.schedDepart;
-  const arrDisp = t.actualArrive || t.schedArrive;
+  // display times (actual if present, otherwise scheduled)
+  const depShown = t.actualDepart || t.schedDepart;
+  const arrShown = t.actualArrive || t.schedArrive;
 
-  const depClass = t.actualDepart
-    ? (timeStrToMins(t.actualDepart) > timeStrToMins(t.schedDepart) ? 't-late' : 't-early') : '';
-  const arrClass = t.actualArrive
-    ? (timeStrToMins(t.actualArrive) > timeStrToMins(t.schedArrive) ? 't-late' : 't-early') : '';
+  // delta labels
+  const dDiff = t.actualDepart ? diffMins(t.actualDepart, t.schedDepart) : 0;
+  const aDiff = t.actualArrive ? diffMins(t.actualArrive, t.schedArrive) : 0;
 
-  const statusText = t.status === 'INFLIGHT' ? 'INFLIGHT' : (t.status === 'ARRIVED' ? 'ARRIVED' : 'ON TIME');
-  const pillClass  = t.status === 'INFLIGHT' ? 'pill-inflight' : (t.status === 'ARRIVED' ? 'pill-arrived' : 'pill-ontime');
+  const depDelta = t.actualDepart
+    ? `<div class="delta ${dDiff>0?'late':dDiff<0?'early':''}">
+         ${dDiff===0 ? 'On Time' : `${Math.abs(dDiff)}m ${dDiff>0?'Late':'Early'}`}
+       </div>` : '';
 
-  const page = document.getElementById('screen-trip-detail');
-  page.innerHTML = `
-    <button class="btn-page-back" id="tdBack" aria-label="Back">
-      <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" stroke="#9aa3af" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
+  const arrDelta = t.actualArrive
+    ? `<div class="delta ${aDiff>0?'late':aDiff<0?'early':''}">
+         ${aDiff===0 ? 'On Time' : `${Math.abs(aDiff)}m ${aDiff>0?'Late':'Early'}`}
+       </div>` : '';
 
-    <div class="td-topnote">Updated now</div>
-    <div class="td-title">${t.from} → ${t.to}</div>
+  const v = document.createElement('div');
+  v.className = 'view tdetail';
 
-    <section class="td-card">
-      <div class="td-airlineRow">
-        <div class="td-left">
-          <img class="td-logo" src="${t.logo||''}" alt="">
-          <div>
-            <div class="td-airlineName">${t.carrier||''}</div>
-            <div class="td-route">${t.from} → ${t.to}</div>
-          </div>
+  v.innerHTML = `
+    <div class="updated">Updated now</div>
+    <div class="route">${t.from} &nbsp;→&nbsp; ${t.to}</div>
+
+    <!-- Airline header card -->
+    <div class="tcard">
+      <div class="trow">
+        <img src="${t.logo||''}" alt="" class="trip-logo" style="width:38px;height:38px;border-radius:10px;background:#13151a">
+        <div>
+          <div class="airline">${t.carrier||''}</div>
+          <div class="sub">${t.from} → ${t.to}</div>
         </div>
-        <span class="pill ${pillClass}">${statusText}</span>
+        <span class="pill ${t.status==='INFLIGHT'?'pill-inflight':t.status==='ARRIVED'?'pill-arrived':'pill-ontime'}">
+          ${t.status==='INFLIGHT'?'INFLIGHT':t.status==='ARRIVED'?'ARRIVED':'ON TIME'}
+        </span>
       </div>
-    </section>
-
-    <section class="td-card">
-      <div class="kv"><span>Date</span><b>${formatDate(t.date)}</b></div>
-      <div class="kv"><span>Depart</span><b class="${depClass}">${depDisp}</b></div>
-      <div class="kv"><span>Arrive</span><b class="${arrClass}">${arrDisp}${t.plusOne? ' <span class="muted">+1</span>':''}</b></div>
-      <div class="kv"><span>Aircraft type</span><b>${t.aircraft||'—'}</b></div>
-      <div class="kv"><span>Passenger</span><b>${t.passenger||'Passenger 1'}</b></div>
-    </section>
-
-    <div style="display:flex; gap:10px">
-      <button class="btn-lg" style="flex:1" id="tdStatus">Status</button>
     </div>
+
+    <!-- Depart section -->
+    <div class="tcard section">
+      <div class="airport">⦿ ${airportTitle(t.from)}</div>
+      <div class="bigtime">
+        ${depShown}
+        ${t.actualDepart ? `<span class="sched-old">${t.schedDepart}</span>` : ''}
+      </div>
+      ${depDelta}
+      <div class="sub" style="margin-top:10px">${t.durationText ? `${t.durationText} • Nonstop` : ''}</div>
+    </div>
+
+    <!-- Arrive section -->
+    <div class="tcard section">
+      <div class="airport">⦿ ${airportTitle(t.to)}</div>
+      <div class="bigtime">
+        ${arrShown}${t.plusOne ? ' <sup class="muted">+1</sup>' : ''}
+        ${t.actualArrive ? `<span class="sched-old">${t.schedArrive}${t.plusOne ? ' +1':''}</span>` : ''}
+      </div>
+      ${arrDelta}
+
+      <!-- Footer info: aircraft + passenger (right below the times as requested) -->
+      <div class="tfooter">
+        <div class="kv"><span>Aircraft</span><b>${t.aircraft || '—'}</b></div>
+        <div class="kv"><span>Passenger</span><b>${t.passenger || 'Passenger 1'}</b></div>
+      </div>
+    </div>
+
+    <div style="height:6px"></div>
+    <button class="btn-lg" id="btnStatus">Status</button>
   `;
 
-  // back to Trips
-  page.querySelector('#tdBack').addEventListener('click', openTrips);
-  // same Status flow you already have (keeps the smooth action sheet)
-  page.querySelector('#tdStatus').addEventListener('click', () => openStatusActions(t));
+  v.querySelector('#btnStatus').addEventListener('click', ()=> openStatusActions(t));
 
-  // show the new page (no sheet)
-  showScreen('screen-trip-detail');
-  window.scrollTo({top: 0, behavior: 'auto'});
+  // show in your existing sheet
+  openSheet();
+  renderView(`${t.from} → ${t.to}`, v);
+  stepStack = [{ title: `${t.from} → ${t.to}`, html: v }];
 }
 
 /* ---------- Status Action Sheet ---------- */
