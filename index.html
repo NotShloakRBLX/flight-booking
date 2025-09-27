@@ -418,6 +418,36 @@
 .time-early{color:#63d488; font-weight:900}
 .time-late {color:#ff6b6b; font-weight:900}
 
+  /* ---- CBP (arrival) modal ---- */
+.cbp-backdrop{
+  position:fixed; inset:0; background:rgba(0,0,0,.55);
+  opacity:0; pointer-events:none; transition:opacity var(--t); z-index:1300;
+}
+.cbp-backdrop.show{ opacity:1; pointer-events:auto }
+
+.cbp-modal{
+  position:fixed; left:50%; top:10px;
+  transform:translate(-50%, calc(100% + 12px));
+  width:min(420px,96vw); max-height:calc(100vh - 20px);
+  background:var(--card); border:1px solid var(--cardBorder);
+  border-radius:20px; overflow:hidden; box-shadow:0 22px 60px rgba(0,0,0,.65);
+  transition:transform var(--t); z-index:1301;
+}
+.cbp-modal.show{ transform:translate(-50%, 0) }
+
+.cbp-head{ display:grid; gap:10px; padding:14px 14px 10px }
+.cbp-head img{ width:44px; height:44px; object-fit:contain; filter:drop-shadow(0 1px 0 rgba(0,0,0,.35)); }
+.cbp-hr{ height:1px; background:rgba(255,255,255,.14) }
+
+.cbp-body{ padding:14px; display:grid; gap:12px }
+.cbp-title{ font-size:24px; font-weight:900; letter-spacing:.3px; margin-top:2px }
+.cbp-row{ display:grid; gap:8px }
+.cbp-row label{ color:#c8ced6; font-size:14px }
+.cbp-row input, .cbp-row select{
+  width:100%; background:#121317; color:#fff; border:1px solid rgba(255,255,255,.16);
+  border-radius:12px; padding:10px 12px; font-size:16px; outline:none; -webkit-appearance:none; appearance:none;
+}
+
 </style>
 </head>
 <body>
@@ -722,6 +752,16 @@ function countryOf(code){
   return 'US';
 }
 function isIntl(a,b){ return countryOf(a) !== countryOf(b); }
+
+/* For conditional UI */
+function needsPassportOnPassengers(from, to){
+  return countryOf(from)==='US' && countryOf(to)==='JP';
+}
+function shouldShowCBPOnArrived(trip){
+  const usPorts = ['IZO','RFD','PER','LCA'];      // allowed “Arrival into …”
+  return countryOf(trip.from)==='JP' && countryOf(trip.to)==='US' && usPorts.includes(trip.to) && !trip.cbpDone;
+}
+const CITY_LABEL = { RFD:'Rockford', IZO:'Izolirani', PER:'Perth', LCA:'Larnaca' };
 
 /* -------------------- Aircraft rules -------------------- */
 const AIRCRAFT_RULES = {
@@ -1495,6 +1535,7 @@ function openSummary(opt){
 
 function openPassengers(){
   const intl=isIntl(lastSelection.from,lastSelection.to);
+  const askPassport = needsPassportOnPassengers(lastSelection.from, lastSelection.to);
   const v=document.createElement('div'); v.className='view';
   const info=intl?`
     <div class="panel info">
@@ -1521,6 +1562,10 @@ function openPassengers(){
     </div>
   </div>
 
+  ${askPassport ? `
+  <div class="form-row" style="margin-top:8px">
+  <div class="field"><label>Passport number •</label><input id="p1Passport" required type="text" inputmode="text" placeholder="XXXXXXXXX"></div>
+
   <button class="btn-lg" id="goPay">Continue</button>`;
   
   v.querySelector('#goPay').addEventListener('click', () => {
@@ -1529,6 +1574,12 @@ function openPassengers(){
     const last = (document.getElementById('p1Last').value || '').trim();
     const dob = document.getElementById('p1Dob').value || '';
     const gender = document.getElementById('p1Gender').value || '';
+    const passport = (document.getElementById('p1Passport')?.value || '').trim();
+if (askPassport && !passport){
+  alert('Please enter the passport number.');
+  return;
+}
+passengerData = { first, middle, last, dob, gender, passport };
 
     if(!first || !last || !dob || !gender){
       alert('Please complete required passenger fields.');
@@ -2026,7 +2077,7 @@ function openStatusActions(trip){
   }
   back.addEventListener('click', close);
 
-  // mount the sheet
+  // mount
   document.body.append(back, box);
   requestAnimationFrame(()=>{ 
     back.classList.add('show'); 
@@ -2057,7 +2108,7 @@ function openStatusActions(trip){
     html += `<div class="row"><button class="btn red" id="archive">Archive flight</button></div>`;
   }
 
-  // Change gate flow (always present)
+  // Change gate (always present)
   html += `
     <div class="row"><button class="btn" id="chgGate">Change gate</button></div>
     <div class="row" id="gateMode" style="display:none">
@@ -2075,41 +2126,62 @@ function openStatusActions(trip){
 
   box.innerHTML = html;
 
-  // status handlers
+  // ----- Status handlers -----
   if(st==='CONFIRMED'){
-    box.querySelector('#toInflight').addEventListener('click', ()=> box.querySelector('#depRow').style.display='grid');
+    box.querySelector('#toInflight').addEventListener('click', ()=>{
+      box.querySelector('#depRow').style.display='grid';
+    });
     box.querySelector('#upd1').addEventListener('click', ()=>{
       const v = box.querySelector('#depTime').value; if(!v) return;
-      const [H,M]=v.split(':').map(Number); const ampm=H>=12?'PM':'AM'; const h12=((H+11)%12)+1; const disp=`${h12}:${String(M).padStart(2,'0')} ${ampm}`;
+      const [H,M]=v.split(':').map(Number);
+      const ampm = H>=12?'PM':'AM';
+      const h12  = ((H+11)%12)+1;
+      const disp = `${h12}:${String(M).padStart(2,'0')} ${ampm}`;
+
       const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
       if(i>-1){
         trips[i].status='INFLIGHT';
         trips[i].actualDepart=disp;
-        trips[i].inflightStart = Date.now(); // start stopwatch
-        delete trips[i].inflightEnd;
+        if (!trips[i].inflightStart) trips[i].inflightStart = Date.now(); // harmless if you added a stopwatch
         setTrips(trips);
       }
       close(); openTripDetail(trip.id); renderTrips();
     });
   } else if(st==='INFLIGHT'){
-    box.querySelector('#toArrived').addEventListener('click', ()=> box.querySelector('#arrRow').style.display='grid');
+    box.querySelector('#toArrived').addEventListener('click', ()=>{
+      box.querySelector('#arrRow').style.display='grid';
+    });
     box.querySelector('#upd2').addEventListener('click', ()=>{
       const v = box.querySelector('#arrTime').value; if(!v) return;
-      const [H,M]=v.split(':').map(Number); const ampm=H>=12?'PM':'AM'; const h12=((H+11)%12)+1; const disp=`${h12}:${String(M).padStart(2,'0')} ${ampm}`;
+      const [H,M]=v.split(':').map(Number);
+      const ampm = H>=12?'PM':'AM';
+      const h12  = ((H+11)%12)+1;
+      const disp = `${h12}:${String(M).padStart(2,'0')} ${ampm}`;
+
       const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
       if(i>-1){
         trips[i].status='ARRIVED';
         trips[i].actualArrive=disp;
-        trips[i].inflightEnd = Date.now(); // stop stopwatch
+        trips[i].inflightEnd = Date.now(); // harmless if using stopwatch
         setTrips(trips);
+
+        // return to details
+        close(); 
+        openTripDetail(trip.id); 
+        renderTrips();
+
+        // JP -> US arrivals into specific ports → show CBP form (if not done)
+        const updated = trips[i];
+        if (typeof shouldShowCBPOnArrived === 'function' && shouldShowCBPOnArrived(updated)){
+          openCBPForm(updated);
+        }
       }
-      close(); openTripDetail(trip.id); renderTrips();
     });
   } else if(st==='ARRIVED'){
     box.querySelector('#archive').addEventListener('click', ()=>{
       const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
       if(i>-1){
-        trips[i].status='ARRIVED';   // keep ARRIVED label
+        trips[i].status='ARRIVED';   // keep label
         trips[i].isArchived=true;    // move to Previous Trips
         setTrips(trips);
       }
@@ -2117,10 +2189,13 @@ function openStatusActions(trip){
     });
   }
 
-  // gate handlers
+  // ----- Gate handlers -----
   const gateMode = box.querySelector('#gateMode');
   const gateForm = box.querySelector('#gateForm');
-  box.querySelector('#chgGate').addEventListener('click', ()=> gateMode.style.display='grid');
+
+  box.querySelector('#chgGate').addEventListener('click', ()=> {
+    gateMode.style.display='grid';
+  });
 
   let gateKind = ''; // 'dep' or 'arr'
   box.querySelector('#gateDep').addEventListener('click', ()=> { gateKind='dep'; gateForm.style.display='grid'; });
@@ -2130,6 +2205,7 @@ function openStatusActions(trip){
     const gate = box.querySelector('#gateInput').value.trim();
     const term = box.querySelector('#termInput').value.trim();
     if(!gate && !term) return;
+
     const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
     if(i>-1){
       if(gateKind==='dep'){ trips[i].depGate = gate; trips[i].depTerminal = term; }
@@ -2155,6 +2231,80 @@ renderTrips();
       <button class="btn-danger"  id="delConfirm" type="button">Delete</button>
     </div>
   `;
+
+    function openCBPForm(trip){
+  const back = document.createElement('div'); back.className='cbp-backdrop';
+  const box  = document.createElement('div'); box.className='cbp-modal';
+
+  const city = CITY_LABEL[trip.to] || trip.to;
+
+  box.innerHTML = `
+    <div class="cbp-head">
+      <img src="./cbp-icon.png" alt="CBP">
+      <div class="cbp-hr"></div>
+    </div>
+    <div class="cbp-body">
+      <div class="cbp-title">Arrival into ${city}</div>
+
+      <div class="cbp-row">
+        <label>Passport Number</label>
+        <input id="cbpPassport" type="text" placeholder="XXXXXXXXX">
+      </div>
+
+      <div class="cbp-row">
+        <label>Departure airport</label>
+        <select id="cbpDeparture">
+          <option value="" disabled selected>Select</option>
+          <option value="HND">Tokyo Haneda (HND)</option>
+          <option value="GRV">Grindavik (GRV)</option>
+        </select>
+      </div>
+
+      <button class="btn-lg" id="cbpSubmit" type="button">Submit Form</button>
+    </div>
+  `;
+
+  function close(){
+    back.classList.remove('show'); box.classList.remove('show');
+    document.body.classList.remove('modal-open');
+    setTimeout(()=>{ back.remove(); box.remove(); }, 220);
+  }
+
+  back.addEventListener('click', close);
+  document.body.append(back, box);
+  requestAnimationFrame(()=>{ back.classList.add('show'); box.classList.add('show'); document.body.classList.add('modal-open'); });
+
+  box.querySelector('#cbpSubmit').addEventListener('click', ()=>{
+    const passport = (box.querySelector('#cbpPassport').value || '').trim();
+    const dep      = box.querySelector('#cbpDeparture').value || '';
+    if(!passport || !dep){
+      alert('Please complete the form.');
+      return;
+    }
+
+    // loading state (reuse your spinner style)
+    box.innerHTML = `
+      <div class="cbp-body" style="place-items:center; text-align:center">
+        <div class="spinner" aria-hidden="true" style="margin:30px 0"></div>
+        <div style="font-weight:800; font-size:18px">Submitting form</div>
+      </div>
+    `;
+
+    // “submit” and persist a flag so we don't ask again
+    setTimeout(()=>{
+      const trips = getTrips();
+      const i = trips.findIndex(t => t.id === trip.id);
+      if(i>-1){
+        trips[i].cbpDone = true;
+        trips[i].cbpPassport = passport;  // optional: keep what was entered
+        trips[i].cbpDeparture = dep;
+        setTrips(trips);
+      }
+      close();
+      // back on details already; nothing else to do
+    }, 4000);
+  });
+}
 
   function close(){
     back.classList.remove('show'); box.classList.remove('show');
