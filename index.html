@@ -1238,12 +1238,20 @@ function buildIzoPhpResults(from, to){
 
 function buildIzoHndResults(from, to){
   const carriers = ['American Airlines','American Airlines','American Airlines'];
-  const fixedDepTimes = [18*60 + 45, 20*60 + 20, 23*60 + 40];
+
+  // HND → IZO should depart 1:20 PM, 3:20 PM, 6:40 PM
+  // Keep the old late-evening schedule for the reverse direction.
+  const fixedDepTimes = (from === 'HND' && to === 'IZO')
+    ? [13*60 + 20, 15*60 + 20, 18*60 + 40]           // 1:20pm, 3:20pm, 6:40pm
+    : [18*60 + 45, 20*60 + 20, 23*60 + 40];          // original: 6:45pm, 8:20pm, 11:40pm
+
   const durations = Array.from({length:3}, () => randInt(420, 510));
-  const prices = Array.from({length:3}, () => randInt(850, 1100));
+  const prices    = Array.from({length:3}, () => randInt(850, 1100));
+
   const tzDelta =
     (countryOf(from) === 'US' && countryOf(to) === 'JP') ? 360 :
     (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
+
   return carriers.map((carrier, i) => {
     const depMins = fixedDepTimes[i], dur = durations[i], arrMins = depMins + dur + tzDelta;
     return {
@@ -1257,7 +1265,7 @@ function buildIzoHndResults(from, to){
     };
   });
 }
-
+  
 function buildIzoGrvResults(from, to){
   const carrier = 'Lufthansa';
 
