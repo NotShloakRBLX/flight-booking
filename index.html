@@ -1534,62 +1534,75 @@ function openSummary(opt){
 }
 
 function openPassengers(){
-  const intl=isIntl(lastSelection.from,lastSelection.to);
+  const intl = isIntl(lastSelection.from, lastSelection.to);
   const askPassport = needsPassportOnPassengers(lastSelection.from, lastSelection.to);
-  const v=document.createElement('div'); v.className='view';
-  const info=intl?`
+
+  const v = document.createElement('div');
+  v.className = 'view';
+
+  const info = intl ? `
     <div class="panel info">
       <div class="title">Know before you go</div>
       <div class="muted">International travel requires a valid passport. Check visa and travel document requirements for your destination.</div>
-    </div>`:'';
+    </div>` : '';
 
-  v.innerHTML=`
-  ${info}
-  <div class="panel"><div class="kv"><span>Your trip total</span><b>$${lastSelection.price.toLocaleString()}</b></div></div>
+  v.innerHTML = `
+    ${info}
+    <div class="panel"><div class="kv"><span>Your trip total</span><b>$${lastSelection.price.toLocaleString()}</b></div></div>
 
-  <div class="panel">
-    <h3>Passenger 1</h3>
-    <div class="form-row">
-      <div class="field"><label>First name •</label><input id="p1First" required type="text" placeholder="As on ID" autocomplete="given-name"></div>
-      <div class="field"><label>Middle name</label><input id="p1Middle" type="text" placeholder="Optional" autocomplete="additional-name"></div>
-      <div class="field"><label>Last name •</label><input id="p1Last" required type="text" placeholder="As on ID" autocomplete="family-name"></div>
-    </div>
-    <div class="form-row half" style="margin-top:8px">
-      <div class="field"><label>Date of birth •</label><input id="p1Dob" required type="date" autocomplete="bday"></div>
-      <div class="field"><label>Gender •</label>
-        <select id="p1Gender" required autocomplete="sex"><option value="" disabled selected>Select</option><option>Female</option><option>Male</option><option>Unspecified</option></select>
+    <div class="panel">
+      <h3>Passenger 1</h3>
+      <div class="form-row">
+        <div class="field"><label>First name •</label><input id="p1First" required type="text" placeholder="As on ID" autocomplete="given-name"></div>
+        <div class="field"><label>Middle name</label><input id="p1Middle" type="text" placeholder="Optional" autocomplete="additional-name"></div>
+        <div class="field"><label>Last name •</label><input id="p1Last" required type="text" placeholder="As on ID" autocomplete="family-name"></div>
+      </div>
+      <div class="form-row half" style="margin-top:8px">
+        <div class="field"><label>Date of birth •</label><input id="p1Dob" required type="date" autocomplete="bday"></div>
+        <div class="field"><label>Gender •</label>
+          <select id="p1Gender" required autocomplete="sex">
+            <option value="" disabled selected>Select</option>
+            <option>Female</option><option>Male</option><option>Unspecified</option>
+          </select>
+        </div>
       </div>
     </div>
-  </div>
 
-  ${askPassport ? `
-  <div class="form-row" style="margin-top:8px">
-  <div class="field"><label>Passport number •</label><input id="p1Passport" required type="text" inputmode="text" placeholder="XXXXXXXXX"></div>
+    ${askPassport ? `
+      <div class="panel">
+        <div class="form-row" style="margin-top:8px">
+          <div class="field"><label>Passport number •</label><input id="p1Passport" required type="text" inputmode="text" placeholder="XXXXXXXXX"></div>
+        </div>
+      </div>
+    ` : ''}
 
-  <button class="btn-lg" id="goPay">Continue</button>`;
-  
+    <button class="btn-lg" id="goPay">Continue</button>
+  `;
+
   v.querySelector('#goPay').addEventListener('click', () => {
-    const first = (document.getElementById('p1First').value || '').trim();
-    const middle = (document.getElementById('p1Middle').value || '').trim();
-    const last = (document.getElementById('p1Last').value || '').trim();
-    const dob = document.getElementById('p1Dob').value || '';
-    const gender = document.getElementById('p1Gender').value || '';
+    const first    = (document.getElementById('p1First').value  || '').trim();
+    const middle   = (document.getElementById('p1Middle').value || '').trim();
+    const last     = (document.getElementById('p1Last').value   || '').trim();
+    const dob      = document.getElementById('p1Dob').value || '';
+    const gender   = document.getElementById('p1Gender').value || '';
     const passport = (document.getElementById('p1Passport')?.value || '').trim();
-if (askPassport && !passport){
-  alert('Please enter the passport number.');
-  return;
-}
-passengerData = { first, middle, last, dob, gender, passport };
 
-    if(!first || !last || !dob || !gender){
+    if (!first || !last || !dob || !gender){
       alert('Please complete required passenger fields.');
       return;
     }
+    if (askPassport && !passport){
+      alert('Please enter the passport number.');
+      return;
+    }
+
     passengerData = { first, middle, last, dob, gender };
+    if (askPassport) passengerData.passport = passport;
+
     openReviewPay();
   });
 
-  stepStack.push({title:'Passenger details', html:v});
+  stepStack.push({ title:'Passenger details', html:v });
   renderView('Passenger details', v);
 }
 
@@ -2219,20 +2232,7 @@ function openStatusActions(trip){
 /* render Trips on load */
 renderTrips();
 
-  function confirmDelete(tripId){
-  const back = document.createElement('div'); back.className = 'confirm-backdrop';
-  const box  = document.createElement('div'); box.className  = 'confirm';
-
-  box.innerHTML = `
-    <h3>Delete this flight?</h3>
-    <p>This will permanently remove it from Previous Trips.</p>
-    <div class="row-btns">
-      <button class="btn-outline" id="delCancel" type="button">Cancel</button>
-      <button class="btn-danger"  id="delConfirm" type="button">Delete</button>
-    </div>
-  `;
-
-    function openCBPForm(trip){
+  function openCBPForm(trip){
   const back = document.createElement('div'); back.className='cbp-backdrop';
   const box  = document.createElement('div'); box.className='cbp-modal';
 
@@ -2261,6 +2261,58 @@ renderTrips();
       </div>
 
       <button class="btn-lg" id="cbpSubmit" type="button">Submit Form</button>
+    </div>
+  `;
+
+  function close(){
+    back.classList.remove('show'); box.classList.remove('show');
+    document.body.classList.remove('modal-open');
+    setTimeout(()=>{ back.remove(); box.remove(); }, 220);
+  }
+
+  back.addEventListener('click', close);
+  document.body.append(back, box);
+  requestAnimationFrame(()=>{ back.classList.add('show'); box.classList.add('show'); document.body.classList.add('modal-open'); });
+
+  box.querySelector('#cbpSubmit').addEventListener('click', ()=>{
+    const passport = (box.querySelector('#cbpPassport').value || '').trim();
+    const dep      = box.querySelector('#cbpDeparture').value || '';
+    if(!passport || !dep){
+      alert('Please complete the form.');
+      return;
+    }
+
+    box.innerHTML = `
+      <div class="cbp-body" style="place-items:center; text-align:center">
+        <div class="spinner" aria-hidden="true" style="margin:30px 0"></div>
+        <div style="font-weight:800; font-size:18px">Submitting form</div>
+      </div>
+    `;
+
+    setTimeout(()=>{
+      const trips = getTrips();
+      const i = trips.findIndex(t => t.id === trip.id);
+      if(i>-1){
+        trips[i].cbpDone = true;
+        trips[i].cbpPassport = passport;
+        trips[i].cbpDeparture = dep;
+        setTrips(trips);
+      }
+      close();
+    }, 4000);
+  });
+}
+
+  function confirmDelete(tripId){
+  const back = document.createElement('div'); back.className = 'confirm-backdrop';
+  const box  = document.createElement('div'); box.className  = 'confirm';
+
+  box.innerHTML = `
+    <h3>Delete this flight?</h3>
+    <p>This will permanently remove it from Previous Trips.</p>
+    <div class="row-btns">
+      <button class="btn-outline" id="delCancel" type="button">Cancel</button>
+      <button class="btn-danger"  id="delConfirm" type="button">Delete</button>
     </div>
   `;
 
