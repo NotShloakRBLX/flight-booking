@@ -705,6 +705,16 @@ function timeStrToMins(s){
   let h=+m[1]%12, min=+m[2]; const pm=/PM/i.test(m[3]); if(pm) h+=12; return h*60+min;
 }
 
+  function computeDurationText(obj){
+  if (obj.durationText) return obj.durationText;
+  const dep = timeStrToMins(obj.schedDepart || obj.depart);
+  let arr   = timeStrToMins(obj.schedArrive || obj.arrive);
+  if (obj.plusOne) arr += 1440;
+  const dur = arr - dep;
+  if (!isFinite(dur) || dur <= 0) return '';
+  return `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`;
+}
+
 /* Country mapping for INTL check */
 function countryOf(code){
   if (['RFD','PER','LCA','PHP','MLR','IZO'].includes(code)) return 'US';
@@ -1654,6 +1664,7 @@ saveTrip({
   aircraft: lastSelection.aircraft || '—',
   price: lastSelection.price || 0,
   passenger: fullName || 'Passenger 1',
+  durationText: lastSelection.durationText || '',
 
   depGate: '', depTerminal: '',
   arrGate: '', arrTerminal: '',
@@ -1900,6 +1911,7 @@ function openTripDetail(id){
   // color classes for NEW times only
   const depClass = t.actualDepart ? (dDiff < 0 ? 'time-early' : dDiff > 0 ? 'time-late' : '') : '';
   const arrClass = t.actualArrive ? (aDiff < 0 ? 'time-early' : aDiff > 0 ? 'time-late' : '') : '';
+  const durationText = computeDurationText(t);
 
   const v = document.createElement('div');
   v.className = 'view tdetail';
@@ -1915,6 +1927,7 @@ function openTripDetail(id){
         <div>
           <div class="airline">${t.carrier || ''}</div>
           <div class="sub">${t.from} → ${t.to}</div>
+          <div class="sub">${durationText ? `${durationText} • Nonstop` : ''}</div> <!-- NEW -->
         </div>
         <span class="pill ${t.status==='INFLIGHT'?'pill-inflight':t.status==='ARRIVED'?'pill-arrived':'pill-ontime'}">
           ${t.status==='INFLIGHT'?'INFLIGHT':t.status==='ARRIVED'?'ARRIVED':'ON TIME'}
