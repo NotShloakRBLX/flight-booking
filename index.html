@@ -758,8 +758,9 @@ function needsPassportOnPassengers(from, to){
   return countryOf(from)==='US' && countryOf(to)==='JP';
 }
 function shouldShowCBPOnArrived(trip){
-  const usPorts = ['IZO','RFD','PER','LCA'];      // allowed “Arrival into …”
-  return countryOf(trip.from)==='JP' && countryOf(trip.to)==='US' && usPorts.includes(trip.to) && !trip.cbpDone;
+  return countryOf(trip.from) === 'JP'
+      && countryOf(trip.to) === 'US'
+      && !trip.cbpDone;
 }
 const CITY_LABEL = { RFD:'Rockford', IZO:'Izolirani', PER:'Perth', LCA:'Larnaca' };
 
