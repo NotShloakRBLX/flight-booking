@@ -759,7 +759,7 @@ function needsPassportOnPassengers(from, to){
 }
 function shouldShowCBPOnArrived(trip){
   return countryOf(trip.from) === 'JP'
-      && countryOf(trip.to) === 'US'
+      && countryOf(trip.to)   === 'US'
       && !trip.cbpDone;
 }
 const CITY_LABEL = { RFD:'Rockford', IZO:'Izolirani', PER:'Perth', LCA:'Larnaca' };
@@ -2173,32 +2173,25 @@ function openStatusActions(trip){
       const disp = `${h12}:${String(M).padStart(2,'0')} ${ampm}`;
 
       const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
-      if (i > -1) {
-  trips[i].status = 'ARRIVED';
-  trips[i].actualArrive = disp;
-  trips[i].inflightEnd = Date.now();
-  setTrips(trips);
+      if(i>-1){
+        trips[i].status='ARRIVED';
+        trips[i].actualArrive=disp;
+        trips[i].inflightEnd = Date.now(); // harmless if using stopwatch
+        setTrips(trips);
 
-  const updated = trips[i];   // capture after we saved
+        const updated = trips[i]; // capture after save
 
-  // Close actions + refresh detail first
-  close();
-  openTripDetail(trip.id);
-  renderTrips();
+        // Return to details first
+        close();
+        openTripDetail(trip.id);
+        renderTrips();
 
-  // Open CBP on the next frame (avoids being swallowed by transitions)
-  requestAnimationFrame(() => {
-    if (shouldShowCBPOnArrived?.(updated)) {
-      openCBPForm(updated);
-    }
-  });
-}
-
-        // JP -> US arrivals into specific ports → show CBP form (if not done)
-        const updated = trips[i];
-        if (typeof shouldShowCBPOnArrived === 'function' && shouldShowCBPOnArrived(updated)){
-          openCBPForm(updated);
-        }
+        // Then open CBP reliably on the next frame
+        requestAnimationFrame(() => {
+          if (shouldShowCBPOnArrived?.(updated)) {
+            openCBPForm(updated);
+          }
+        });
       }
     });
   } else if(st==='ARRIVED'){
@@ -2274,9 +2267,47 @@ renderTrips();
       <button class="btn-lg" id="cbpSubmit" type="button">Submit Form</button>
     </div>
   `;
+
+  function close(){
+    back.classList.remove('show'); box.classList.remove('show');
+    document.body.classList.remove('modal-open');
+    setTimeout(()=>{ back.remove(); box.remove(); }, 220);
+  }
+
+  back.addEventListener('click', close);
+  document.body.append(back, box);
+  requestAnimationFrame(()=>{ back.classList.add('show'); box.classList.add('show'); document.body.classList.add('modal-open'); });
+
+  box.querySelector('#cbpSubmit').addEventListener('click', ()=>{
+    const passport = (box.querySelector('#cbpPassport').value || '').trim();
+    const dep      = box.querySelector('#cbpDeparture').value || '';
+    if(!passport || !dep){
+      alert('Please complete the form.');
+      return;
+    }
+
+    box.innerHTML = `
+      <div class="cbp-body" style="place-items:center; text-align:center">
+        <div class="spinner" aria-hidden="true" style="margin:30px 0"></div>
+        <div style="font-weight:800; font-size:18px">Submitting form</div>
+      </div>
+    `;
+
+    setTimeout(()=>{
+      const trips = getTrips();
+      const i = trips.findIndex(t => t.id === trip.id);
+      if(i>-1){
+        trips[i].cbpDone = true;
+        trips[i].cbpPassport = passport;
+        trips[i].cbpDeparture = dep;
+        setTrips(trips);
+      }
+      close();
+    }, 4000);
+  });
 }
 
-  function confirmDelete(tripId){
+function confirmDelete(tripId){
   const back = document.createElement('div'); back.className = 'confirm-backdrop';
   const box  = document.createElement('div'); box.className  = 'confirm';
 
@@ -2305,13 +2336,12 @@ renderTrips();
   });
 
   document.body.append(back, box);
-  requestAnimationFrame(() => {
-    back.classList.add('show');
-    box.classList.add('show');
-    document.body.classList.add('modal-open');
+  requestAnimationFrame(()=>{ 
+    back.classList.add('show'); 
+    box.classList.add('show'); 
+    document.body.classList.add('modal-open'); 
   });
 }
-  
 </script>
 </body>
 </html>
