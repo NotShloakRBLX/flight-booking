@@ -1314,23 +1314,47 @@ function buildLcaPhpResults(from, to){
 }
 
 function buildLcaHndResults(from, to){
-  const carriers = ['Delta', 'Singapore', 'Emirates'];
-  const depTimes  = randomUniqueTimes(3);
-  const durations = Array.from({length:3}, () => randInt(720, 960));
-  const prices    = Array.from({length:3}, () => randInt(950, 1250));
+  const isLcaToHnd = (from === 'LCA' && to === 'HND');
+
+  // Fixed departure times by direction + carrier
+  const schedule = isLcaToHnd
+    ? [
+        { carrier: 'Emirates',  timeMins: 9*60 },        // 9:00 AM
+        { carrier: 'Delta',     timeMins: 17*60 },       // 5:00 PM
+        { carrier: 'Singapore', timeMins: 17*60 + 30 },  // 5:30 PM
+      ]
+    : [
+        { carrier: 'Delta',     timeMins: 5*60 },        // 5:00 AM
+        { carrier: 'Singapore', timeMins: 5*60 + 30 },   // 5:30 AM
+        { carrier: 'Emirates',  timeMins: 22*60 },       // 10:00 PM
+      ];
+
+  // Duration: 13h–15h (in minutes)
+  const durations = Array.from({length: schedule.length}, () => randInt(780, 900));
+  const prices    = Array.from({length: schedule.length}, () => randInt(950, 1250));
+
+  // Keep your existing JP/US tz delta rule
   const tzDelta =
     (countryOf(from) === 'US' && countryOf(to) === 'JP') ? 360 :
     (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
-  return carriers.map((carrier, i) => {
-    const depMins = depTimes[i], dur = durations[i], arrMins = depMins + dur + tzDelta;
+
+  return schedule.map((s, i) => {
+    const depMins = s.timeMins;
+    const dur     = durations[i];
+    const arrMins = depMins + dur + tzDelta;
+
     return {
       from, to,
-      depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
+      depart: minutesToTime(depMins),
+      arrive: minutesToTime(arrMins),
       plusOne: Math.floor(arrMins/1440) > Math.floor(depMins/1440) ? '+1' : '',
-      durationMin: dur, durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
-      nonstop: true, price: prices[i], carrier,
+      durationMin: dur,
+      durationText: `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`,
+      nonstop: true,
+      price: prices[i],
+      carrier: s.carrier,
       overnight: overnightFlag(depMins, arrMins),
-      aircraft: pickAircraft(from, to, carrier)
+      aircraft: pickAircraft(from, to, s.carrier)
     };
   });
 }
