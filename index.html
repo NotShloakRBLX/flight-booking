@@ -2263,34 +2263,6 @@ renderTrips();
       <button class="btn-lg" id="cbpSubmit" type="button">Submit Form</button>
     </div>
   `;
-
-  box.querySelector('#cbpSubmit').addEventListener('click', ()=>{
-    const passport = (box.querySelector('#cbpPassport').value || '').trim();
-    const dep      = box.querySelector('#cbpDeparture').value || '';
-    if(!passport || !dep){
-      alert('Please complete the form.');
-      return;
-    }
-
-    box.innerHTML = `
-      <div class="cbp-body" style="place-items:center; text-align:center">
-        <div class="spinner" aria-hidden="true" style="margin:30px 0"></div>
-        <div style="font-weight:800; font-size:18px">Submitting form</div>
-      </div>
-    `;
-
-    setTimeout(()=>{
-      const trips = getTrips();
-      const i = trips.findIndex(t => t.id === trip.id);
-      if(i>-1){
-        trips[i].cbpDone = true;
-        trips[i].cbpPassport = passport;
-        trips[i].cbpDeparture = dep;
-        setTrips(trips);
-      }
-      close();
-    }, 4000);
-  });
 }
 
   function confirmDelete(tripId){
@@ -2307,28 +2279,31 @@ renderTrips();
   `;
 
   function close(){
-    back.classList.remove('show'); box.classList.remove('show');
+    back.classList.remove('show'); 
+    box.classList.remove('show');
     document.body.classList.remove('modal-open');
     setTimeout(()=>{ back.remove(); box.remove(); }, 220);
   }
 
+  // Wire events
   back.addEventListener('click', close);
-
   box.querySelector('#delCancel').addEventListener('click', close);
   box.querySelector('#delConfirm').addEventListener('click', ()=>{
     const arr = getTrips().filter(t => t.id !== tripId);
     setTrips(arr);
-    renderTrips();
+    renderTrips();   // refresh lists
     close();
   });
 
+  // Mount & animate
   document.body.append(back, box);
   requestAnimationFrame(()=>{
-    back.classList.add('show');
-    box.classList.add('show');
-    document.body.classList.add('modal-open');
+    back.classList.add('show'); 
+    box.classList.add('show'); 
+    document.body.classList.add('modal-open'); // lock background
   });
 }
+  
 </script>
 </body>
 </html>
