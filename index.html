@@ -199,7 +199,7 @@
 /* sliding highlight “pill” */
 .dock-indicator{
   position:absolute; top:6px; bottom:6px; left:6px;
-  width:calc(50% - 3px);  /* two tabs → half width */
+  width:calc(33.333% - 3px);  /* three tabs → one third width */
   border-radius:999px;
   background:rgba(30,139,255,.18);
   border:1px solid rgba(30,139,255,.45);
@@ -207,7 +207,7 @@
   transform:translateX(0%); transition:transform var(--t);
   will-change:transform;
 }
-
+  
 /* (optional) make sure sheet/backdrop are above the dock */
 .backdrop{ z-index:40; }
 .sheet{ z-index:50; }
@@ -448,6 +448,46 @@
   border-radius:12px; padding:10px 12px; font-size:16px; outline:none; -webkit-appearance:none; appearance:none;
 }
 
+  /* ====== Stats screen ====== */
+.stat-card{
+  position:relative;
+  border-radius:18px;
+  padding:18px 16px;
+  margin:12px 4px;
+  box-shadow:0 10px 28px rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.10);
+  overflow:hidden;
+}
+.stat-card .stat-kicker{
+  font-weight:800; letter-spacing:.3px; opacity:.95; margin-bottom:8px;
+}
+.stat-card .stat-big{
+  font-size:36px; line-height:1; font-weight:900; letter-spacing:.3px;
+}
+.stat-card .stat-sub{
+  margin-top:6px; color:#d0d7df; font-size:14px;
+}
+
+/* gradients */
+.grad-blue{
+  background:linear-gradient(135deg, rgba(30,139,255,.22), rgba(30,139,255,.06));
+}
+.grad-red{
+  background:linear-gradient(135deg, rgba(255,88,88,.22), rgba(255,88,88,.06));
+}
+.grad-ice{
+  background:linear-gradient(135deg, rgba(255,255,255,.18), rgba(130,190,255,.12));
+}
+
+/* most-flown aircraft logo spot (bottom-right) */
+.stat-logo{
+  position:absolute; right:10px; bottom:10px;
+  width:44px; height:44px; border-radius:10px;
+  background:#13151a; object-fit:contain;
+  filter:drop-shadow(0 1px 0 rgba(0,0,0,.35));
+  display:none;
+}
+
 </style>
 </head>
 <body>
@@ -547,11 +587,36 @@
 
   <main id="screen-trip-detail" class="page screen" style="display:none"></main>
 
+  <main id="screen-stats" class="page screen" style="display:none">
+  <h1>Statistics</h1>
+  <div class="hr" style="margin:8px 4px 12px"></div>
+
+  <section class="stat-card grad-blue">
+    <div class="stat-kicker">Flight time</div>
+    <div class="stat-big" id="statFlightTimeValue">0h 0m</div>
+  </section>
+
+  <section class="stat-card grad-blue">
+    <div class="stat-kicker">IRL time</div>
+    <div class="stat-big" id="statIrlTimeValue">0h 0m</div>
+  </section>
+
+  <section class="stat-card grad-red">
+    <div class="stat-big" id="statDelayHoursValue">0</div>
+    <div class="stat-sub">hours lost from delays</div>
+  </section>
+
+  <section class="stat-card grad-ice">
+    <div class="stat-kicker">Most flown aircraft</div>
+    <div class="stat-big" id="statMostAircraft">—</div>
+    <img id="statMostAircraftLogo" class="stat-logo" alt="">
+  </section>
+</main>
+
   <nav class="dock" id="dock" aria-label="Tabs">
   <span class="dock-indicator" aria-hidden="true"></span>
 
   <button class="dock-item active" data-tab="booking" aria-current="page">
-    <!-- airplane-ish icon (matches your style) -->
     <svg viewBox="0 0 24 24">
       <path d="M4.5 12.8l14.6-8.75c.5-.3 1.1.23.83.76L13.6 20.9a.7.7 0 0 1-1.31-.06l-1.24-5.17-5.17-1.24a.7.7 0 0 1 .06-1.31z"></path>
     </svg>
@@ -559,12 +624,22 @@
   </button>
 
   <button class="dock-item" data-tab="trips">
-    <!-- “list/ticket” style icon -->
     <svg viewBox="0 0 24 24">
       <rect x="3" y="4" width="18" height="16" rx="3"></rect>
       <path d="M7 8h10M7 12h10M7 16h7"></path>
     </svg>
     <span>Trips</span>
+  </button>
+
+  <button class="dock-item" data-tab="stats">
+    <!-- simple bar-chart icon -->
+    <svg viewBox="0 0 24 24">
+      <path d="M4 20V10"></path>
+      <path d="M10 20V4"></path>
+      <path d="M16 20v-6"></path>
+      <path d="M3 20h18"></path>
+    </svg>
+    <span>Stats</span>
   </button>
 </nav>
 
@@ -1905,12 +1980,15 @@ function showScreen(id){
 // wire dock buttons to screens
 const dockBookingBtn = document.querySelector('.dock .dock-item[data-tab="booking"]');
 const dockTripsBtn   = document.querySelector('.dock .dock-item[data-tab="trips"]');
+const dockStatsBtn   = document.querySelector('.dock .dock-item[data-tab="stats"]');   // NEW
 
 function openBooking(){ setActiveTab(0); showScreen('screen-booking'); }
 function openTrips(){ setActiveTab(1); showScreen('screen-trips'); }
+function openStats(){ setActiveTab(2); showScreen('screen-stats'); renderStats(); }     // NEW
 
 dockBookingBtn.addEventListener('click', openBooking);
 dockTripsBtn.addEventListener('click', openTrips);
+dockStatsBtn.addEventListener('click', openStats);                                      // NEW
 
 // default
 showScreen('screen-booking');
@@ -1958,6 +2036,104 @@ function renderTrips(){
   prev.innerHTML = previous.map(t => tripCardHTML(t, true)).join('');
 
   empty.style.display = upcoming.length ? 'none' : '';
+}
+
+  /* ====== Stats helpers & renderer ====== */
+
+// minutes between shown sched depart & sched arrive (respects +1 on schedule)
+function tripScheduledMinutes(t){
+  const dep = timeStrToMins(t.schedDepart || '');
+  let arr   = timeStrToMins(t.schedArrive || '');
+  if (t.plusOne) arr += 1440;
+  const diff = arr - dep;
+  return (isFinite(diff) && diff > 0) ? diff : 0;
+}
+
+// format totals: "Xd Yh" once >= 24h (no minutes); else "Xh YYm"
+function formatTotalMinutes(mins){
+  if (!mins || mins <= 0) return '0h 0m';
+  const days = Math.floor(mins / 1440);
+  if (days >= 1){
+    const remH = Math.floor((mins - days*1440) / 60);
+    return `${days}d ${remH}h`;
+  }
+  const hours = Math.floor(mins / 60);
+  const m = mins % 60;
+  return `${hours}h ${String(m).padStart(2,'0')}m`;
+}
+
+// sum of delays in minutes (only late minutes counted)
+function totalDelayMinutes(trips){
+  let sum = 0;
+  trips.forEach(t=>{
+    if (t.actualDepart && t.schedDepart){
+      const d = timeStrToMins(t.actualDepart) - timeStrToMins(t.schedDepart);
+      if (d > 0) sum += d;
+    }
+    if (t.actualArrive && t.schedArrive){
+      const d = timeStrToMins(t.actualArrive) - timeStrToMins(t.schedArrive);
+      if (d > 0) sum += d;
+    }
+  });
+  return sum;
+}
+
+// most flown aircraft + a representative carrier logo for that aircraft
+function mostFlownAircraft(trips){
+  const byAc = {};
+  trips.forEach(t=>{
+    const ac = t.aircraft || '';
+    if (!ac) return;
+    byAc[ac] = (byAc[ac] || 0) + 1;
+  });
+  let topAc = '', topCount = 0;
+  Object.entries(byAc).forEach(([k,c])=>{ if (c>topCount){ topAc=k; topCount=c; }});
+  if (!topAc) return { aircraft:'—', logo:'', carrier:'' };
+
+  const carrierCount = {};
+  trips.filter(t=>t.aircraft===topAc).forEach(t=>{
+    const c = t.carrier || '';
+    if (!c) return;
+    carrierCount[c] = (carrierCount[c] || 0) + 1;
+  });
+  const topCarrier = Object.keys(carrierCount).sort((a,b)=>carrierCount[b]-carrierCount[a])[0] || '';
+  const logo = topCarrier ? logoFor(topCarrier) : '';
+
+  return { aircraft: topAc, logo, carrier: topCarrier };
+}
+
+function renderStats(){
+  const prev = getTrips().filter(t => t.isArchived);
+
+  // Flight time (scheduled)
+  const flightMins = prev.reduce((sum,t)=> sum + tripScheduledMinutes(t), 0);
+  const ft = document.getElementById('statFlightTimeValue');
+  if (ft) ft.textContent = formatTotalMinutes(flightMins);
+
+  // IRL time (stopwatch)
+  const irlMs = prev.reduce((sum,t)=> {
+    const a = (typeof t.inflightStart==='number' && typeof t.inflightEnd==='number') ? (t.inflightEnd - t.inflightStart) : 0;
+    return sum + Math.max(0, a);
+  }, 0);
+  const irlMins = Math.floor(irlMs / 60000);
+  const irl = document.getElementById('statIrlTimeValue');
+  if (irl) irl.textContent = formatTotalMinutes(irlMins);
+
+  // Delays → hours (floor)
+  const delayMins = totalDelayMinutes(prev);
+  const delayHours = Math.floor(delayMins / 60);
+  const dh = document.getElementById('statDelayHoursValue');
+  if (dh) dh.textContent = `${delayHours}`;
+
+  // Most flown aircraft
+  const mf = mostFlownAircraft(prev);
+  const ma = document.getElementById('statMostAircraft');
+  const logo = document.getElementById('statMostAircraftLogo');
+  if (ma)   ma.textContent = mf.aircraft || '—';
+  if (logo){
+    logo.src = mf.logo || '';
+    logo.style.display = mf.logo ? 'block' : 'none';
+  }
 }
 
 document.getElementById('upcomingList').addEventListener('click', e=>{
@@ -2227,16 +2403,16 @@ function openStatusActions(trip){
       }
     });
   } else if(st==='ARRIVED'){
-    box.querySelector('#archive').addEventListener('click', ()=>{
-      const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
-      if(i>-1){
-        trips[i].status='ARRIVED';   // keep label
-        trips[i].isArchived=true;    // move to Previous Trips
-        setTrips(trips);
-      }
-      close(); closeSheet(); renderTrips();
-    });
-  }
+  box.querySelector('#archive').addEventListener('click', ()=>{
+    const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
+    if(i>-1){
+      trips[i].status='ARRIVED';   // keep label
+      trips[i].isArchived=true;    // move to Previous Trips
+      setTrips(trips);
+    }
+    close(); closeSheet(); renderTrips(); renderStats();   // ← update stats too
+  });
+}
 
   // ----- Gate handlers -----
   const gateMode = box.querySelector('#gateMode');
@@ -2267,6 +2443,7 @@ function openStatusActions(trip){
 
 /* render Trips on load */
 renderTrips();
+renderStats();
 
   function openCBPForm(trip){
   const back = document.createElement('div'); back.className='cbp-backdrop';
@@ -2361,11 +2538,12 @@ function confirmDelete(tripId){
   back.addEventListener('click', close);
   box.querySelector('#delCancel').addEventListener('click', close);
   box.querySelector('#delConfirm').addEventListener('click', ()=>{
-    const arr = getTrips().filter(t => t.id !== tripId);
-    setTrips(arr);
-    close();
-    renderTrips();
-  });
+  const arr = getTrips().filter(t => t.id !== tripId);
+  setTrips(arr);
+  close();
+  renderTrips();
+  renderStats();  // keep stats in sync
+});
 
   document.body.append(back, box);
   requestAnimationFrame(()=>{ 
