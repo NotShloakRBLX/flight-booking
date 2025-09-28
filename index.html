@@ -196,10 +196,9 @@
 .dock-item svg{width:18px; height:18px}
 .dock-item svg *{stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
 
-/* sliding highlight “pill” */
 .dock-indicator{
   position:absolute; top:6px; bottom:6px; left:6px;
-  width:calc(33.333% - 3px);  /* three tabs → one third width */
+  width:calc(25% - 3px);  /* four tabs → quarter width */
   border-radius:999px;
   background:rgba(30,139,255,.18);
   border:1px solid rgba(30,139,255,.45);
@@ -488,6 +487,93 @@
   display:none;
 }
 
+  /* ===== ID page (Travel identification) ===== */
+.id-hr{height:1px;background:rgba(255,255,255,.14);margin:8px 4px 14px}
+
+.id-card{
+  position:relative;
+  background:linear-gradient(180deg,#0f1115, #1a1d23);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:18px;
+  padding:16px 16px 14px;
+  box-shadow:0 10px 28px rgba(0,0,0,.35);
+  margin:10px 4px;
+}
+.id-card .title{font-size:18px;font-weight:900;letter-spacing:.3px;margin-bottom:8px}
+.id-card .row{display:grid;gap:4px}
+.id-card .label{color:#aab2ba;font-size:12px}
+.id-card .value{font-weight:800;font-size:18px;letter-spacing:.3px}
+.id-card .value.mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace}
+
+/* Passport look */
+.id-card.passport{
+  background:linear-gradient(160deg,#0c0d10 0%, #23262c 100%);
+  border-color:rgba(255,255,255,.18);
+}
+
+/* VISA card look */
+.id-card.visa{
+  background:linear-gradient(160deg,#0d1621 0%, #1f2f44 100%);
+  border-color:rgba(67,153,255,.35);
+}
+.id-card.visa .title{
+  font-style:italic; font-weight:900;
+}
+
+/* VISA status pill (bottom-right) */
+.visa-status{
+  position:absolute; right:12px; bottom:12px;
+  padding:6px 10px; border-radius:999px; font-weight:900; letter-spacing:.2px;
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16);
+}
+.visa-status.active{ color:#63d488; border-color:rgba(33,208,122,.35); background:rgba(33,208,122,.12) }
+.visa-status.expired{ color:#ff6b6b; border-color:rgba(255,107,107,.35); background:rgba(255,107,107,.10) }
+
+/* VISA countdown (top-right) */
+.visa-timer{
+  position:absolute; right:12px; top:12px;
+  font-weight:800; letter-spacing:.3px;
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16);
+  padding:6px 10px; border-radius:10px;
+}
+
+/* small warning banner shown if redirected here */
+.id-warn{
+  background:#3b2a2a; border:1px solid rgba(255,99,99,.35);
+  color:#ffd0d0; border-radius:12px; padding:10px 12px; margin:8px 4px 10px; display:none;
+  font-weight:700;
+}
+.id-warn.show{ display:block }
+
+/* Centered modal for VISA */
+.idv-backdrop{
+  position:fixed; inset:0; background:rgba(0,0,0,.55);
+  opacity:0; pointer-events:none; transition:opacity var(--t); z-index:1400;
+}
+.idv-backdrop.show{ opacity:1; pointer-events:auto }
+
+.idv-modal{
+  position:fixed; left:50%; top:50%;
+  transform:translate(-50%,-40%) scale(.96); opacity:0;
+  width:min(420px, 92vw); background:var(--card); border:1px solid var(--cardBorder);
+  border-radius:16px; box-shadow:0 22px 60px rgba(0,0,0,.65);
+  transition:transform var(--t), opacity var(--t); z-index:1401; padding:14px;
+}
+.idv-modal.show{ transform:translate(-50%,-50%) scale(1); opacity:1 }
+.idv-modal h3{ margin:6px 0 4px; font-size:20px; font-weight:900 }
+.idv-modal .sub{ color:#cfd6dd; margin-bottom:10px }
+.idv-row{ display:grid; gap:8px; margin:8px 0 }
+.idv-row .field{ display:flex; flex-direction:column; gap:6px }
+.idv-row .field label{ color:#c8ced6; font-size:14px }
+.idv-row .field input{
+  width:100%; background:#121317; color:#fff; border:1px solid rgba(255,255,255,.16);
+  border-radius:12px; padding:10px 12px; font-size:16px; outline:none; -webkit-appearance:none; appearance:none;
+}
+.idv-btns{ display:flex; gap:10px; margin-top:10px }
+.idv-btn{ flex:1; height:48px; border-radius:12px; border:1px solid rgba(255,255,255,.18);
+  background:#2a2d33; color:#fff; font-weight:800; cursor:pointer }
+.idv-btn.primary{ background:var(--accent); border-color:rgba(30,139,255,.4) }
+
 </style>
 </head>
 <body>
@@ -623,13 +709,24 @@
     <span>Booking</span>
   </button>
 
-  <button class="dock-item" data-tab="trips">
+   <button class="dock-item" data-tab="trips">
     <svg viewBox="0 0 24 24">
       <rect x="3" y="4" width="18" height="16" rx="3"></rect>
       <path d="M7 8h10M7 12h10M7 16h7"></path>
     </svg>
     <span>Trips</span>
   </button>
+
+  <!-- NEW: ID tab -->
+  <button class="dock-item" data-tab="id">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3" y="6" width="18" height="12" rx="2"></rect>
+      <circle cx="9" cy="12" r="2"></circle>
+      <path d="M13 10h5M13 13h5"></path>
+    </svg>
+    <span>ID</span>
+  </button>
+</nav>
 
   <button class="dock-item" data-tab="stats">
     <!-- simple bar-chart icon -->
@@ -642,6 +739,30 @@
     <span>Stats</span>
   </button>
 </nav>
+
+  <main id="screen-id" class="page screen" style="display:none">
+  <h1>Travel identification</h1>
+  <div class="id-hr"></div>
+
+  <!-- shown when redirected here from blocked search -->
+  <div id="visaWarn" class="id-warn">Active VISA required for travel to Japan.</div>
+
+  <!-- Passport card -->
+  <section class="id-card passport" aria-label="Passport">
+    <div class="title">Passport</div>
+    <div class="row">
+      <div class="label mono">Number</div>
+      <div class="value mono">457476810</div>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <div class="label">Name</div>
+      <div class="value">Shloak Patel</div>
+    </div>
+  </section>
+
+  <!-- VISA card container (rendered by JS) -->
+  <section id="visaCardMount"></section>
+</main>
 
 <script>
 /* -------------------- Airports + form behavior -------------------- */
@@ -1880,14 +2001,22 @@ renderTrips();    // refresh Trips page if it's open
 /* -------------------- Search handler (nonstop routes only) -------------------- */
 document.getElementById('btnSearch').addEventListener('click', () => {
   const from = fromSel.value, to = toSel.value;
-  const departDate = document.getElementById('depart').value;
+const departDate = document.getElementById('depart').value;
 
-  if (!from || !to || !departDate) {
-    const formCard = document.querySelector('.card');
-    formCard.style.boxShadow = '0 0 0 4px rgba(255,80,80,.25)';
-    setTimeout(()=>formCard.style.boxShadow = 'var(--shadow)', 350);
-    return;
-  }
+if (!from || !to || !departDate) {
+  const formCard = document.querySelector('.card');
+  formCard.style.boxShadow = '0 0 0 4px rgba(255,80,80,.25)';
+  setTimeout(()=>formCard.style.boxShadow = 'var(--shadow)', 350);
+  return;
+}
+
+/* NEW — block US → JP when VISA not active and redirect to ID page */
+if (needsVisa(from, to) && !isVisaActive()){
+  openID();
+  const w = document.getElementById('visaWarn');
+  if (w){ w.classList.add('show'); setTimeout(()=>w.classList.remove('show'), 2500); }
+  return;
+}
 
   const key = [from, to].sort().join('-');
 
@@ -1977,18 +2106,20 @@ function showScreen(id){
   }
 }
 
-// wire dock buttons to screens
 const dockBookingBtn = document.querySelector('.dock .dock-item[data-tab="booking"]');
 const dockTripsBtn   = document.querySelector('.dock .dock-item[data-tab="trips"]');
-const dockStatsBtn   = document.querySelector('.dock .dock-item[data-tab="stats"]');   // NEW
+const dockStatsBtn   = document.querySelector('.dock .dock-item[data-tab="stats"]'); // if you added Stats
+const dockIDBtn      = document.querySelector('.dock .dock-item[data-tab="id"]');
 
 function openBooking(){ setActiveTab(0); showScreen('screen-booking'); }
 function openTrips(){ setActiveTab(1); showScreen('screen-trips'); }
-function openStats(){ setActiveTab(2); showScreen('screen-stats'); renderStats(); }     // NEW
+function openStats(){ setActiveTab(2); showScreen('screen-stats'); } // if you added Stats
+function openID(){ setActiveTab(3); showScreen('screen-id'); renderIDPage(); } // (also defined above, either is fine)
 
-dockBookingBtn.addEventListener('click', openBooking);
-dockTripsBtn.addEventListener('click', openTrips);
-dockStatsBtn.addEventListener('click', openStats);                                      // NEW
+dockBookingBtn?.addEventListener('click', openBooking);
+dockTripsBtn?.addEventListener('click', openTrips);
+dockStatsBtn?.addEventListener('click', openStats); // if present
+dockIDBtn?.addEventListener('click', openID);                                      // NEW
 
 // default
 showScreen('screen-booking');
@@ -2441,6 +2572,203 @@ function openStatusActions(trip){
   });
 }
 
+  /* ===== ID / VISA state + UI ===== */
+const VISA_KEY = 'visa';
+let visaTimerHandle = null;
+
+function getVisa(){
+  try { return JSON.parse(localStorage.getItem(VISA_KEY) || '{"status":"EXPIRED"}'); }
+  catch(e){ return { status:'EXPIRED' }; }
+}
+function setVisa(v){ localStorage.setItem(VISA_KEY, JSON.stringify(v)); }
+function ensureVisaFresh(){
+  const v = getVisa();
+  if (v.status === 'ACTIVE' && v.expiresAt && Date.now() >= v.expiresAt){
+    v.status = 'EXPIRED';
+    delete v.expiresAt;
+    setVisa(v);
+  }
+  return v;
+}
+function isVisaActive(){
+  const v = ensureVisaFresh();
+  return v.status === 'ACTIVE' && v.expiresAt && v.expiresAt > Date.now();
+}
+function rand13(){ let s=''; for(let i=0;i<13;i++) s += Math.floor(Math.random()*10); return s; }
+
+function formatRemaining(ms){
+  if (ms <= 0) return 'Expired';
+  const sec = Math.floor(ms/1000);
+  const d   = Math.floor(sec / 86400);
+  const h   = Math.floor((sec % 86400) / 3600);
+  const m   = Math.floor((sec % 3600) / 60);
+  const s   = sec % 60;
+
+  if (d > 0) return `${d}d ${h}h`;
+  if (h > 0) return `${h}h ${String(m).padStart(2,'0')}m`;
+  if (m > 0) return `${m}m ${String(s).padStart(2,'0')}s`;
+  return `${s}s`;
+}
+
+function startVisaTimer(expiresAt){
+  // clear previous
+  if (visaTimerHandle) { clearInterval(visaTimerHandle); visaTimerHandle = null; }
+  const el = document.getElementById('visaTimer');
+  if (!el || !expiresAt) return;
+
+  const tick = ()=>{
+    const left = expiresAt - Date.now();
+    el.textContent = formatRemaining(left);
+    if (left <= 0){
+      clearInterval(visaTimerHandle); visaTimerHandle = null;
+      // flip to EXPIRED and re-render
+      const v = getVisa();
+      v.status = 'EXPIRED';
+      delete v.expiresAt;
+      setVisa(v);
+      renderIDPage();
+    }
+  };
+  tick();
+  visaTimerHandle = setInterval(tick, 1000);
+}
+
+function renderIDPage(){
+  const mount = document.getElementById('visaCardMount');
+  if (!mount) return;
+  const v = ensureVisaFresh();
+
+  const isActive = v.status === 'ACTIVE' && v.expiresAt && v.expiresAt > Date.now();
+  const statusClass = isActive ? 'active' : 'expired';
+  const statusText  = isActive ? 'ACTIVE' : 'EXPIRED';
+  const timerHTML   = isActive ? `<div class="visa-timer" id="visaTimer"></div>` : '';
+
+  mount.innerHTML = `
+    <div class="id-card visa" id="visaCard" role="button" tabindex="0" aria-label="Visa details">
+      ${timerHTML}
+      <div class="title"><em>VISA</em></div>
+      <div class="row">
+        <div class="label">Country</div>
+        <div class="value">Japan (2-day)</div>
+      </div>
+      <span class="visa-status ${statusClass}">${statusText}</span>
+    </div>
+  `;
+
+  // click opens modal
+  const card = document.getElementById('visaCard');
+  if (card){
+    card.addEventListener('click', openVisaPopup);
+    card.addEventListener('keypress', e=>{ if(e.key==='Enter' || e.key===' ') openVisaPopup(); });
+  }
+
+  // (re)start timer if active
+  if (isActive) startVisaTimer(v.expiresAt);
+}
+
+function closeVisaModal(back, box){
+  back.classList.remove('show'); box.classList.remove('show');
+  document.body.classList.remove('modal-open');
+  setTimeout(()=>{ back.remove(); box.remove(); }, 220);
+}
+
+function openVisaPopup(){
+  const v = ensureVisaFresh();
+  const back = document.createElement('div'); back.className = 'idv-backdrop';
+  const box  = document.createElement('div'); box.className  = 'idv-modal';
+
+  function mount(html){ box.innerHTML = html; }
+
+  // active → show number + label
+  if (v.status === 'ACTIVE' && v.expiresAt && v.expiresAt > Date.now()){
+    const num = v.number || rand13();
+    v.number = num; setVisa(v);
+
+    mount(`
+      <h3>VISA ${num}</h3>
+      <div class="sub">Japan 2 day VISA</div>
+      <div class="idv-btns">
+        <button class="idv-btn" id="visaClose">Close</button>
+      </div>
+    `);
+  } else {
+    // expired → show renew button
+    mount(`
+      <h3>VISA</h3>
+      <div class="sub">Your VISA has expired.</div>
+      <div class="idv-btns">
+        <button class="idv-btn" id="visaClose">Close</button>
+        <button class="idv-btn primary" id="visaRenew">Renew VISA</button>
+      </div>
+    `);
+  }
+
+  back.addEventListener('click', ()=>closeVisaModal(back, box));
+  document.body.append(back, box);
+  requestAnimationFrame(()=>{ back.classList.add('show'); box.classList.add('show'); document.body.classList.add('modal-open'); });
+
+  // wire buttons
+  box.querySelector('#visaClose')?.addEventListener('click', ()=>closeVisaModal(back, box));
+  box.querySelector('#visaRenew')?.addEventListener('click', ()=>{
+    // show payment form
+    box.innerHTML = `
+      <h3>Japan 2 day VISA</h3>
+      <div class="sub"><b>$14.99</b></div>
+      <div class="idv-row">
+        <div class="field"><label>Card number</label><input id="vccNumber" type="text" inputmode="numeric" placeholder="1234 5678 9012 3456"></div>
+        <div class="idv-row" style="grid-template-columns:1fr 1fr; gap:8px">
+          <div class="field"><label>Expiry (MM/YY)</label><input id="vccExp" type="text" inputmode="numeric" placeholder="MM/YY"></div>
+          <div class="field"><label>CVV</label><input id="vccCvv" type="text" inputmode="numeric" placeholder="CVV" maxlength="4"></div>
+        </div>
+        <div class="field"><label>Cardholder name</label><input id="vccName" type="text" placeholder="Full name"></div>
+        <label class="agree"><input id="vAgree" type="checkbox"><span>I agree to the terms.</span></label>
+        <div class="idv-btns">
+          <button class="idv-btn" id="visaCancel">Cancel</button>
+          <button class="idv-btn primary" id="visaPay">Pay now</button>
+        </div>
+      </div>
+    `;
+    box.querySelector('#visaCancel').addEventListener('click', ()=>closeVisaModal(back, box));
+    box.querySelector('#visaPay').addEventListener('click', ()=>{
+      const cc = (document.getElementById('vccNumber')?.value||'').trim();
+      const ex = (document.getElementById('vccExp')?.value||'').trim();
+      const cv = (document.getElementById('vccCvv')?.value||'').trim();
+      const nm = (document.getElementById('vccName')?.value||'').trim();
+      const ok = document.getElementById('vAgree')?.checked;
+      if (!cc || !ex || !cv || !nm || !ok){ alert('Please complete payment details and agree.'); return; }
+
+      // loading
+      box.innerHTML = `
+        <div class="processing" style="padding:30px 8px">
+          <div class="spinner" aria-hidden="true"></div>
+          <div style="font-weight:800; font-size:18px">Processing transaction</div>
+        </div>
+      `;
+      setTimeout(()=>{
+        const now = Date.now();
+        const v = { status:'ACTIVE', number: rand13(), expiresAt: now + 48*60*60*1000 };
+        setVisa(v);
+        renderIDPage();            // update card
+        startVisaTimer(v.expiresAt);
+        closeVisaModal(back, box); // close
+      }, 4000);
+    });
+  });
+}
+
+/* screen switcher for ID */
+function openID(){
+  // close any open result sheet first
+  try { closeSheet(); } catch(e){}
+  setActiveTab(3);            // 0=Booking,1=Trips,2=Stats,3=ID
+  showScreen('screen-id');
+  renderIDPage();
+}
+
+/* helper: need VISA only US -> JP */
+function needsVisa(from, to){
+  return countryOf(from) === 'US' && countryOf(to) === 'JP';
+}
 /* render Trips on load */
 renderTrips();
 renderStats();
@@ -2543,6 +2871,7 @@ function confirmDelete(tripId){
   close();
   renderTrips();
   renderStats();  // keep stats in sync
+  renderIDPage();
 });
 
   document.body.append(back, box);
