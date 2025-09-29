@@ -575,6 +575,42 @@
   background:#2a2d33; color:#fff; font-weight:800; cursor:pointer }
 .idv-btn.primary{ background:var(--accent); border-color:rgba(30,139,255,.4) }
 
+  /* ==== CBP hub card & page ==== */
+.cbp-hub{
+  background:linear-gradient(135deg, rgba(255,255,255,.22), rgba(130,190,255,.12));
+  display:flex; gap:12px; align-items:center; min-height:92px;
+}
+.cbp-badge{ width:42px; height:42px; object-fit:contain; filter:drop-shadow(0 1px 0 rgba(0,0,0,.35)); }
+.cbp-hub .title{ font-weight:900; font-size:18px; }
+.cbp-go{
+  margin-left:auto; height:38px; padding:0 14px; border-radius:12px;
+  border:1px solid rgba(255,255,255,.16); background:#2a2d33; color:#fff;
+  font-weight:800; cursor:pointer;
+}
+
+.cbp-logo-big{
+  width:92px; height:92px; object-fit:contain;
+  display:block; margin:0 auto 6px; filter:drop-shadow(0 1px 0 rgba(0,0,0,.35));
+}
+.cbp-empty{ text-align:center; color:#cfd6dd; margin:8px 0 14px; }
+.cbp-bigbtn{
+  width:100%; height:52px; border-radius:14px; border:0;
+  background:var(--accent); color:#fff; font-weight:800; font-size:18px;
+  box-shadow:0 10px 24px rgba(30,139,255,.33); cursor:pointer;
+}
+
+/* “Saved form …” selectable chip shown in the Trips CBP modal */
+.cbp-saved{
+  padding:10px 12px; border-radius:12px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.06);
+  cursor:pointer;
+}
+.cbp-saved.selected{
+  border-color:rgba(30,139,255,.5);
+  box-shadow:0 0 0 2px rgba(30,139,255,.35) inset;
+}
+
 </style>
 </head>
 <body>
@@ -700,7 +736,13 @@
   </section>
 </main>
 
-  <nav class="dock" id="dock" aria-label="Tabs">
+<!-- CBP Page (no dock tab) -->
+<main id="screen-cbp" class="page screen" style="display:none">
+  <img class="cbp-logo-big" src="./cbp-icon.png" alt="CBP">
+  <div id="cbpContent"></div>
+</main>
+
+<nav class="dock" id="dock" aria-label="Tabs">
   <span class="dock-indicator" aria-hidden="true"></span>
 
   <button class="dock-item active" data-tab="booking" aria-current="page">
@@ -762,6 +804,12 @@
 
   <!-- VISA card container (rendered by JS) -->
   <section id="visaCardMount"></section>
+    <!-- CBP hub card (launches the CBP page) -->
+<section class="id-card cbp-hub grad-ice">
+  <img class="cbp-badge" src="./cbp-icon.png" alt="CBP">
+  <div class="title">CBP</div>
+  <button class="cbp-go" id="btnCBPPage" type="button">CBP Submissions</button>
+</section>
 </main>
 
 <script>
@@ -923,6 +971,19 @@ const logoFor = carrier => LOGO_MAP[carrier] ? `./${LOGO_MAP[carrier]}` : '';
 const getTrips = () => { try { return JSON.parse(localStorage.getItem('trips')||'[]'); } catch(e){ return []; } };
 const setTrips = (arr) => localStorage.setItem('trips', JSON.stringify(arr));
 const saveTrip = (trip) => { const arr=getTrips(); arr.unshift(trip); setTrips(arr); };
+
+  /* ----- CBP form storage (single saved form) ----- */
+const CBP_KEY = 'cbpForm';
+const getCBPForm = () => { try { return JSON.parse(localStorage.getItem(CBP_KEY) || 'null'); } catch(e){ return null; } };
+const setCBPForm = (obj) => localStorage.setItem(CBP_KEY, JSON.stringify(obj));
+const clearCBPForm = () => localStorage.removeItem(CBP_KEY);
+
+function stamp(ts){
+  const d = new Date(ts);
+  const fmt = { year:'2-digit', month:'2-digit', day:'2-digit', hour:'numeric', minute:'2-digit' };
+  return d.toLocaleString(undefined, fmt).replace(',', ''); // "09/28/25 4:23 PM"
+}
+function airportByCode(c){ return AIRPORTS.find(a => a.code === c) || { code:c, name:c }; }
 
 /* time parsing for comparisons ("10:02 PM" → minutes) */
 function timeStrToMins(s){
@@ -2120,7 +2181,8 @@ function openID(){ setActiveTab(3); showScreen('screen-id'); renderIDPage(); } /
 dockBookingBtn?.addEventListener('click', openBooking);
 dockTripsBtn?.addEventListener('click', openTrips);
 dockStatsBtn?.addEventListener('click', openStats); // if present
-dockIDBtn?.addEventListener('click', openID);                                      // NEW
+dockIDBtn?.addEventListener('click', openID);
+document.getElementById('btnCBPPage')?.addEventListener('click', openCBPPage);
 
 // default
 showScreen('screen-booking');
@@ -2667,6 +2729,166 @@ function renderIDPage(){
   if (isActive) startVisaTimer(v.expiresAt);
 }
 
+  function openCBPPage(){
+  // keep ID tab visually active; CBP is a subpage
+  setActiveTab(3);
+  showScreen('screen-cbp');
+  renderCBPPage();
+}
+
+function renderCBPPage(){
+  const mount = document.getElementById('cbpContent');
+  const saved = getCBPForm();
+
+  if(!saved){
+    mount.innerHTML = `
+      <div class="cbp-empty">No saved forms</div>
+      <button class="cbp-bigbtn" id="btnNewCBP" type="button">New Submission</button>
+    `;
+    document.getElementById('btnNewCBP').addEventListener('click', openCBPWizard);
+    return;
+  }
+
+  const ap = airportByCode(saved.port);
+  const apName = ap.name.replace(/\s*\(${ap.code}\)\s*$/, '');
+  mount.innerHTML = `
+    <section class="id-card grad-ice">
+      <div class="title">Saved form</div>
+      <div class="kv"><span>CBP Port</span><b>${apName} (${ap.code})</b></div>
+      <div class="kv"><span>Traveler</span><b>${saved.name}</b></div>
+      <div class="kv"><span>Saved</span><b>${stamp(saved.createdAt)}</b></div>
+    </section>
+
+    <div class="id-card" style="background:transparent; border-color:rgba(255,255,255,.12)">
+      <div class="stat-big" style="font-size:22px">Have you arrived at ${apName} (${ap.code})?</div>
+      <div style="display:grid;gap:10px;margin-top:12px">
+        <button class="btn-lg" id="cbpGoSubmit" type="button">Submit Form</button>
+        <button class="mini-btn red" id="cbpDelete" type="button">Delete form</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('cbpGoSubmit').addEventListener('click', ()=>{ openTrips(); });
+  document.getElementById('cbpDelete').addEventListener('click', confirmDeleteCBP);
+}
+
+function confirmDeleteCBP(){
+  const back = document.createElement('div'); back.className='confirm-backdrop';
+  const box  = document.createElement('div'); box.className='confirm';
+  box.innerHTML = `
+    <h3>Delete saved CBP form?</h3>
+    <p>This will remove it from this device.</p>
+    <div class="row-btns">
+      <button class="btn-outline" id="cCancel">Cancel</button>
+      <button class="btn-danger" id="cDel">Delete</button>
+    </div>
+  `;
+  function close(){
+    back.classList.remove('show'); box.classList.remove('show');
+    document.body.classList.remove('modal-open');
+    setTimeout(()=>{ back.remove(); box.remove(); }, 220);
+  }
+  back.addEventListener('click', close);
+  box.querySelector('#cCancel').addEventListener('click', close);
+  box.querySelector('#cDel').addEventListener('click', ()=>{ clearCBPForm(); close(); renderCBPPage(); });
+
+  document.body.append(back, box);
+  requestAnimationFrame(()=>{ back.classList.add('show'); box.classList.add('show'); document.body.classList.add('modal-open'); });
+}
+
+  function openCBPWizard(){
+  const back = document.createElement('div'); back.className='idv-backdrop';
+  const box  = document.createElement('div'); box.className='idv-modal';
+  document.body.append(back, box);
+  requestAnimationFrame(()=>{ back.classList.add('show'); box.classList.add('show'); document.body.classList.add('modal-open'); });
+
+  // US airports except MLR and PHP (based on your countryOf() mapping)
+  const US_PORTS = AIRPORTS.filter(a => countryOf(a.code) === 'US' && !['MLR','PHP'].includes(a.code));
+
+  const data = { port:'', name:'', q1:false, q2:false, q3:false };
+  let step = 0;
+
+  function close(){
+    back.classList.remove('show'); box.classList.remove('show'); document.body.classList.remove('modal-open');
+    setTimeout(()=>{ back.remove(); box.remove(); }, 220);
+  }
+
+  function view(){
+    if(step===0){
+      box.innerHTML = `
+        <h3>CBP Port</h3>
+        <div class="sub">Choose your U.S. arrival airport</div>
+        <div class="idv-row">
+          <div class="field">
+            <label>Port of Entry</label>
+            <select id="wPort">
+              <option value="" disabled selected>Select</option>
+              ${US_PORTS.map(a=>`<option value="${a.code}">${a.name}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="idv-btns">
+          <button class="idv-btn" id="wCancel">Cancel</button>
+          <button class="idv-btn primary" id="wNext">Next</button>
+        </div>
+      `;
+    } else if(step===1){
+      box.innerHTML = `
+        <h3>Traveler full name</h3>
+        <div class="idv-row">
+          <div class="field"><label>Full name</label><input id="wName" type="text" placeholder="As on passport"></div>
+        </div>
+        <div class="idv-btns">
+          <button class="idv-btn" id="wBack">Back</button>
+          <button class="idv-btn primary" id="wNext">Next</button>
+        </div>
+      `;
+    } else if(step===2){
+      box.innerHTML = `
+        <h3>Declarations</h3>
+        <div class="idv-row">
+          ${[
+            {k:'q1', t:'Do I (we) have any commercial merchandise?'},
+            {k:'q2', t:'Am I (we) transporting currency or monetary instruments equal to or greater than $10,000 U.S., or foreign equivalent, in any form?'},
+            {k:'q3', t:'Do I (we) have any articles to declare that were acquired abroad and are being brought into the United States in excess of the duty free exemption?'},
+          ].map(q=>`
+            <div class="field">
+              <label>${q.t}</label>
+              <select id="${q.k}">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </div>
+          `).join('')}
+        </div>
+        <div class="idv-btns">
+          <button class="idv-btn" id="wBack">Back</button>
+          <button class="idv-btn primary" id="wSave">Save Form</button>
+        </div>
+      `;
+    }
+
+    // handlers for the current step
+    box.querySelector('#wCancel')?.addEventListener('click', close);
+    box.querySelector('#wNext')?.addEventListener('click', ()=>{
+      if(step===0){
+        const v = box.querySelector('#wPort').value; if(!v) return; data.port = v; step = 1; view();
+      } else if(step===1){
+        const v = (box.querySelector('#wName').value || '').trim(); if(!v) return; data.name = v; step = 2; view();
+      }
+    });
+    box.querySelector('#wBack')?.addEventListener('click', ()=>{ step = Math.max(0, step-1); view(); });
+    box.querySelector('#wSave')?.addEventListener('click', ()=>{
+      data.q1 = box.querySelector('#q1').value === 'yes';
+      data.q2 = box.querySelector('#q2').value === 'yes';
+      data.q3 = box.querySelector('#q3').value === 'yes';
+      setCBPForm({ ...data, createdAt: Date.now() });
+      close();
+      renderCBPPage();
+    });
+  }
+  view();
+}
+
 function closeVisaModal(back, box){
   back.classList.remove('show'); box.classList.remove('show');
   document.body.classList.remove('modal-open');
@@ -2779,32 +3001,41 @@ renderStats();
   const box  = document.createElement('div'); box.className='cbp-modal';
 
   const city = CITY_LABEL[trip.to] || trip.to;
+  const savedForm = getCBPForm();
+  const savedBlock = savedForm
+    ? `<div class="cbp-saved" id="cbpSavedSel">Saved form ${stamp(savedForm.createdAt)}</div>`
+    : '';
 
   box.innerHTML = `
-    <div class="cbp-head">
-      <img src="./cbp-icon.png" alt="CBP">
-      <div class="cbp-hr"></div>
+  <div class="cbp-head">
+    <img src="./cbp-icon.png" alt="CBP">
+    <div class="cbp-hr"></div>
+  </div>
+  <div class="cbp-body">
+    <div class="cbp-title">Arrival into ${city}</div>
+
+    ${savedBlock}
+
+    <div class="cbp-row">
+      <label>Passport Number</label>
+      <input id="cbpPassport" type="text" placeholder="XXXXXXXXX">
     </div>
-    <div class="cbp-body">
-      <div class="cbp-title">Arrival into ${city}</div>
 
-      <div class="cbp-row">
-        <label>Passport Number</label>
-        <input id="cbpPassport" type="text" placeholder="XXXXXXXXX">
-      </div>
-
-      <div class="cbp-row">
-        <label>Departure airport</label>
-        <select id="cbpDeparture">
-          <option value="" disabled selected>Select</option>
-          <option value="HND">Tokyo Haneda (HND)</option>
-          <option value="GRV">Grindavik (GRV)</option>
-        </select>
-      </div>
-
-      <button class="btn-lg" id="cbpSubmit" type="button">Submit Form</button>
+    <div class="cbp-row">
+      <label>Departure airport</label>
+      <select id="cbpDeparture">
+        <option value="" disabled selected>Select</option>
+        <option value="HND">Tokyo Haneda (HND)</option>
+        <option value="GRV">Grindavik (GRV)</option>
+      </select>
     </div>
-  `;
+
+    <button class="btn-lg" id="cbpSubmit" type="button">Submit Form</button>
+  </div>
+`;
+
+    const savedBox = box.querySelector('#cbpSavedSel');
+savedBox?.addEventListener('click', ()=> savedBox.classList.toggle('selected'));
 
   function close(){
     back.classList.remove('show'); box.classList.remove('show');
@@ -2817,33 +3048,34 @@ renderStats();
   requestAnimationFrame(()=>{ back.classList.add('show'); box.classList.add('show'); document.body.classList.add('modal-open'); });
 
   box.querySelector('#cbpSubmit').addEventListener('click', ()=>{
-    const passport = (box.querySelector('#cbpPassport').value || '').trim();
-    const dep      = box.querySelector('#cbpDeparture').value || '';
-    if(!passport || !dep){
-      alert('Please complete the form.');
-      return;
+  const passport = (box.querySelector('#cbpPassport').value || '').trim();
+  const dep      = box.querySelector('#cbpDeparture').value || '';
+  const useSaved = !!box.querySelector('#cbpSavedSel')?.classList.contains('selected');
+  if(!passport || !dep){
+    alert('Please complete the form.');
+    return;
+  }
+
+  box.innerHTML = `
+    <div class="cbp-body" style="place-items:center; text-align:center">
+      <div class="spinner" aria-hidden="true" style="margin:30px 0"></div>
+      <div style="font-weight:800; font-size:18px">Submitting form</div>
+    </div>
+  `;
+
+  setTimeout(()=>{
+    const trips = getTrips();
+    const i = trips.findIndex(t => t.id === trip.id);
+    if(i>-1){
+      trips[i].cbpDone = true;
+      trips[i].cbpPassport = passport;
+      trips[i].cbpDeparture = dep;
+      setTrips(trips);
     }
-
-    box.innerHTML = `
-      <div class="cbp-body" style="place-items:center; text-align:center">
-        <div class="spinner" aria-hidden="true" style="margin:30px 0"></div>
-        <div style="font-weight:800; font-size:18px">Submitting form</div>
-      </div>
-    `;
-
-    setTimeout(()=>{
-      const trips = getTrips();
-      const i = trips.findIndex(t => t.id === trip.id);
-      if(i>-1){
-        trips[i].cbpDone = true;
-        trips[i].cbpPassport = passport;
-        trips[i].cbpDeparture = dep;
-        setTrips(trips);
-      }
-      close();
-    }, 4000);
-  });
-}
+    if (useSaved) clearCBPForm();   // remove the saved form after successful submit
+    close();
+  }, 4000);
+});
 
 function confirmDelete(tripId){
   const back = document.createElement('div'); back.className = 'confirm-backdrop';
