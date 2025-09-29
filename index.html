@@ -992,12 +992,10 @@ function stamp(ts){
 function airportByCode(c){ return AIRPORTS.find(a => a.code === c) || { code:c, name:c }; }
 
   function airportLabel(code){
-  const a = airportByCode(code);
-  const nameNoCode = (a?.name || '').replace(
-    new RegExp(`\\s*\$begin:math:text$${a.code}\\$end:math:text$\\s*$`),  // strip trailing "(CODE)"
-    ''
-  );
-  return `${nameNoCode} (${a.code})`;
+  const a = airportByCode(code);                // {code, name} or fallback
+  const plain = (a?.name || String(code))       // strip trailing "(XXX)" if present
+    .replace(/\s*\([A-Z]{3}\)\s*$/, '');
+  return `${plain} (${a.code || code})`;        // always a string
 }
 
 /* time parsing for comparisons ("10:02 PM" → minutes) */
@@ -2764,7 +2762,7 @@ function renderCBPPage(){
     return;
   }
 
-  const apLabel = airportByCode(saved.port);
+  const apLabel = airportLabel(saved.port);
   mount.innerHTML = `
     <section class="id-card grad-ice">
       <div class="title">Saved form</div>
