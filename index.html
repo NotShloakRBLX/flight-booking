@@ -1958,6 +1958,11 @@ function openSummary(opt){
   renderView('Your trip summary', v);
 }
 
+function openPassengers(){
+  passengerData = passengerData || {};
+  openReviewPay();
+}
+
 function openReviewPay(){
   const v = document.createElement('div'); 
   v.className = 'view';
@@ -2598,6 +2603,7 @@ document.getElementById('btnStatsFilter')?.addEventListener('click', ()=>openFil
 }
 
 /* ---------- Status Action Sheet ---------- */
+/* ---------- Status Action Sheet ---------- */
 function openStatusActions(trip){
   const back = document.createElement('div'); back.className='actions-backdrop';
   const box  = document.createElement('div'); box.className='actions';
@@ -2755,107 +2761,7 @@ function openStatusActions(trip){
     close(); openTripDetail(trip.id); renderTrips();
   });
 }
-  } else if(st==='INFLIGHT'){
-  box.querySelector('#toArrived').addEventListener('click', ()=>{
-    if (trip.atc24){
-      const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
-      if(i>-1){
-        trips[i].status='ARRIVED';
-        trips[i].inflightEnd = Date.now();
-        setTrips(trips);
-        const updated = trips[i];
-      }
-      close(); openTripDetail(trip.id); renderTrips();
-      requestAnimationFrame(()=>{ if (shouldShowCBPOnArrived?.(trip)) openCBPForm(trip); });
-    } else {
-      box.querySelector('#arrRow').style.display='grid';
-    }
-  });
-  if (!trip.atc24){
-    box.querySelector('#upd2').addEventListener('click', ()=>{
-      const v = box.querySelector('#arrTime').value; if(!v) return;
-      const [H,M]=v.split(':').map(Number);
-      const ampm=H>=12?'PM':'AM'; const h12=((H+11)%12)+1; const disp=`${h12}:${String(M).padStart(2,'0')} ${ampm}`;
-      const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
-      if(i>-1){
-        trips[i].status='ARRIVED'; trips[i].actualArrive=disp;
-        trips[i].inflightEnd = Date.now();
-        setTrips(trips);
-        const updated = trips[i];
-      }
-      close(); openTripDetail(trip.id); renderTrips();
-      requestAnimationFrame(()=>{ if (shouldShowCBPOnArrived?.(trip)) openCBPForm(trip); });
-    });
-  }
-}
-      const v = box.querySelector('#arrTime').value; if(!v) return;
-      const [H,M]=v.split(':').map(Number);
-      const ampm = H>=12?'PM':'AM';
-      const h12  = ((H+11)%12)+1;
-      const disp = `${h12}:${String(M).padStart(2,'0')} ${ampm}`;
-
-      const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
-      if(i>-1){
-        trips[i].status='ARRIVED';
-        trips[i].actualArrive=disp;
-        trips[i].inflightEnd = Date.now(); // harmless if using stopwatch
-        setTrips(trips);
-
-        const updated = trips[i]; // capture after save
-
-        // Return to details first
-        close();
-        openTripDetail(trip.id);
-        renderTrips();
-
-        // Then open CBP reliably on the next frame
-        requestAnimationFrame(() => {
-          if (shouldShowCBPOnArrived?.(updated)) {
-            openCBPForm(updated);
-          }
-        });
-      }
-    });
-  } else if(st==='ARRIVED'){
-  box.querySelector('#archive').addEventListener('click', ()=>{
-    const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
-    if(i>-1){
-      trips[i].status='ARRIVED';   // keep label
-      trips[i].isArchived=true;    // move to Previous Trips
-      setTrips(trips);
-    }
-    close(); closeSheet(); renderTrips(); renderStats();   // ← update stats too
-  });
-}
-
-  // ----- Gate handlers -----
-  const gateMode = box.querySelector('#gateMode');
-  const gateForm = box.querySelector('#gateForm');
-
-  box.querySelector('#chgGate').addEventListener('click', ()=> {
-    gateMode.style.display='grid';
-  });
-
-  let gateKind = ''; // 'dep' or 'arr'
-  box.querySelector('#gateDep').addEventListener('click', ()=> { gateKind='dep'; gateForm.style.display='grid'; });
-  box.querySelector('#gateArr').addEventListener('click', ()=> { gateKind='arr'; gateForm.style.display='grid'; });
-
-  box.querySelector('#saveGate').addEventListener('click', ()=>{
-    const gate = box.querySelector('#gateInput').value.trim();
-    const term = box.querySelector('#termInput').value.trim();
-    if(!gate && !term) return;
-
-    const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
-    if(i>-1){
-      if(gateKind==='dep'){ trips[i].depGate = gate; trips[i].depTerminal = term; }
-      else                { trips[i].arrGate = gate; trips[i].arrTerminal = term; }
-      setTrips(trips);
-    }
-    close(); openTripDetail(trip.id); renderTrips();
-  });
-}
-
-  /* ===== ID / VISA state + UI ===== */
+/* ===== ID / VISA state + UI ===== */
 const VISA_KEY = 'visa';
 let visaTimerHandle = null;
 
