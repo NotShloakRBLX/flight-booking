@@ -611,6 +611,12 @@
   box-shadow:0 0 0 2px rgba(30,139,255,.35) inset;
 }
 
+.cbp-question{
+  font-size:22px;
+  font-weight:900;
+  letter-spacing:.2px;
+}
+
 </style>
 </head>
 <body>
@@ -984,6 +990,15 @@ function stamp(ts){
   return d.toLocaleString(undefined, fmt).replace(',', ''); // "09/28/25 4:23 PM"
 }
 function airportByCode(c){ return AIRPORTS.find(a => a.code === c) || { code:c, name:c }; }
+
+  function airportLabel(code){
+  const a = airportByCode(code);
+  const nameNoCode = (a?.name || '').replace(
+    new RegExp(`\\s*\$begin:math:text$${a.code}\\$end:math:text$\\s*$`),  // strip trailing "(CODE)"
+    ''
+  );
+  return `${nameNoCode} (${a.code})`;
+}
 
 /* time parsing for comparisons ("10:02 PM" → minutes) */
 function timeStrToMins(s){
@@ -2749,18 +2764,17 @@ function renderCBPPage(){
     return;
   }
 
-  const ap = airportByCode(saved.port);
-  const apName = ap.name.replace(/\s*\(${ap.code}\)\s*$/, '');
+  const apLabel = airportByCode(saved.port);
   mount.innerHTML = `
     <section class="id-card grad-ice">
       <div class="title">Saved form</div>
-      <div class="kv"><span>CBP Port</span><b>${apName} (${ap.code})</b></div>
+      <div class="kv"><span>CBP Port</span><b>${apLabel}</b></div>
       <div class="kv"><span>Traveler</span><b>${saved.name}</b></div>
       <div class="kv"><span>Saved</span><b>${stamp(saved.createdAt)}</b></div>
     </section>
 
     <div class="id-card" style="background:transparent; border-color:rgba(255,255,255,.12)">
-      <div class="stat-big" style="font-size:22px">Have you arrived at ${apName} (${ap.code})?</div>
+      <div class="cbp-question">Have you arrived at ${apLabel}?</div>
       <div style="display:grid;gap:10px;margin-top:12px">
         <button class="btn-lg" id="cbpGoSubmit" type="button">Submit Form</button>
         <button class="mini-btn red" id="cbpDelete" type="button">Delete form</button>
