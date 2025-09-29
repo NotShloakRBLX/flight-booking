@@ -1958,9 +1958,82 @@ function openSummary(opt){
   renderView('Your trip summary', v);
 }
 
+/* -------- Passengers step (real form + branching) -------- */
 function openPassengers(){
-  passengerData = passengerData || {};
-  openReviewPay();
+  const v = document.createElement('div'); 
+  v.className = 'view';
+
+  const isATC24 = !!(lastSelection && lastSelection.atc24);
+
+  v.innerHTML = `
+    ${isATC24 ? `<div class="atc24-banner">ATC24</div>` : ``}
+
+    <div class="panel">
+      <h3>Passenger details</h3>
+      <div class="form-row">
+        <div class="field">
+          <label>First name •</label>
+          <input id="pFirst" type="text" autocomplete="given-name" placeholder="e.g., Alex">
+        </div>
+        <div class="field">
+          <label>Middle name</label>
+          <input id="pMiddle" type="text" autocomplete="additional-name" placeholder="">
+        </div>
+        <div class="field">
+          <label>Last name •</label>
+          <input id="pLast" type="text" autocomplete="family-name" placeholder="e.g., Chen">
+        </div>
+      </div>
+
+      <div class="form-row half">
+        <div class="field">
+          <label>Date of birth •</label>
+          <input id="pDob" type="date">
+        </div>
+        <div class="field">
+          <label>Passport #</label>
+          <input id="pPass" type="text" inputmode="numeric" placeholder="">
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-lg" id="btnPassengersNext" type="button">
+      ${isATC24 ? 'Book flight' : 'Continue'}
+    </button>
+    <div class="muted" style="margin-top:8px">
+      ${isATC24 
+        ? 'ATC24: payment handled via account; booking finalizes now.'
+        : 'You can review and pay on the next step.'}
+    </div>
+  `;
+
+  v.querySelector('#btnPassengersNext').addEventListener('click', () => {
+    const first = v.querySelector('#pFirst').value.trim();
+    const middle = v.querySelector('#pMiddle').value.trim();
+    const last  = v.querySelector('#pLast').value.trim();
+    const dob   = v.querySelector('#pDob').value;
+    const pass  = v.querySelector('#pPass').value.trim();
+
+    if(!first || !last || !dob){
+      alert('Please fill first name, last name, and date of birth.');
+      return;
+    }
+
+    // persist passenger data for confirmation + tickets
+    passengerData = { first, middle, last, dob, passport: pass };
+
+    if (isATC24){
+      // Skip review & pay → book immediately
+      showProcessing();
+      setTimeout(showConfirmation, 1200);
+    } else {
+      // Regular flow → go to Review & Pay
+      openReviewPay();
+    }
+  });
+
+  stepStack.push({ title:'Passenger details', html:v });
+  renderView('Passenger details', v);
 }
 
 function openReviewPay(){
