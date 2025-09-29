@@ -3076,36 +3076,40 @@ savedBox?.addEventListener('click', ()=> savedBox.classList.toggle('selected'));
     close();
   }, 4000);
 });
-
+  }
+    
 function confirmDelete(tripId){
-  const back = document.createElement('div'); back.className = 'confirm-backdrop';
-  const box  = document.createElement('div'); box.className  = 'confirm';
+  const back = document.createElement('div'); back.className='confirm-backdrop';
+  const box  = document.createElement('div'); box.className='confirm';
 
   box.innerHTML = `
     <h3>Delete this flight?</h3>
     <p>This will permanently remove it from Previous Trips.</p>
     <div class="row-btns">
-      <button class="btn-outline" id="delCancel" type="button">Cancel</button>
-      <button class="btn-danger"  id="delConfirm" type="button">Delete</button>
+      <button class="btn-outline" id="cCancel">Cancel</button>
+      <button class="btn-danger"  id="cDel">Delete</button>
     </div>
   `;
 
   function close(){
     back.classList.remove('show'); box.classList.remove('show');
     document.body.classList.remove('modal-open');
-    setTimeout(()=>{ back.remove(); box.remove(); }, 220);
+    setTimeout(()=>{ back.remove(); box.remove(); }, 200);
   }
 
   back.addEventListener('click', close);
-  box.querySelector('#delCancel').addEventListener('click', close);
-  box.querySelector('#delConfirm').addEventListener('click', ()=>{
-  const arr = getTrips().filter(t => t.id !== tripId);
-  setTrips(arr);
-  close();
-  renderTrips();
-  renderStats();  // keep stats in sync
-  renderIDPage();
-});
+  box.querySelector('#cCancel').addEventListener('click', close);
+  box.querySelector('#cDel').addEventListener('click', ()=>{
+    const arr = getTrips();
+    const i   = arr.findIndex(t => t.id === tripId);
+    if (i > -1){ arr.splice(i,1); setTrips(arr); }
+    close();
+    // refresh UI
+    renderTrips();
+    renderStats?.();
+    // if a detail sheet for this trip was open, close it cleanly
+    try { closeSheet(); } catch(e){}
+  });
 
   document.body.append(back, box);
   requestAnimationFrame(()=>{ 
@@ -3114,6 +3118,7 @@ function confirmDelete(tripId){
     document.body.classList.add('modal-open'); 
   });
 }
+
 </script>
 </body>
 </html>
