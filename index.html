@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,12 +27,15 @@
     -webkit-font-smoothing:antialiased;
     color-scheme:dark;
   }
+
   .page{width:clamp(320px,92vw,420px); margin:0 auto; padding:22px 16px 40px;}
   h1{font-size:48px; line-height:1; margin:6px 4px 18px; font-weight:800; letter-spacing:-.4px}
+
   .card{
     position:relative; background:var(--card); border:1px solid var(--cardBorder);
     border-radius:var(--radiusCard); box-shadow:var(--shadow); padding:22px 20px 24px;
   }
+
   .grid{display:grid; grid-template-columns:1fr; row-gap:20px}
   .label{font-size:16px; color:var(--muted); margin:0 0 8px;}
   .row{position:relative}
@@ -49,6 +51,7 @@
   .icon{position:absolute; right:0; top:50%; transform:translateY(-50%); width:20px; height:20px}
   .icon svg{width:100%; height:100%; display:block}
   .icon svg *{stroke:var(--accent); fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round}
+
   .swap{
     position:absolute; left:50%; top:-18px; transform:translateX(-50%);
     width:40px; height:40px; border-radius:50%;
@@ -57,10 +60,12 @@
   }
   .swap svg{width:20px;height:20px}
   .swap svg path{stroke:var(--accent); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
+
   .cta{margin-top:22px}
   .cta button{width:100%; height:60px; border-radius:34px; border:0; cursor:pointer; background:var(--accent); color:#fff; font-weight:800; font-size:24px; letter-spacing:.2px; box-shadow:0 12px 26px rgba(30,139,255,.33); transition:transform var(--t), background var(--t)}
   .cta button:hover{background:var(--accentHover)}
   .cta button:active{transform:translateY(1px)}
+
   /* ---------- OVERLAY ---------- */
   .backdrop{position:fixed; inset:0; background:rgba(0,0,0,.45); opacity:0; pointer-events:none; transition:opacity var(--t);}
   .backdrop.show{opacity:1; pointer-events:auto}
@@ -70,8 +75,10 @@
   .route-title{font-weight:800; letter-spacing:.4px}
   .btn-back{position:absolute; left:10px; top:10px; width:36px; height:36px; border-radius:50%; border:1px solid var(--cardBorder); background:#2a2d33; display:grid; place-items:center}
   .btn-back svg{width:18px;height:18px}
+
   .view{padding:12px 16px 22px; max-height:calc(86vh - 76px); overflow:auto; animation:fadeSlideIn .28s var(--t) both;}
   @keyframes fadeSlideIn {from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none}}
+
   .results{padding:10px 12px 18px;}
   .card-result{background:#22252a; border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:16px 16px 14px; margin:12px 4px; box-shadow:0 8px 24px rgba(0,0,0,.35); transition:transform var(--t), box-shadow var(--t), background var(--t)}
   .card-result:active{transform:translateY(1px); box-shadow:0 6px 18px rgba(0,0,0,.28); background:#202228}
@@ -84,15 +91,18 @@
   .row-mid{color:var(--muted); margin:6px 0 0; display:flex; gap:14px; font-size:15px}
   .row-foot{margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,.06); display:flex; align-items:center; gap:8px; color:#ffcc66; font-size:14px}
   .row-foot.hide{display:none}
+
   .panel{background:#23262c; border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:14px 14px 12px; margin:10px 0; box-shadow:0 8px 22px rgba(0,0,0,.32)}
   .panel h3{margin:0 0 8px; font-size:20px}
   .kv{display:flex; justify-content:space-between; margin:6px 0; color:#cfd6dd; gap:12px}
   .kv b{color:#fff}
   .btn-lg{width:100%; height:56px; border-radius:30px; border:0; background:var(--accent); color:#fff; font-weight:800; font-size:20px; box-shadow:0 10px 24px rgba(30,139,255,.33); cursor:pointer; transition:transform var(--t), background var(--t)}
   .btn-lg:active{transform:translateY(1px)}
+
   .info{background:#1d3a54; border:1px solid rgba(67,153,255,.4)}
   .info .title{font-weight:800; margin-bottom:8px}
   .muted{color:#aab2ba}
+
   .form-row{display:grid; gap:12px; grid-template-columns:1fr; width:100%}
   .form-row.half{grid-template-columns:repeat(2, minmax(0,1fr))}
   @media (max-width: 360px){ .form-row.half{grid-template-columns:1fr} }
@@ -101,9 +111,13 @@
   .field input, .field select{width:100%; max-width:100%; background:#121317; color:#fff; border:1px solid rgba(255,255,255,.16); border-radius:12px; padding:12px 12px; font-size:16px; outline:none; -webkit-appearance:none; appearance:none;}
   .agree{display:flex; align-items:flex-start; gap:10px; margin:12px 0 8px; color:#cfd6dd}
   .agree input{margin-top:4px}
+
   @media (min-width:480px){ .sheet, .page{width:420px} }
+
   .hr{height:1px;background:rgba(255,255,255,.14); margin:8px 0}
+
   :root { --priceGreen:#63d488; }
+
   .gf-head{display:flex;align-items:center;justify-content:space-between}
   .gf-times{font-size:20px;font-weight:800;letter-spacing:.2px}
   .gf-times .arrow{opacity:.6;margin:0 8px}
@@ -114,32 +128,123 @@
   .gf-carrier{margin-top:2px;font-size:14px;color:#aab2ba}
   .gf-price{font-weight:800;font-size:20px;color:var(--priceGreen)}
   .gf-overnight{margin-top:8px;color:#ffcc66;font-size:14px;display:flex;align-items:center;gap:6px}
+
+/* === ATC24 toggle + chip + filter UI === */
+.head-row{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px; margin:0 4px 8px;
+}
+.mini-icon-btn{
+  display:inline-grid; place-items:center;
+  width:36px; height:36px; border-radius:10px;
+  background:#2a2d33; border:1px solid rgba(255,255,255,.12);
+  cursor:pointer;
+}
+.mini-icon-btn svg{ width:18px; height:18px }
+.mini-icon-btn svg *{ stroke:#cfd6dd; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round }
+
+/* tiny slider */
+.atc24-toggle{
+  display:flex; align-items:center; justify-content:flex-end;
+  margin:10px 2px -2px;       /* tucks in under the price panel */
+}
+.tiny-switch{
+  display:inline-flex; align-items:center; gap:8px; font-weight:800; letter-spacing:.2px;
+}
+.tiny-switch input{ position:absolute; opacity:0; pointer-events:none }
+.tiny-track{
+  width:42px; height:24px; border-radius:999px; position:relative;
+  background:#444a52; border:1px solid rgba(255,255,255,.16);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+  transition: background var(--t), border-color var(--t);
+}
+.tiny-knob{
+  position:absolute; top:50%; left:3px; width:18px; height:18px; border-radius:50%;
+  transform:translateY(-50%); background:#fff; transition:left var(--t);
+  box-shadow:0 2px 6px rgba(0,0,0,.35);
+}
+.tiny-switch input:checked + .tiny-track{
+  background:rgba(33,208,122,.35); border-color:rgba(33,208,122,.55);
+}
+.tiny-switch input:checked + .tiny-track .tiny-knob{ left:21px; }
+
+/* white ATC24 “chip” used in many places */
+.chip-atc24{
+  display:inline-block; background:#fff; color:#111; font-weight:900;
+  padding:4px 8px; border-radius:8px; letter-spacing:.3px;
+  box-shadow:0 1px 0 rgba(0,0,0,.35);
+}
+.chip-atc24.big{ padding:6px 10px; border-radius:10px; font-size:22px }
+
+/* banner at top of trip detail when ATC24 */
+.atc24-banner{
+  display:flex; justify-content:center; align-items:center;
+  width:120px; margin:0 4px 12px; background:#fff; color:#111;
+  font-weight:900; padding:8px 10px; border-radius:10px; letter-spacing:.3px;
+}
+
+/* centered Filter modal (re-uses your visual language) */
+.flt-backdrop{
+  position:fixed; inset:0; background:rgba(0,0,0,.55);
+  opacity:0; pointer-events:none; transition:opacity var(--t); z-index:1400;
+}
+.flt-backdrop.show{ opacity:1; pointer-events:auto }
+.flt-modal{
+  position:fixed; left:50%; top:50%;
+  transform:translate(-50%,-40%) scale(.96); opacity:0;
+  width:min(360px, 92vw); background:var(--card); border:1px solid var(--cardBorder);
+  border-radius:16px; box-shadow:0 22px 60px rgba(0,0,0,.65);
+  padding:14px; transition:transform var(--t), opacity var(--t); z-index:1401;
+}
+.flt-modal.show{ transform:translate(-50%,-50%) scale(1); opacity:1 }
+.flt-modal h3{ margin:6px 0 10px; font-size:18px; font-weight:800 }
+.flt-options{ display:grid; gap:8px; }
+.flt-opt{
+  display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px; cursor:pointer;
+  background:#2a2d33; border:1px solid rgba(255,255,255,.12);
+}
+.flt-opt input{ width:18px; height:18px }
+.flt-btns{ display:flex; gap:10px; margin-top:12px }
+.flt-apply{ flex:1; height:48px; border-radius:12px; border:0; background:var(--accent); color:#fff; font-weight:900; cursor:pointer }
+
+/* Make Upcoming Trips same size as Previous Trips */
+#screen-trips h1{ font-size:22px; font-weight:800; margin:14px 4px 10px; letter-spacing:.2px }
+  
   /* ---- Processing / Confirmation bits ---- */
   .processing { display:grid; gap:14px; place-items:center; padding:40px 8px; text-align:center; }
   .spinner { width:52px; height:52px; border-radius:50%; border:4px solid rgba(255,255,255,.18); border-top-color: var(--accent); animation: spin 1s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
+
   .glass { background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); border-radius: 18px; padding:16px 14px 12px; box-shadow: 0 10px 28px rgba(0,0,0,.35); backdrop-filter: blur(6px); }
+
   .check-wrap{ width:72px;height:72px; border-radius:50%; background: rgba(68, 185, 119, .15); display:grid; place-items:center; margin:0 auto 10px; border:1px solid rgba(68,185,119,.25); }
   .check-wrap svg{width:40px;height:40px}
   .check-wrap svg *{stroke:#63d488; stroke-width:3; fill:none; stroke-linecap:round; stroke-linejoin:round}
+
   .confirm-title{font-weight:800; font-size:20px; text-align:center; margin:6px 0 2px}
   .confirm-sub{color:#cfd6dd; text-align:center; margin-bottom:10px}
+
   .badge { display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); font-weight:700; letter-spacing:.3px; }
   .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+
   .icon { pointer-events: none; }
   .select .icon { pointer-events: none; }
   .swap { pointer-events: none; }
+
   .select select {
     position: relative;
     z-index: 1;
     -webkit-appearance: none;
     appearance: none;
   }
+
   /* modal layer order + lock the page when sheet is open */
 .backdrop { z-index: 999; }
 .sheet    { z-index: 1000; }
+
 .modal-open { overflow: hidden; }        /* no background scroll */
 .modal-open .page { pointer-events: none; } /* no background taps/clicks */
+
   /* ---- Bottom Dock (tabs) ---- */
 .dock{
   position:fixed;
@@ -172,6 +277,7 @@
 .dock-item.active{ color:#fff; }
 .dock-item svg{width:18px; height:18px}
 .dock-item svg *{stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+
 .dock-indicator{
   position:absolute; top:6px; bottom:6px; left:6px;
   width: calc((100% / var(--tabs, 4)) - 3px);
@@ -186,16 +292,20 @@
 /* (optional) make sure sheet/backdrop are above the dock */
 .backdrop{ z-index:40; }
 .sheet{ z-index:50; }
+
   /* Screens + simple fade/slide transition */
 .screen{
   opacity:0; transform:translateY(8px);
   transition:opacity var(--t), transform var(--t);
 }
 .screen.show{ opacity:1; transform:none; }
+
 /* small section header for "Previous Trips" */
 .subhead{ font-size:20px; font-weight:800; margin:8px 4px 0; }
+
   .gf-times{font-size:18px; line-height:1.15; font-weight:800; letter-spacing:.2px}
   .gf-times sup{font-size:11px}
+
   /* Airline logo row */
 .row-mid{
   display:flex; align-items:center; gap:10px;
@@ -207,6 +317,7 @@
 }
 .airlogo.is-u2{ width:26px; height:26px; }  /* easyJet slightly bigger */
 .row-mid-text .carrier-line{ color:#cfd6dd; font-size:14px; margin-top:2px; }
+
   /* ------- Trips page ------- */
 .subhead{font-size:22px;font-weight:800;margin:14px 4px 10px}
 .trip-list{display:grid;gap:12px;padding:0 4px 24px}
@@ -222,12 +333,15 @@
 .trip-times{font-size:18px;font-weight:800;letter-spacing:.2px}
 .trip-route{font-size:13px;color:#aab2ba}
 .trip-date{font-size:12px;color:#8f99a4}
+
 .pill{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:700;letter-spacing:.3px}
 .pill-ontime{background:rgba(33,208,122,.15);border:1px solid rgba(33,208,122,.35);color:#63d488}
 .pill-inflight{background:rgba(67,153,255,.15);border:1px solid rgba(67,153,255,.33);color:#2ea0ff}
 .pill-arrived{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);color:#d9dee3}
+
 .t-early{color:#63d488}
 .t-late{color:#ff6b6b}
+
 /* small action sheet used by Status button */
 .actions-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity var(--t)}
 .actions-backdrop.show{opacity:1;pointer-events:auto}
@@ -244,8 +358,10 @@
 .actions input[type="time"], .actions input[type="text"]{
   width:100%;background:#121317;border:1px solid rgba(255,255,255,.16);color:#fff;border-radius:12px;padding:10px 12px;font-size:16px
 }
+
 /* Trips page container (hidden when on booking) */
 #pageTrips[hidden]{display:none}
+
   /* ---- Trip detail (full page) ---- */
 .btn-page-back{
   position:absolute; left:12px; top:12px; width:36px; height:36px;
@@ -253,9 +369,11 @@
   background:#2a2d33; display:grid; place-items:center; z-index:2
 }
 .btn-page-back svg{width:18px;height:18px}
+
 .td-topnote{color:#9aa3af; font-size:12px; margin:0 4px 4px}
 .td-title{font-size:44px; font-weight:800; letter-spacing:.3px; margin:22px 4px 12px}
 @media (max-width:380px){ .td-title{font-size:38px} }
+
 .td-card{
   background:#202329; border:1px solid rgba(255,255,255,.10);
   border-radius:18px; padding:14px 14px 12px; margin:10px 0;
@@ -266,7 +384,9 @@
 .td-logo{width:40px; height:40px; border-radius:10px; background:#13151a; object-fit:contain}
 .td-airlineName{font-weight:800; font-size:18px}
 .td-route{font-size:13px; color:#aab2ba}
+
 /* reuse your .kv rows */
+
   /* small action sheet used by Status button */
 .actions-backdrop{
   position:fixed; inset:0;
@@ -275,6 +395,7 @@
   z-index:1100;                    /* ABOVE the dock */
 }
 .actions-backdrop.show{ opacity:1; pointer-events:auto }
+
 .actions{
   position:fixed; left:50%; bottom:0;
   transform:translate(-50%, 100%); /* start fully off-screen */
@@ -286,16 +407,20 @@
   z-index:1101;                    /* ABOVE the backdrop & dock */
 }
 .actions.show{ transform:translate(-50%, 0) }
+
 .actions .btn{ width:100%; height:48px; border:0; border-radius:12px;
   background:#2a2d33; color:#fff; font-weight:700; margin:6px 0 }
 .actions .btn.red{ background:#5a1e1e }
+
 .actions .row{ display:grid; gap:8px; margin:8px 0 }
 .actions input[type="time"], .actions input[type="text"]{
   width:100%; background:#121317; border:1px solid rgba(255,255,255,.16);
   color:#fff; border-radius:12px; padding:10px 12px; font-size:16px
 }
+
 /* also block taps on the dock while any modal/action is open */
 .modal-open .dock{ pointer-events:none; }
+
   /* ---- Delete button in archived cards ---- */
 .trip-right{ margin-left:auto; display:grid; gap:6px; align-items:center; justify-items:end }
 .mini-btn{
@@ -304,12 +429,14 @@
 }
 .mini-btn.red{ background:#5a1e1e; border-color:rgba(255,99,99,.45) }
 .mini-btn:active{ transform:translateY(1px) }
+
 /* ---- Centered confirm dialog ---- */
 .confirm-backdrop{
   position:fixed; inset:0; background:rgba(0,0,0,.5);
   opacity:0; pointer-events:none; transition:opacity var(--t); z-index:1200;
 }
 .confirm-backdrop.show{ opacity:1; pointer-events:auto }
+
 .confirm{
   position:fixed; left:50%; top:50%;
   transform:translate(-50%,-40%) scale(.96); opacity:0;
@@ -329,11 +456,14 @@
   flex:1; height:44px; border-radius:12px; border:1px solid rgba(255,99,99,.45);
   background:#5a1e1e; color:#fff; font-weight:800; cursor:pointer;
 }
+
 /* block dock while any modal is open (you already have .modal-open for sheets) */
 .modal-open .dock{ pointer-events:none; }
+
   /* ---- Trip detail (large-times design) ---- */
 .tdetail .updated{color:#8f99a4;font-size:12px;margin:2px 4px 12px}
 .tdetail .route{font-size:40px;line-height:1.05;font-weight:800;letter-spacing:.4px;margin:0 4px 14px}
+
 .tcard{
   background:#202329;border:1px solid rgba(255,255,255,.10);
   border-radius:20px;padding:14px 14px;box-shadow:0 10px 28px rgba(0,0,0,.35);
@@ -343,6 +473,7 @@
 .trow .airline{font-weight:800;font-size:20px}
 .trow .sub{color:#aab2ba;font-size:13px;margin-top:2px}
 .trow .pill{margin-left:auto}
+
 .section{padding:14px 14px 12px}
 .airport{font-weight:700}
 .airport small{color:#9aa3af;font-weight:600}
@@ -351,8 +482,10 @@
 .delta{font-weight:800;margin-top:4px}
 .delta.late{color:#ff6b6b}
 .delta.early{color:#63d488}
+
 .tfooter{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .tfooter .kv{margin:0}
+
 /* gate badge + terminal label */
 .headrow{display:flex;align-items:center;justify-content:space-between}
 .gatebox{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
@@ -361,15 +494,18 @@
   background:#ffd54a; color:#111; font-weight:900; letter-spacing:.2px;
 }
 .term{font-size:12px; color:#cfd6dd}
+
 /* color the NEW time when early/late (not the crossed-out one) */
 .time-early{color:#63d488; font-weight:900}
 .time-late {color:#ff6b6b; font-weight:900}
+
   /* ---- CBP (arrival) modal ---- */
 .cbp-backdrop{
   position:fixed; inset:0; background:rgba(0,0,0,.55);
   opacity:0; pointer-events:none; transition:opacity var(--t); z-index:1300;
 }
 .cbp-backdrop.show{ opacity:1; pointer-events:auto }
+
 .cbp-modal{
   position:fixed; left:50%; top:10px;
   transform:translate(-50%, calc(100% + 12px));
@@ -379,9 +515,11 @@
   transition:transform var(--t); z-index:1301;
 }
 .cbp-modal.show{ transform:translate(-50%, 0) }
+
 .cbp-head{ display:grid; gap:10px; padding:14px 14px 10px }
 .cbp-head img{ width:44px; height:44px; object-fit:contain; filter:drop-shadow(0 1px 0 rgba(0,0,0,.35)); }
 .cbp-hr{ height:1px; background:rgba(255,255,255,.14) }
+
 .cbp-body{ padding:14px; display:grid; gap:12px }
 .cbp-title{ font-size:24px; font-weight:900; letter-spacing:.3px; margin-top:2px }
 .cbp-row{ display:grid; gap:8px }
@@ -390,6 +528,7 @@
   width:100%; background:#121317; color:#fff; border:1px solid rgba(255,255,255,.16);
   border-radius:12px; padding:10px 12px; font-size:16px; outline:none; -webkit-appearance:none; appearance:none;
 }
+
   /* ====== Stats screen ====== */
 .stat-card{
   position:relative;
@@ -409,6 +548,7 @@
 .stat-card .stat-sub{
   margin-top:6px; color:#d0d7df; font-size:14px;
 }
+
 /* gradients */
 .grad-blue{
   background:linear-gradient(135deg, rgba(30,139,255,.22), rgba(30,139,255,.06));
@@ -419,6 +559,7 @@
 .grad-ice{
   background:linear-gradient(135deg, rgba(255,255,255,.18), rgba(130,190,255,.12));
 }
+
 /* most-flown aircraft logo spot (bottom-right) */
 .stat-logo{
   position:absolute; right:10px; bottom:10px;
@@ -427,8 +568,10 @@
   filter:drop-shadow(0 1px 0 rgba(0,0,0,.35));
   display:none;
 }
+
   /* ===== ID page (Travel identification) ===== */
 .id-hr{height:1px;background:rgba(255,255,255,.14);margin:8px 4px 14px}
+
 .id-card{
   position:relative;
   background:linear-gradient(180deg,#0f1115, #1a1d23);
@@ -443,11 +586,13 @@
 .id-card .label{color:#aab2ba;font-size:12px}
 .id-card .value{font-weight:800;font-size:18px;letter-spacing:.3px}
 .id-card .value.mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace}
+
 /* Passport look */
 .id-card.passport{
   background:linear-gradient(160deg,#0c0d10 0%, #23262c 100%);
   border-color:rgba(255,255,255,.18);
 }
+
 /* VISA card look */
 .id-card.visa{
   background:linear-gradient(160deg,#0d1621 0%, #1f2f44 100%);
@@ -456,6 +601,7 @@
 .id-card.visa .title{
   font-style:italic; font-weight:900;
 }
+
 /* VISA status pill (bottom-right) */
 .visa-status{
   position:absolute; right:12px; bottom:12px;
@@ -464,6 +610,7 @@
 }
 .visa-status.active{ color:#63d488; border-color:rgba(33,208,122,.35); background:rgba(33,208,122,.12) }
 .visa-status.expired{ color:#ff6b6b; border-color:rgba(255,107,107,.35); background:rgba(255,107,107,.10) }
+
 /* VISA countdown (top-right) */
 .visa-timer{
   position:absolute; right:12px; top:12px;
@@ -471,6 +618,7 @@
   background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16);
   padding:6px 10px; border-radius:10px;
 }
+
 /* small warning banner shown if redirected here */
 .id-warn{
   background:#3b2a2a; border:1px solid rgba(255,99,99,.35);
@@ -478,12 +626,14 @@
   font-weight:700;
 }
 .id-warn.show{ display:block }
+
 /* Centered modal for VISA */
 .idv-backdrop{
   position:fixed; inset:0; background:rgba(0,0,0,.55);
   opacity:0; pointer-events:none; transition:opacity var(--t); z-index:1400;
 }
 .idv-backdrop.show{ opacity:1; pointer-events:auto }
+
 .idv-modal{
   position:fixed; left:50%; top:50%;
   transform:translate(-50%,-40%) scale(.96); opacity:0;
@@ -505,6 +655,7 @@
 .idv-btn{ flex:1; height:48px; border-radius:12px; border:1px solid rgba(255,255,255,.18);
   background:#2a2d33; color:#fff; font-weight:800; cursor:pointer }
 .idv-btn.primary{ background:var(--accent); border-color:rgba(30,139,255,.4) }
+
   /* ==== CBP hub card & page ==== */
 .cbp-hub{
   background:linear-gradient(135deg, rgba(255,255,255,.22), rgba(130,190,255,.12));
@@ -517,6 +668,7 @@
   border:1px solid rgba(255,255,255,.16); background:#2a2d33; color:#fff;
   font-weight:800; cursor:pointer;
 }
+
 .cbp-logo-big{
   width:92px; height:92px; object-fit:contain;
   display:block; margin:0 auto 6px; filter:drop-shadow(0 1px 0 rgba(0,0,0,.35));
@@ -527,6 +679,7 @@
   background:var(--accent); color:#fff; font-weight:800; font-size:18px;
   box-shadow:0 10px 24px rgba(30,139,255,.33); cursor:pointer;
 }
+
 /* “Saved form …” selectable chip shown in the Trips CBP modal */
 .cbp-saved{
   padding:10px 12px; border-radius:12px;
@@ -538,20 +691,24 @@
   border-color:rgba(30,139,255,.5);
   box-shadow:0 0 0 2px rgba(30,139,255,.35) inset;
 }
+
 .cbp-question{
   font-size:22px;
   font-weight:900;
   letter-spacing:.2px;
 }
+
 </style>
 </head>
 <body>
   <main id="screen-booking" class="page screen show">
     <h1>Book</h1>
+
     <section class="card" aria-label="Flight Search">
       <div class="swap" aria-hidden="true">
         <svg viewBox="0 0 24 24"><path d="M3 7h12"></path><path d="M10 3l5 4-5 4"></path><path d="M21 17H9"></path><path d="M14 21l-5-4 5-4"></path></svg>
       </div>
+
       <div class="grid">
         <div class="row">
           <div class="label">From</div>
@@ -565,6 +722,7 @@
             <div class="focusbar"></div>
           </div>
         </div>
+
         <div class="row">
           <div class="label">To</div>
           <div class="line-wrap select">
@@ -577,6 +735,7 @@
             <div class="focusbar"></div>
           </div>
         </div>
+
         <div class="row">
           <div class="label">Depart</div>
           <div class="line-wrap">
@@ -598,6 +757,7 @@
             <div class="focusbar"></div>
           </div>
         </div>
+
         <div class="row">
           <div class="label">Passengers</div>
           <div class="line-wrap select">
@@ -609,9 +769,11 @@
           </div>
         </div>
       </div>
+
       <div class="cta"><button id="btnSearch" type="button">Search</button></div>
     </section>
   </main>
+
   <div class="backdrop" id="backdrop"></div>
   <section class="sheet" id="sheet" aria-modal="true" role="dialog">
     <div class="sheet-header">
@@ -622,49 +784,74 @@
     </div>
     <div id="sheetBody" class="view"></div>
   </section>
+
   <main id="screen-trips" class="page screen" style="display:none">
+  <div class="head-row">
   <h1>Upcoming Trips</h1>
+  <button class="mini-icon-btn" id="btnTripsFilter" type="button" aria-label="Filter trips">
+    <svg viewBox="0 0 24 24">
+      <path d="M3 5h18M6 12h12M10 19h4"></path>
+    </svg>
+  </button>
+</div>
   <div id="upcomingEmpty" class="muted" style="margin:2px 4px 12px">No upcoming trips</div>
   <div id="upcomingList" class="trip-list"></div>
   <div class="hr" style="margin:12px 0"></div>
   <div class="subhead">Previous Trips</div>
   <div id="previousList" class="trip-list"></div>
 </main>
+
   <main id="screen-trip-detail" class="page screen" style="display:none"></main>
+
   <main id="screen-stats" class="page screen" style="display:none">
+  <div class="head-row">
   <h1>Statistics</h1>
+  <button class="mini-icon-btn" id="btnStatsFilter" type="button" aria-label="Filter statistics">
+    <svg viewBox="0 0 24 24">
+      <path d="M3 5h18M6 12h12M10 19h4"></path>
+    </svg>
+  </button>
+</div>
   <div class="hr" style="margin:8px 4px 12px"></div>
+
   <section class="stat-card grad-blue">
     <div class="stat-kicker">Flight time</div>
     <div class="stat-big" id="statFlightTimeValue">0h 0m</div>
   </section>
+
   <section class="stat-card grad-blue">
     <div class="stat-kicker">IRL time</div>
     <div class="stat-big" id="statIrlTimeValue">0h 0m</div>
   </section>
+
   <section class="stat-card grad-red">
     <div class="stat-big" id="statDelayHoursValue">0</div>
     <div class="stat-sub">hours lost from delays</div>
   </section>
+
   <section class="stat-card grad-ice">
     <div class="stat-kicker">Most flown aircraft</div>
     <div class="stat-big" id="statMostAircraft">—</div>
     <img id="statMostAircraftLogo" class="stat-logo" alt="">
   </section>
 </main>
+
 <!-- CBP Page (no dock tab) -->
 <main id="screen-cbp" class="page screen" style="display:none">
   <img class="cbp-logo-big" src="./cbp-icon.png" alt="CBP">
   <div id="cbpContent"></div>
 </main>
+
 <nav class="dock" id="dock" aria-label="Tabs">
   <span class="dock-indicator" aria-hidden="true"></span>
+
   <button class="dock-item active" data-tab="booking" aria-current="page">
     <svg viewBox="0 0 24 24">
       <path d="M4.5 12.8l14.6-8.75c.5-.3 1.1.23.83.76L13.6 20.9a.7.7 0 0 1-1.31-.06l-1.24-5.17-5.17-1.24a.7.7 0 0 1 .06-1.31z"></path>
     </svg>
     <span>Booking</span>
   </button>
+
   <button class="dock-item" data-tab="trips">
     <svg viewBox="0 0 24 24">
       <rect x="3" y="4" width="18" height="16" rx="3"></rect>
@@ -672,6 +859,7 @@
     </svg>
     <span>Trips</span>
   </button>
+
   <!-- Stats goes INSIDE the nav (3rd) -->
   <button class="dock-item" data-tab="stats">
     <svg viewBox="0 0 24 24">
@@ -682,6 +870,7 @@
     </svg>
     <span>Stats</span>
   </button>
+
   <!-- ID stays 4th -->
   <button class="dock-item" data-tab="id">
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -692,11 +881,14 @@
     <span>ID</span>
   </button>
 </nav>
+
   <main id="screen-id" class="page screen" style="display:none">
   <h1>Travel identification</h1>
   <div class="id-hr"></div>
+
   <!-- shown when redirected here from blocked search -->
   <div id="visaWarn" class="id-warn">Active VISA required for travel to Japan.</div>
+
   <!-- Passport card -->
   <section class="id-card passport" aria-label="Passport">
     <div class="title">Passport</div>
@@ -709,6 +901,7 @@
       <div class="value">Shloak Patel</div>
     </div>
   </section>
+
   <!-- VISA card container (rendered by JS) -->
   <section id="visaCardMount"></section>
     <!-- CBP hub card (launches the CBP page) -->
@@ -718,6 +911,7 @@
   <button class="cbp-go" id="btnCBPPage" type="button">CBP Submissions</button>
 </section>
 </main>
+
 <script>
 /* -------------------- Airports + form behavior -------------------- */
 const AIRPORTS = [
@@ -731,11 +925,14 @@ const AIRPORTS = [
   { code:'GRV', name:'Grindavik Intl Airport (GRV)' },
   { code:'SAU', name:'Sauthemptona Airport (SAU)' }
 ];
+
 let passengerData = {};
 function randDigits(n){ let s=''; for(let i=0;i<n;i++) s += Math.floor(Math.random()*10); return s; }
 function formatDate(iso){ if(!iso) return ''; const d=new Date(iso); return d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}); }
+
 const fromSel = document.getElementById('from');
 const toSel   = document.getElementById('to');
+
 function fillSelect(selectEl, excludeCode) {
   const current = selectEl.value;
   selectEl.innerHTML = '<option value="" disabled selected>City / airport</option>';
@@ -755,6 +952,7 @@ fillSelect(fromSel);
 fillSelect(toSel);
 fromSel.addEventListener('change', () => fillSelect(toSel, fromSel.value || null));
 toSel  .addEventListener('change', () => fillSelect(fromSel, toSel.value || null));
+
 /* -------------------- Overlay + transitions -------------------- */
 const backdrop = document.getElementById('backdrop');
 const sheet = document.getElementById('sheet');
@@ -762,8 +960,20 @@ const btnBack = document.getElementById('btnBack');
 const sheetBody = document.getElementById('sheetBody');
 const routeTitle = document.getElementById('routeTitle');
 let stepStack = [];
+
+  /* ---- ATC24 + filters state ---- */
+let currentTripsFilter = 'all';   // 'all' | 'regular' | 'atc24'
+let currentStatsFilter = 'all';   // 'all' | 'regular' | 'atc24'
+
+function applyFilter(arr, mode){
+  if (mode === 'all') return arr;
+  if (mode === 'atc24') return arr.filter(t => !!t.atc24);
+  /* regular */          return arr.filter(t => !t.atc24);
+}
+
 /* ---- inflight stopwatch (persists in localStorage) ---- */
 let inflightInterval = null;
+
 function formatHMS(ms){
   const s = Math.max(0, Math.floor(ms/1000));
   const hh = Math.floor(s/3600);
@@ -775,10 +985,12 @@ const CLOCK_SVG = `<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="
   <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
   <path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`;
+
 function renderInflightTimer(slotEl, trip){
   if(!slotEl) return;
   slotEl.innerHTML = '';
   if(!trip.inflightStart) return;
+
   const wrap = document.createElement('span');
   wrap.className = 'badge';
   wrap.style.display = 'inline-flex';
@@ -786,6 +998,7 @@ function renderInflightTimer(slotEl, trip){
   wrap.style.gap = '6px';
   wrap.innerHTML = `${CLOCK_SVG}<span class="mono" id="sw-${trip.id}"></span>`;
   slotEl.appendChild(wrap);
+
   const label = wrap.querySelector(`#sw-${trip.id}`);
   const tick = ()=>{
     const end = trip.inflightEnd || Date.now();
@@ -800,11 +1013,13 @@ function renderInflightTimer(slotEl, trip){
     inflightInterval = setInterval(tick, 1000);
   }
 }
+
 function openSheet(){
   backdrop.classList.add('show');
   sheet.classList.add('show');
   document.body.classList.add('modal-open');
 }
+
 function closeSheet(){
   sheet.classList.remove('show');
   backdrop.classList.remove('show');
@@ -818,6 +1033,7 @@ btnBack.addEventListener('click', () => {
   const prev = stepStack[stepStack.length-1];
   renderView(prev.title, prev.html);
 });
+
 /* -------------------- Utilities -------------------- */
 function randInt(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
 function shuffle(arr){ return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(p=>p[1]); }
@@ -830,11 +1046,13 @@ function minutesToTime(mins){
   return `${h12}:${m.toString().padStart(2,'0')} ${ampm}`;
 }
 function overnightFlag(depMins, arrMins){ const w=t=>t>=0&&t<360; return w(depMins%1440)||w(arrMins%1440); }
+
 /* Airline codes (used on Review & Pay) */
 const AIRLINE_CODES = {
   'American Airlines':'AA','JetBlue':'B6','Delta':'DL','United':'UA','Southwest':'WN','Spirit':'NK',
   'Emirates':'EK','Singapore':'SQ','Lufthansa':'LH','SWISS':'LX','Korean Air':'KE','KLM':'KL','Qatar Airways':'QR','Air France':'AF','Qantas':'QF','CEBU Pacific':'5J','British Airways':'BA','Condor':'DE','easyJet':'U2'
 };
+
 /* Airline logos in / (repo root). Adjust filenames if your paths differ */
 const LOGO_MAP = {
   'JetBlue':'jb-icon.png',
@@ -858,35 +1076,39 @@ const LOGO_MAP = {
   'easyJet':'U2-icon.png'
 };
 const logoFor = carrier => LOGO_MAP[carrier] ? `./${LOGO_MAP[carrier]}` : '';
+
 /* very small localStorage wrapper */
 const getTrips = () => { try { return JSON.parse(localStorage.getItem('trips')||'[]'); } catch(e){ return []; } };
 const setTrips = (arr) => localStorage.setItem('trips', JSON.stringify(arr));
 const saveTrip = (trip) => { const arr=getTrips(); arr.unshift(trip); setTrips(arr); };
+
   /* ----- CBP form storage (single saved form) ----- */
 const CBP_KEY = 'cbpForm';
 const getCBPForm = () => { try { return JSON.parse(localStorage.getItem(CBP_KEY) || 'null'); } catch(e){ return null; } };
 const setCBPForm = (obj) => localStorage.setItem(CBP_KEY, JSON.stringify(obj));
 const clearCBPForm = () => localStorage.removeItem(CBP_KEY);
+
 function stamp(ts){
   const d = new Date(ts);
   const fmt = { year:'2-digit', month:'2-digit', day:'2-digit', hour:'numeric', minute:'2-digit' };
   return d.toLocaleString(undefined, fmt).replace(',', ''); // "09/28/25 4:23 PM"
 }
 function airportByCode(c){ return AIRPORTS.find(a => a.code === c) || { code:c, name:c }; }
+
   function airportLabel(code){
-  const a = airportByCode(code);
-  const nameNoCode = (a?.name || '').replace(
-    new RegExp(`\\s*\$begin:math:text$${a.code}\\$end:math:text$\\s*$`),  // strip trailing "(CODE)"
-    ''
-  );
-  return `${nameNoCode} (${a.code})`;
+  const a = airportByCode(code);                // {code, name} or fallback
+  const plain = (a?.name || String(code))       // strip trailing "(XXX)" if present
+    .replace(/\s*\([A-Z]{3}\)\s*$/, '');
+  return `${plain} (${a.code || code})`;        // always a string
 }
+
 /* time parsing for comparisons ("10:02 PM" → minutes) */
 function timeStrToMins(s){
   if(!s) return 0;
   const m=s.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i); if(!m) return 0;
   let h=+m[1]%12, min=+m[2]; const pm=/PM/i.test(m[3]); if(pm) h+=12; return h*60+min;
 }
+
   function computeDurationText(obj){
   if (obj.durationText) return obj.durationText;
   const dep = timeStrToMins(obj.schedDepart || obj.depart);
@@ -896,6 +1118,7 @@ function timeStrToMins(s){
   if (!isFinite(dur) || dur <= 0) return '';
   return `${Math.floor(dur/60)}h ${String(dur%60).padStart(2,'0')}m`;
 }
+
 /* Country mapping for INTL check */
 function countryOf(code){
   if (['RFD','PER','LCA','PHP','MLR','IZO'].includes(code)) return 'US';
@@ -903,6 +1126,7 @@ function countryOf(code){
   return 'US';
 }
 function isIntl(a,b){ return countryOf(a) !== countryOf(b); }
+
 /* For conditional UI */
 function needsPassportOnPassengers(from, to){
   return countryOf(from)==='US' && countryOf(to)==='JP';
@@ -913,6 +1137,7 @@ function shouldShowCBPOnArrived(trip){
       && !trip.cbpDone;
 }
 const CITY_LABEL = { RFD:'Rockford', IZO:'Izolirani', PER:'Perth', LCA:'Larnaca' };
+
 /* -------------------- Aircraft rules -------------------- */
 const AIRCRAFT_RULES = {
   'PER-RFD': {
@@ -1052,6 +1277,7 @@ const AIRCRAFT_RULES = {
     'easyJet': ['A320']
   }
 };
+
 function routeKey(a,b){ return [a,b].sort().join('-'); }
 function pickAircraft(fromCode,toCode,carrier){
   const rules = AIRCRAFT_RULES[routeKey(fromCode,toCode)];
@@ -1059,6 +1285,7 @@ function pickAircraft(fromCode,toCode,carrier){
   const list = rules[carrier];
   return list[randInt(0, list.length-1)];
 }
+
 /* -------------------- Route builders (NONSTOP ONLY) -------------------- */
 function buildRfdPerResults(from,to){
   const carriers=['American Airlines','JetBlue',...shuffle(['United','Spirit','Southwest','Delta'])];
@@ -1076,6 +1303,7 @@ function buildRfdPerResults(from,to){
     aircraft: pickAircraft(from,to,c)
   }});
 }
+
 function buildRfdIzoResults(from,to){
   const carriers=['American Airlines','American Airlines','JetBlue',...shuffle(['JetBlue','Southwest','Delta'])];
   const depTimes=randomUniqueTimes(6), durations=Array.from({length:6},()=>randInt(120,180)), prices=Array.from({length:6},()=>randInt(250,600));
@@ -1087,6 +1315,7 @@ function buildRfdIzoResults(from,to){
     aircraft: pickAircraft(from,to,c)
   }});
 }
+
 function buildRfdLcaResults(from,to){
   const carriers=['JetBlue','Delta','Delta',...shuffle(['American Airlines','Southwest','United'])];
   const depTimes=randomUniqueTimes(6), durations=Array.from({length:6},()=>randInt(90,120)), prices=Array.from({length:6},()=>randInt(250,550));
@@ -1098,6 +1327,7 @@ function buildRfdLcaResults(from,to){
     aircraft: pickAircraft(from,to,c)
   }});
 }
+
 function buildRfdPhpResults(from,to){
   const carriers=['JetBlue','JetBlue','Delta',...shuffle(['American Airlines','United','Southwest'])];
   const depTimes=randomUniqueTimes(6), durations=Array.from({length:6},()=>randInt(90,120)), prices=Array.from({length:6},()=>randInt(250,550));
@@ -1109,18 +1339,22 @@ function buildRfdPhpResults(from,to){
     aircraft: pickAircraft(from,to,c)
   }});
 }
+
 /* RFD ↔ HND (Tokyo) */
 function buildRfdHndResults(fromCode, toCode){
   const firstSix = shuffle(['American Airlines','Delta','Emirates','Singapore','British Airways','Lufthansa']);
   const pool = ['SWISS','Korean Air','KLM','Qatar Airways','Air France'];
   const lastSix = shuffle((() => { const out=[...pool]; while(out.length<6) out.push(pool[randInt(0,pool.length-1)]); return out; })());
   const carriers = [...firstSix, ...lastSix];
+
   const depTimes  = randomUniqueTimes(12);
   const durations = Array.from({length:12}, () => randInt(510, 720));  // 8.5–12h
   const prices    = Array.from({length:12}, () => randInt(900, 1100));
+
   const tzDelta =
     (countryOf(fromCode) === 'US' && countryOf(toCode) === 'JP') ? 360 :
     (countryOf(fromCode) === 'JP' && countryOf(toCode) === 'US') ? -360 : 0;
+
   return carriers.map((carrier, i) => {
     const depMins = depTimes[i];
     const dur     = durations[i];
@@ -1137,6 +1371,7 @@ function buildRfdHndResults(fromCode, toCode){
     };
   });
 }
+
 function buildRfdMlrResults(from,to){
   const carriers=['American Airlines','JetBlue','United',...shuffle(['American Airlines','United','JetBlue'])];
   const depTimes=randomUniqueTimes(6), durations=Array.from({length:6},()=>randInt(30,60)), prices=Array.from({length:6},()=>randInt(150,250));
@@ -1148,6 +1383,7 @@ function buildRfdMlrResults(from,to){
     aircraft: pickAircraft(from,to,c)
   }});
 }
+
 /* RFD ↔ GRV (Grindavik) */
 // RFD ↔ GRV: RFD departs 4:00 PM; GRV departs 8:30 AM
 function buildRfdGrvResults(fromCode, toCode){
@@ -1156,8 +1392,10 @@ function buildRfdGrvResults(fromCode, toCode){
   const tzDelta =
     (countryOf(fromCode) === 'US' && countryOf(toCode) === 'JP') ? 360 :
     (countryOf(fromCode) === 'JP' && countryOf(toCode) === 'US') ? -360 : 0;
+
   const arrMins = depMins + dur + tzDelta;
   const price   = randInt(850, 1100);
+
   return [{
     from: fromCode, to: toCode,
     depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
@@ -1168,6 +1406,7 @@ function buildRfdGrvResults(fromCode, toCode){
     aircraft: pickAircraft(fromCode, toCode, 'United')
   }];
 }
+
 function buildPerIzoResults(from, to){
   const carriers = Array(4).fill('American Airlines');
   const depTimes  = randomUniqueTimes(4);
@@ -1187,6 +1426,7 @@ function buildPerIzoResults(from, to){
     };
   });
 }
+
 function buildPerMlrResults(from, to){
   const carriers = ['American Airlines', 'JetBlue', 'United','Southwest', 'Delta', 'United'];
   const depTimes  = randomUniqueTimes(6);
@@ -1206,6 +1446,7 @@ function buildPerMlrResults(from, to){
     };
   });
 }
+
 function buildPerLcaResults(from, to){
   const carriers = ['American Airlines', 'Delta', 'Delta','Spirit', 'United', 'American Airlines'];
   const depTimes  = randomUniqueTimes(6);
@@ -1225,6 +1466,7 @@ function buildPerLcaResults(from, to){
     };
   });
 }
+
 function buildPerPhpResults(from, to){
   const carriers = ['American Airlines', 'Delta', 'United','Spirit', 'Southwest'];
   const depTimes  = randomUniqueTimes(5);
@@ -1244,6 +1486,7 @@ function buildPerPhpResults(from, to){
     };
   });
 }
+
 // PER ↔ GRV: PER departs 5:00 AM; GRV departs 12:00 AM
 function buildPerGrvResults(from, to){
   const carrier = 'Qantas';
@@ -1254,6 +1497,7 @@ function buildPerGrvResults(from, to){
     (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
   const arrMins = depMins + duration + tzDelta;
   const price   = randInt(950, 1200);
+
   return [{
     from, to,
     depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
@@ -1265,6 +1509,7 @@ function buildPerGrvResults(from, to){
     aircraft: pickAircraft(from, to, carrier)
   }];
 }
+
 function buildMlrIzoResults(from, to){
   const carriers = ['American Airlines', 'American Airlines', 'American Airlines','United', 'United', 'Delta'];
   const depTimes  = randomUniqueTimes(6);
@@ -1284,6 +1529,7 @@ function buildMlrIzoResults(from, to){
     };
   });
 }
+
 function buildMlrLcaResults(from, to){
   const carriers = ['Delta', 'Delta', 'United','Spirit', 'United', 'American Airlines'];
   const depTimes  = randomUniqueTimes(6);
@@ -1303,6 +1549,7 @@ function buildMlrLcaResults(from, to){
     };
   });
 }
+
 function buildMlrPhpResults(from, to){
   const carriers = ['American Airlines', 'United','Delta', 'United'];
   const depTimes  = randomUniqueTimes(4);
@@ -1322,6 +1569,7 @@ function buildMlrPhpResults(from, to){
     };
   });
 }
+
 function buildIzoLcaResults(from, to){
   const carriers = ['American Airlines', 'American Airlines', 'Delta','Delta', 'Delta', 'United'];
   const depTimes  = randomUniqueTimes(6);
@@ -1341,6 +1589,7 @@ function buildIzoLcaResults(from, to){
     };
   });
 }
+
 function buildIzoPhpResults(from, to){
   const carriers = ['American Airlines', 'American Airlines','Spirit', 'Spirit'];
   const depTimes  = randomUniqueTimes(4);
@@ -1360,18 +1609,23 @@ function buildIzoPhpResults(from, to){
     };
   });
 }
+
 function buildIzoHndResults(from, to){
   const carriers = ['American Airlines','American Airlines','American Airlines'];
+
   // HND → IZO should depart 1:20 PM, 3:20 PM, 6:40 PM
   // Keep the old late-evening schedule for the reverse direction.
   const fixedDepTimes = (from === 'HND' && to === 'IZO')
     ? [13*60 + 20, 15*60 + 20, 18*60 + 40]           // 1:20pm, 3:20pm, 6:40pm
     : [18*60 + 45, 20*60 + 20, 23*60 + 40];          // original: 6:45pm, 8:20pm, 11:40pm
+
   const durations = Array.from({length:3}, () => randInt(420, 510));
   const prices    = Array.from({length:3}, () => randInt(850, 1100));
+
   const tzDelta =
     (countryOf(from) === 'US' && countryOf(to) === 'JP') ? 360 :
     (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
+
   return carriers.map((carrier, i) => {
     const depMins = fixedDepTimes[i], dur = durations[i], arrMins = depMins + dur + tzDelta;
     return {
@@ -1388,17 +1642,20 @@ function buildIzoHndResults(from, to){
   
 function buildIzoGrvResults(from, to){
   const carrier = 'Lufthansa';
+
   // GRV → IZO should depart 10:30 PM; IZO → GRV stays 6:40 PM
   // (times are minutes after midnight)
   const depMins = (from === 'GRV' && to === 'IZO')
     ? (13*60 + 20)   // 1:20 PM
     : (18*60 + 40);  // 6:40 PM
+
   const dur      = randInt(510, 600);
   const tzDelta =
     (countryOf(from) === 'US' && countryOf(to) === 'JP') ? 360 :
     (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
   const arrMins = depMins + dur + tzDelta;
   const price   = randInt(900, 1200);
+
   return [{
     from, to,
     depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
@@ -1410,6 +1667,7 @@ function buildIzoGrvResults(from, to){
     aircraft: pickAircraft(from, to, carrier)
   }];
 }
+
 function buildLcaPhpResults(from, to){
   const carriers = Array(6).fill('Delta');
   const depTimes  = randomUniqueTimes(6);
@@ -1428,8 +1686,10 @@ function buildLcaPhpResults(from, to){
     };
   });
 }
+
 function buildLcaHndResults(from, to){
   const isLcaToHnd = (from === 'LCA' && to === 'HND');
+
   // Fixed departure times by direction + carrier
   const schedule = isLcaToHnd
     ? [
@@ -1442,17 +1702,21 @@ function buildLcaHndResults(from, to){
         { carrier: 'Singapore', timeMins: 5*60 + 30 },   // 5:30 AM
         { carrier: 'Emirates',  timeMins: 22*60 },       // 10:00 PM
       ];
+
   // Duration: 13h–15h (in minutes)
   const durations = Array.from({length: schedule.length}, () => randInt(780, 900));
   const prices    = Array.from({length: schedule.length}, () => randInt(950, 1250));
+
   // Keep your existing JP/US tz delta rule
   const tzDelta =
     (countryOf(from) === 'US' && countryOf(to) === 'JP') ? 360 :
     (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
+
   return schedule.map((s, i) => {
     const depMins = s.timeMins;
     const dur     = durations[i];
     const arrMins = depMins + dur + tzDelta;
+
     return {
       from, to,
       depart: minutesToTime(depMins),
@@ -1468,6 +1732,7 @@ function buildLcaHndResults(from, to){
     };
   });
 }
+
 // LCA ↔ GRV: LCA departs 1:30 AM; GRV departs 6:00 PM
 function buildLcaGrvResults(from, to){
   const carrier = 'Delta';
@@ -1478,6 +1743,7 @@ function buildLcaGrvResults(from, to){
     (countryOf(from) === 'JP' && countryOf(to) === 'US') ? -360 : 0;
   const arrMins  = depMins + dur + tzDelta;
   const price    = randInt(900, 1150);
+
   return [{
     from, to,
     depart: minutesToTime(depMins), arrive: minutesToTime(arrMins),
@@ -1488,6 +1754,7 @@ function buildLcaGrvResults(from, to){
     aircraft: pickAircraft(from, to, carrier)
   }];
 }
+
 function buildHndGrvResults(from, to){
   const carriers = ['Lufthansa', 'CEBU Pacific', 'British Airways','Qatar Airways', 'Condor', 'easyJet'];
   const depTimes  = randomUniqueTimes(6);
@@ -1509,6 +1776,7 @@ function buildHndGrvResults(from, to){
     };
   });
 }
+
 function buildHndSauResults(from, to){
   const carriers = ['SWISS', 'Qatar Airways', 'Lufthansa','British Airways', 'Condor', 'SWISS'];
   const depTimes  = randomUniqueTimes(6);
@@ -1530,6 +1798,7 @@ function buildHndSauResults(from, to){
     };
   });
 }
+
 function buildGrvSauResults(from, to){
   const carriers = ['SWISS','SWISS','easyJet','easyJet'];
   const depTimes  = randomUniqueTimes(4);
@@ -1551,6 +1820,7 @@ function buildGrvSauResults(from, to){
     };
   });
 }
+
 function buildHndMlrResults(from, to){
   const carriers = ['Delta','American Airlines','United','Qatar Airways','Lufthansa'];
   const depTimes  = randomUniqueTimes(5);
@@ -1572,15 +1842,18 @@ function buildHndMlrResults(from, to){
     };
   });
 }
+
 /* -------------------- Results list (nonstop) -------------------- */
 function resultsView(list){
   const div = document.createElement('div');
   div.className = 'results';
+
   list.forEach(opt => {
     const logo = logoFor(opt.carrier);
     const logoHTML = logo
       ? `<img class="airlogo ${opt.carrier==='easyJet' ? 'is-u2' : ''}" src="${logo}" alt="${opt.carrier} logo">`
       : '';
+
     const card = document.createElement('div');
     card.className = 'card-result';
     card.innerHTML = `
@@ -1597,12 +1870,14 @@ function resultsView(list){
           </svg>
         </div>
       </div>
+
       <div class="row-top" style="margin-top:6px">
         <div class="timepair">
           ${opt.depart} &nbsp;→&nbsp; ${opt.arrive}
           ${opt.plusOne ? `<span class="plus1">${opt.plusOne}</span>` : ''}
         </div>
       </div>
+
       <div class="row-mid">
         ${logoHTML}
         <div class="row-mid-text">
@@ -1610,6 +1885,7 @@ function resultsView(list){
           <div class="carrier-line">${opt.carrier}</div>
         </div>
       </div>
+
       <div class="row-foot ${opt.overnight ? '' : 'hide'}">
         <svg width="16" height="16" viewBox="0 0 24 24">
           <path d="M12 9v4m0 4h.01M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2z" stroke="#ffcc66" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1620,25 +1896,33 @@ function resultsView(list){
     card.addEventListener('click', () => openSummary(opt));
     div.appendChild(card);
   });
+
   return div;
 }
+
 function renderView(title, node){
   routeTitle.textContent = title;
   sheetBody.innerHTML = '';
   sheetBody.appendChild(node);
 }
+
 /* -------------------- Steps -------------------- */
 let lastSelection=null;
+
 function openSummary(opt){
   lastSelection = {...opt, airlineCode: AIRLINE_CODES[opt.carrier] || ''};
   lastSelection.travelDate = document.getElementById('depart').value || '';
-  const v=document.createElement('div'); v.className='view';
-  const warn=opt.overnight?`
+
+  const v = document.createElement('div');
+  v.className = 'view';
+
+  const warn = opt.overnight ? `
     <div class="panel" style="color:#ffcc66; display:flex; align-items:center; gap:8px">
       <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2z" stroke="#ffcc66" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Overnight flight
-    </div>`:'';
-  v.innerHTML=`
+    </div>` : '';
+
+  v.innerHTML = `
     <div class="panel">
       <div style="font-weight:800; color:#21d07a; margin-bottom:6px">DEPART</div>
       <div style="font-size:17px; color:#e9eef4; margin-bottom:6px">${opt.from} to ${opt.to}</div>
@@ -1646,78 +1930,116 @@ function openSummary(opt){
       <div class="kv"><span>Duration</span><b>${opt.durationText}</b></div>
       <div class="kv"><span>Aircraft</span><b>${opt.aircraft || '—'}</b></div>
     </div>
+
     ${warn}
+
     <div class="panel"><div class="kv"><span>Total amount due</span><b>$${opt.price.toLocaleString()}</b></div></div>
-    <button class="btn-lg" id="goPassengers">Continue</button>`;
-  v.querySelector('#goPassengers').addEventListener('click',()=>openPassengers());
+
+    <!-- ATC24 tiny slider -->
+    <div class="atc24-toggle">
+      <label class="tiny-switch">
+        <span>ATC24</span>
+        <input id="atc24Chk" type="checkbox">
+        <span class="tiny-track"><span class="tiny-knob"></span></span>
+      </label>
+    </div>
+
+    <button class="btn-lg" id="goPassengers">Continue</button>
+  `;
+
+  // (this JS MUST be after innerHTML, not inside it)
+  v.querySelector('#atc24Chk').addEventListener('change', (e)=>{
+    lastSelection.atc24 = !!e.target.checked;
+  });
+  v.querySelector('#goPassengers').addEventListener('click', ()=>openPassengers());
+
   if(!stepStack.length) openSheet();
-  stepStack=[{title:'Your trip summary', html:v}];
+  stepStack = [{title:'Your trip summary', html:v}];
   renderView('Your trip summary', v);
 }
+
+/* -------- Passengers step (real form + branching) -------- */
 function openPassengers(){
-  const intl = isIntl(lastSelection.from, lastSelection.to);
-  const askPassport = needsPassportOnPassengers(lastSelection.from, lastSelection.to);
-  const v = document.createElement('div');
+  const v = document.createElement('div'); 
   v.className = 'view';
-  const info = intl ? `
-    <div class="panel info">
-      <div class="title">Know before you go</div>
-      <div class="muted">International travel requires a valid passport. Check visa and travel document requirements for your destination.</div>
-    </div>` : '';
+
+  const isATC24 = !!(lastSelection && lastSelection.atc24);
+
   v.innerHTML = `
-    ${info}
-    <div class="panel"><div class="kv"><span>Your trip total</span><b>$${lastSelection.price.toLocaleString()}</b></div></div>
+    ${isATC24 ? `<div class="atc24-banner">ATC24</div>` : ``}
+
     <div class="panel">
-      <h3>Passenger 1</h3>
+      <h3>Passenger details</h3>
       <div class="form-row">
-        <div class="field"><label>First name •</label><input id="p1First" required type="text" placeholder="As on ID" autocomplete="given-name"></div>
-        <div class="field"><label>Middle name</label><input id="p1Middle" type="text" placeholder="Optional" autocomplete="additional-name"></div>
-        <div class="field"><label>Last name •</label><input id="p1Last" required type="text" placeholder="As on ID" autocomplete="family-name"></div>
+        <div class="field">
+          <label>First name •</label>
+          <input id="pFirst" type="text" autocomplete="given-name" placeholder="e.g., Alex">
+        </div>
+        <div class="field">
+          <label>Middle name</label>
+          <input id="pMiddle" type="text" autocomplete="additional-name" placeholder="">
+        </div>
+        <div class="field">
+          <label>Last name •</label>
+          <input id="pLast" type="text" autocomplete="family-name" placeholder="e.g., Chen">
+        </div>
       </div>
-      <div class="form-row half" style="margin-top:8px">
-        <div class="field"><label>Date of birth •</label><input id="p1Dob" required type="date" autocomplete="bday"></div>
-        <div class="field"><label>Gender •</label>
-          <select id="p1Gender" required autocomplete="sex">
-            <option value="" disabled selected>Select</option>
-            <option>Female</option><option>Male</option><option>Unspecified</option>
-          </select>
+
+      <div class="form-row half">
+        <div class="field">
+          <label>Date of birth •</label>
+          <input id="pDob" type="date">
+        </div>
+        <div class="field">
+          <label>Passport #</label>
+          <input id="pPass" type="text" inputmode="numeric" placeholder="">
         </div>
       </div>
     </div>
-    ${askPassport ? `
-      <div class="panel">
-        <div class="form-row" style="margin-top:8px">
-          <div class="field"><label>Passport number •</label><input id="p1Passport" required type="text" inputmode="text" placeholder="XXXXXXXXX"></div>
-        </div>
-      </div>
-    ` : ''}
-    <button class="btn-lg" id="goPay">Continue</button>
+
+    <button class="btn-lg" id="btnPassengersNext" type="button">
+      ${isATC24 ? 'Book flight' : 'Continue'}
+    </button>
+    <div class="muted" style="margin-top:8px">
+      ${isATC24 
+        ? 'ATC24: payment handled via account; booking finalizes now.'
+        : 'You can review and pay on the next step.'}
+    </div>
   `;
-  v.querySelector('#goPay').addEventListener('click', () => {
-    const first    = (document.getElementById('p1First').value  || '').trim();
-    const middle   = (document.getElementById('p1Middle').value || '').trim();
-    const last     = (document.getElementById('p1Last').value   || '').trim();
-    const dob      = document.getElementById('p1Dob').value || '';
-    const gender   = document.getElementById('p1Gender').value || '';
-    const passport = (document.getElementById('p1Passport')?.value || '').trim();
-    if (!first || !last || !dob || !gender){
-      alert('Please complete required passenger fields.');
+
+  v.querySelector('#btnPassengersNext').addEventListener('click', () => {
+    const first = v.querySelector('#pFirst').value.trim();
+    const middle = v.querySelector('#pMiddle').value.trim();
+    const last  = v.querySelector('#pLast').value.trim();
+    const dob   = v.querySelector('#pDob').value;
+    const pass  = v.querySelector('#pPass').value.trim();
+
+    if(!first || !last || !dob){
+      alert('Please fill first name, last name, and date of birth.');
       return;
     }
-    if (askPassport && !passport){
-      alert('Please enter the passport number.');
-      return;
+
+    // persist passenger data for confirmation + tickets
+    passengerData = { first, middle, last, dob, passport: pass };
+
+    if (isATC24){
+      // Skip review & pay → book immediately
+      showProcessing();
+      setTimeout(showConfirmation, 1200);
+    } else {
+      // Regular flow → go to Review & Pay
+      openReviewPay();
     }
-    passengerData = { first, middle, last, dob, gender };
-    if (askPassport) passengerData.passport = passport;
-    openReviewPay();
   });
+
   stepStack.push({ title:'Passenger details', html:v });
   renderView('Passenger details', v);
 }
+
 function openReviewPay(){
   const v = document.createElement('div'); 
   v.className = 'view';
+
   // build connection details if present
   let connHTML = '';
   if (Array.isArray(lastSelection.segments) && lastSelection.segments.length){
@@ -1731,7 +2053,9 @@ function openReviewPay(){
       </div>
     `).join('');
   }
+
   const showStops = Array.isArray(lastSelection.connections) ? '' : '<div class="kv"><span>Stops</span><b>Nonstop</b></div>';
+
   v.innerHTML = `
     <div class="panel">
       <div style="font-weight:800; margin-bottom:6px">Your trip</div>
@@ -1742,6 +2066,7 @@ function openReviewPay(){
       <div class="kv"><span>Aircraft</span><b>${lastSelection.aircraft || '—'}</b></div>
       ${connHTML}
     </div>
+
     <div class="panel">
       <h3>Cost summary</h3>
       <div class="kv"><span>Economy</span><b>$${lastSelection.price.toLocaleString()}</b></div>
@@ -1749,6 +2074,7 @@ function openReviewPay(){
         <span>Total amount due (All passengers)</span><b>$${lastSelection.price.toLocaleString()}</b>
       </div>
     </div>
+
     <div class="panel">
       <h3>Credit / debit card</h3>
       <div class="form-row">
@@ -1771,17 +2097,21 @@ function openReviewPay(){
       </div>
     </div>
   `;
+
   /* <-- attach the handler AFTER setting innerHTML */
   v.querySelector('#btnPay').addEventListener('click', handlePay);
+
   stepStack.push({title:'Review and pay', html:v});
   renderView('Review and pay', v);
 }
+
 function handlePay(){
   const agree = document.getElementById('agreeCheckbox')?.checked;
   const ccNumber = (document.getElementById('ccNumber')?.value || '').replace(/\s+/g,'');
   const ccExp = (document.getElementById('ccExp')?.value || '').trim();
   const ccCvv = (document.getElementById('ccCvv')?.value || '').trim();
   const ccName = (document.getElementById('ccName')?.value || '').trim();
+
   if(!ccNumber || !ccExp || !ccCvv || !ccName){
     alert('Please complete card details.');
     return;
@@ -1793,6 +2123,7 @@ function handlePay(){
   showProcessing();
   setTimeout(showConfirmation, 3000);
 }
+
 function showProcessing(){
   const v = document.createElement('div'); v.className='view';
   v.innerHTML = `
@@ -1805,15 +2136,18 @@ function showProcessing(){
   stepStack.push({title:'Processing…', html:v});
   renderView('Processing…', v);
 }
+
 function showConfirmation(){
   const p = passengerData || {};
   const fullName = [p.first, p.middle, p.last].filter(Boolean).join(' ');
   const bookingRef = randDigits(6);
   const ticketNo  = randDigits(13);
+
   // Save to Trips
 saveTrip({
   id: Date.now() + '-' + randDigits(4),
   status: 'CONFIRMED',            // CONFIRMED → INFLIGHT → ARRIVED → ARCHIVED
+  atc24: !!lastSelection.atc24,
   carrier: lastSelection.carrier || '',
   logo: logoFor(lastSelection.carrier || ''),
   from: lastSelection.from,
@@ -1826,11 +2160,13 @@ saveTrip({
   price: lastSelection.price || 0,
   passenger: fullName || 'Passenger 1',
   durationText: lastSelection.durationText || '',
+
   depGate: '', depTerminal: '',
   arrGate: '', arrTerminal: '',
   isArchived: false
 });
 renderTrips();    // refresh Trips page if it's open
+
   const v = document.createElement('div'); v.className='view';
   v.innerHTML = `
     <div class="glass" style="padding:18px 16px 14px;">
@@ -1839,10 +2175,12 @@ renderTrips();    // refresh Trips page if it's open
       </div>
       <div class="confirm-title" style="color:#63d488">Thank you for your purchase</div>
       <div class="confirm-sub">Your booking is confirmed</div>
+
       <div class="panel" style="margin-top:12px">
         <div class="kv"><span>Booking reference</span><b class="mono">${bookingRef}</b></div>
         <div class="kv"><span>e-Ticket number</span><b class="mono">${ticketNo}</b></div>
       </div>
+
       <div class="panel">
         <div class="kv"><span>Passenger</span><b>${fullName || 'Passenger 1'}</b></div>
         <div class="kv"><span>Route</span><b>${lastSelection.from} → ${lastSelection.to}</b></div>
@@ -1851,6 +2189,7 @@ renderTrips();    // refresh Trips page if it's open
         <div class="kv"><span>Carrier</span><b>${lastSelection.carrier || ''}</b></div>
         <div class="kv"><span>Amount paid</span><b>$${lastSelection.price.toLocaleString()}</b></div>
       </div>
+
       <div style="display:flex; gap:10px; margin-top:8px">
         <button class="btn-lg" style="flex:1" id="btnDone">Done</button>
       </div>
@@ -1860,16 +2199,22 @@ renderTrips();    // refresh Trips page if it's open
   stepStack.push({title:'Booking confirmed', html:v});
   renderView('Booking confirmed', v);
 }
+
 /* -------------------- Search handler (nonstop routes only) -------------------- */
-document.getElementById('btnSearch').addEventListener('click', () => {
+function needsVisa(from, to){
+  return countryOf(from) === 'US' && countryOf(to) === 'JP';
+}
+  document.getElementById('btnSearch').addEventListener('click', () => {
   const from = fromSel.value, to = toSel.value;
 const departDate = document.getElementById('depart').value;
+
 if (!from || !to || !departDate) {
   const formCard = document.querySelector('.card');
   formCard.style.boxShadow = '0 0 0 4px rgba(255,80,80,.25)';
   setTimeout(()=>formCard.style.boxShadow = 'var(--shadow)', 350);
   return;
 }
+
 /* NEW — block US → JP when VISA not active and redirect to ID page */
 if (needsVisa(from, to) && !isVisaActive()){
   openID();
@@ -1877,7 +2222,9 @@ if (needsVisa(from, to) && !isVisaActive()){
   if (w){ w.classList.add('show'); setTimeout(()=>w.classList.remove('show'), 2500); }
   return;
 }
+
   const key = [from, to].sort().join('-');
+
   let list;
   if (key==='PER-RFD') list=buildRfdPerResults(from,to);
   else if (key==='IZO-RFD') list=buildRfdIzoResults(from,to);
@@ -1912,14 +2259,17 @@ if (needsVisa(from, to) && !isVisaActive()){
     openSheet(); renderView('Choose departure', v); stepStack=[{title:'Choose departure', html:v}];
     return;
   }
+
   const resNode = resultsView(list);
   openSheet(); renderView('Choose departure', resNode); stepStack=[{title:'Choose departure', html:resNode}];
 });
+
   /* ---- Dock behavior ---- */
 const dock = document.getElementById('dock');
 const dockItems = dock.querySelectorAll('.dock-item');
 const dockIndicator = dock.querySelector('.dock-indicator');
 dock.style.setProperty('--tabs', dockItems.length);
+
 function setActiveTab(idx){
   dockItems.forEach(b => {
     b.classList.remove('active');
@@ -1929,6 +2279,7 @@ function setActiveTab(idx){
   dockItems[idx].setAttribute('aria-current','page');
   dockIndicator.style.transform = `translateX(${idx*100}%)`;
 }
+
 // click to switch highlight
 dockItems.forEach((btn, idx) => {
   btn.addEventListener('click', () => {
@@ -1937,77 +2288,99 @@ dockItems.forEach((btn, idx) => {
     // e.g., openTrips();
   });
 });
+
 // default tab on load
 setActiveTab(0);
+
   /* ---------- Simple screen switcher with a smooth fade ---------- */
 function showScreen(id){
   const next = document.getElementById(id);
   const curr = document.querySelector('.screen.show');
+
   if (curr === next) return;
+
   // show next
   next.style.display = 'block';
   // force reflow so transition runs
   next.getBoundingClientRect();
   next.classList.add('show');
+
   // hide current after transition
   if (curr){
     curr.classList.remove('show');
     setTimeout(()=>{ if(!curr.classList.contains('show')) curr.style.display = 'none'; }, 300);
   }
 }
+
 const dockBookingBtn = document.querySelector('.dock .dock-item[data-tab="booking"]');
 const dockTripsBtn   = document.querySelector('.dock .dock-item[data-tab="trips"]');
 const dockStatsBtn   = document.querySelector('.dock .dock-item[data-tab="stats"]'); // if you added Stats
 const dockIDBtn      = document.querySelector('.dock .dock-item[data-tab="id"]');
+
 function openBooking(){ setActiveTab(0); showScreen('screen-booking'); }
 function openTrips(){ setActiveTab(1); showScreen('screen-trips'); }
 function openStats(){ setActiveTab(2); showScreen('screen-stats'); } // if you added Stats
 function openID(){ setActiveTab(3); showScreen('screen-id'); renderIDPage(); } // (also defined above, either is fine)
+
 dockBookingBtn?.addEventListener('click', openBooking);
 dockTripsBtn?.addEventListener('click', openTrips);
 dockStatsBtn?.addEventListener('click', openStats); // if present
 dockIDBtn?.addEventListener('click', openID);
 document.getElementById('btnCBPPage')?.addEventListener('click', openCBPPage);
+
 // default
 showScreen('screen-booking');
+
   /* ---------- Trips list ---------- */
 function tripCardHTML(t, isArchived = false){
   const pillLabel = t.status === 'INFLIGHT' ? 'INFLIGHT'
                   : t.status === 'ARRIVED'  ? 'ARRIVED'
                   : 'ON TIME';
+
   const pillClass = t.status === 'INFLIGHT' ? 'pill-inflight'
                    : t.status === 'ARRIVED'  ? 'pill-arrived'
                    : 'pill-ontime';
+
   return `
     <div class="trip-card" data-id="${t.id}">
       <img class="trip-logo" alt="" src="${t.logo || ''}">
       <div class="trip-body">
         <div class="trip-times">
-          <b>${t.schedDepart}</b>
-          &nbsp;→&nbsp;
-          <b>${t.schedArrive}${t.plusOne ? ' <span class="muted">+1</span>' : ''}</b>
-        </div>
+  ${
+    t.atc24
+    ? `<span class="chip-atc24">ATC24</span>`
+    : `<b>${t.schedDepart}</b> &nbsp;→&nbsp; <b>${t.schedArrive}${t.plusOne ? ' <span class="muted">+1</span>' : ''}</b>`
+  }
+</div>
         <div class="trip-route">${t.from} &nbsp;→&nbsp; ${t.to}</div>
         <div class="trip-date">${formatDate(t.date)}</div>
       </div>
+
       <div class="trip-right">
         <span class="pill ${pillClass}">${pillLabel}</span>
         ${isArchived ? `<button class="mini-btn red btn-delete" type="button">Delete</button>` : ``}
       </div>
     </div>`;
 }
+
 function renderTrips(){
   const trips = getTrips();
-  const upcoming = trips.filter(t => !t.isArchived);
-  const previous = trips.filter(t => t.isArchived);
+const filtered = applyFilter(trips, currentTripsFilter);
+const upcoming = filtered.filter(t => !t.isArchived);
+const previous = filtered.filter(t => t.isArchived);
+
   const up = document.getElementById('upcomingList');
   const prev = document.getElementById('previousList');
   const empty = document.getElementById('upcomingEmpty');
+
   up.innerHTML = upcoming.map(t => tripCardHTML(t, false)).join('');
   prev.innerHTML = previous.map(t => tripCardHTML(t, true)).join('');
+
   empty.style.display = upcoming.length ? 'none' : '';
 }
+
   /* ====== Stats helpers & renderer ====== */
+
 // minutes between shown sched depart & sched arrive (respects +1 on schedule)
 function tripScheduledMinutes(t){
   const dep = timeStrToMins(t.schedDepart || '');
@@ -2016,6 +2389,7 @@ function tripScheduledMinutes(t){
   const diff = arr - dep;
   return (isFinite(diff) && diff > 0) ? diff : 0;
 }
+
 // format totals: "Xd Yh" once >= 24h (no minutes); else "Xh YYm"
 function formatTotalMinutes(mins){
   if (!mins || mins <= 0) return '0h 0m';
@@ -2028,6 +2402,7 @@ function formatTotalMinutes(mins){
   const m = mins % 60;
   return `${hours}h ${String(m).padStart(2,'0')}m`;
 }
+
 // sum of delays in minutes (only late minutes counted)
 function totalDelayMinutes(trips){
   let sum = 0;
@@ -2043,6 +2418,7 @@ function totalDelayMinutes(trips){
   });
   return sum;
 }
+
 // most flown aircraft + a representative carrier logo for that aircraft
 function mostFlownAircraft(trips){
   const byAc = {};
@@ -2054,6 +2430,7 @@ function mostFlownAircraft(trips){
   let topAc = '', topCount = 0;
   Object.entries(byAc).forEach(([k,c])=>{ if (c>topCount){ topAc=k; topCount=c; }});
   if (!topAc) return { aircraft:'—', logo:'', carrier:'' };
+
   const carrierCount = {};
   trips.filter(t=>t.aircraft===topAc).forEach(t=>{
     const c = t.carrier || '';
@@ -2062,14 +2439,18 @@ function mostFlownAircraft(trips){
   });
   const topCarrier = Object.keys(carrierCount).sort((a,b)=>carrierCount[b]-carrierCount[a])[0] || '';
   const logo = topCarrier ? logoFor(topCarrier) : '';
+
   return { aircraft: topAc, logo, carrier: topCarrier };
 }
+
 function renderStats(){
-  const prev = getTrips().filter(t => t.isArchived);
+  const prev = applyFilter(getTrips(), currentStatsFilter).filter(t => t.isArchived);
+
   // Flight time (scheduled)
   const flightMins = prev.reduce((sum,t)=> sum + tripScheduledMinutes(t), 0);
   const ft = document.getElementById('statFlightTimeValue');
   if (ft) ft.textContent = formatTotalMinutes(flightMins);
+
   // IRL time (stopwatch)
   const irlMs = prev.reduce((sum,t)=> {
     const a = (typeof t.inflightStart==='number' && typeof t.inflightEnd==='number') ? (t.inflightEnd - t.inflightStart) : 0;
@@ -2078,11 +2459,13 @@ function renderStats(){
   const irlMins = Math.floor(irlMs / 60000);
   const irl = document.getElementById('statIrlTimeValue');
   if (irl) irl.textContent = formatTotalMinutes(irlMins);
+
   // Delays → hours (floor)
   const delayMins = totalDelayMinutes(prev);
   const delayHours = Math.floor(delayMins / 60);
   const dh = document.getElementById('statDelayHoursValue');
   if (dh) dh.textContent = `${delayHours}`;
+
   // Most flown aircraft
   const mf = mostFlownAircraft(prev);
   const ma = document.getElementById('statMostAircraft');
@@ -2093,6 +2476,7 @@ function renderStats(){
     logo.style.display = mf.logo ? 'block' : 'none';
   }
 }
+
 document.getElementById('upcomingList').addEventListener('click', e=>{
   const card = e.target.closest('.trip-card'); if(card) openTripDetail(card.dataset.id);
 });
@@ -2107,6 +2491,7 @@ document.getElementById('previousList').addEventListener('click', e=>{
   const card = e.target.closest('.trip-card');
   if(card) openTripDetail(card.dataset.id);
 });
+
   function airportTitle(code){
   const a = AIRPORTS.find(x=>x.code===code);
   // strip "(XXX)" from the end
@@ -2114,11 +2499,53 @@ document.getElementById('previousList').addEventListener('click', e=>{
   return `${code} • ${n}`;
 }
 function diffMins(a, b){ return timeStrToMins(a) - timeStrToMins(b); } // + = late, - = early
-function openTripDetail(id){
+
+function openFilter(which){ // which: 'trips' | 'stats'
+  const back = document.createElement('div'); back.className='flt-backdrop';
+  const box  = document.createElement('div'); box.className='flt-modal';
+
+  // current selection
+  const initial = (which==='trips' ? currentTripsFilter : currentStatsFilter);
+
+  box.innerHTML = `
+    <h3>Show</h3>
+    <div class="flt-options">
+      <label class="flt-opt"><input type="radio" name="flt" value="all" ${initial==='all'?'checked':''}>All</label>
+      <label class="flt-opt"><input type="radio" name="flt" value="regular" ${initial==='regular'?'checked':''}>Regular</label>
+      <label class="flt-opt"><input type="radio" name="flt" value="atc24" ${initial==='atc24'?'checked':''}>ATC24</label>
+    </div>
+    <div class="flt-btns">
+      <button class="flt-apply" id="fltApply" type="button">Filter</button>
+    </div>
+  `;
+
+  function close(){
+    back.classList.remove('show'); box.classList.remove('show');
+    document.body.classList.remove('modal-open');
+    setTimeout(()=>{ back.remove(); box.remove(); }, 220);
+  }
+  back.addEventListener('click', close);
+  box.querySelector('#fltApply').addEventListener('click', ()=>{
+    const sel = box.querySelector('input[name="flt"]:checked')?.value || 'all';
+    if (which === 'trips'){ currentTripsFilter = sel; renderTrips(); }
+    else                  { currentStatsFilter = sel; renderStats(); }
+    close();
+  });
+
+  document.body.append(back, box);
+  requestAnimationFrame(()=>{ back.classList.add('show'); box.classList.add('show'); document.body.classList.add('modal-open'); });
+}
+
+// wire the buttons (safe if missing)
+document.getElementById('btnTripsFilter')?.addEventListener('click', ()=>openFilter('trips'));
+document.getElementById('btnStatsFilter')?.addEventListener('click', ()=>openFilter('stats'));
+  
+  function openTripDetail(id){
   const trips = getTrips();
   const i = trips.findIndex(t => t.id === id);
   if (i < 0) return;
   const t = trips[i];
+
   // helpers local to this view
   function airportTitle(code){
     const a = AIRPORTS.find(x => x.code === code);
@@ -2126,21 +2553,28 @@ function openTripDetail(id){
     return `${code} • ${n}`;
   }
   function diffMins(a, b){ return timeStrToMins(a) - timeStrToMins(b); } // + late, - early
+
   // which time to show (actual overrides scheduled)
   const depShown = t.actualDepart || t.schedDepart;
   const arrShown = t.actualArrive || t.schedArrive;
+
   // minute deltas when actuals exist
   const dDiff = t.actualDepart ? diffMins(t.actualDepart, t.schedDepart) : 0;
   const aDiff = t.actualArrive ? diffMins(t.actualArrive, t.schedArrive) : 0;
+
   // color classes for NEW times only
   const depClass = t.actualDepart ? (dDiff < 0 ? 'time-early' : dDiff > 0 ? 'time-late' : '') : '';
   const arrClass = t.actualArrive ? (aDiff < 0 ? 'time-early' : aDiff > 0 ? 'time-late' : '') : '';
   const durationText = computeDurationText(t);
+
   const v = document.createElement('div');
   v.className = 'view tdetail';
+
   v.innerHTML = `
-    <div class="updated">Updated now</div>
-    <div class="route">${t.from} &nbsp;→&nbsp; ${t.to}</div>
+  ${t.atc24 ? `<div class="atc24-banner">ATC24</div>` : `<div class="updated">Updated now</div>`}
+  <div class="route">${t.from} &nbsp;→&nbsp; ${t.to}</div>
+  ...
+
     <!-- Airline header -->
     <div class="tcard">
       <div class="trow">
@@ -2157,6 +2591,7 @@ function openTripDetail(id){
       <!-- Stopwatch slot -->
       <div id="timerSlot" style="display:flex;justify-content:flex-end;margin-top:6px"></div>
     </div>
+
     <!-- Depart -->
     <div class="tcard section">
       <div class="headrow" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
@@ -2170,10 +2605,15 @@ function openTripDetail(id){
           : ``
         }
       </div>
+
       <div class="bigtime">
-        <span class="${depClass}">${depShown}</span>
-        ${t.actualDepart ? `<span class="sched-old">${t.schedDepart}</span>` : ''}
-      </div>
+  ${
+    t.atc24
+      ? `<span class="chip-atc24 big">ATC24</span>`
+      : `<span class="${depClass}">${depShown}</span>${t.actualDepart ? `<span class="sched-old">${t.schedDepart}</span>` : ''}`
+  }
+</div>
+
       ${
         t.actualDepart
           ? `<div class="delta ${dDiff>0?'late':dDiff<0?'early':''}">
@@ -2181,8 +2621,10 @@ function openTripDetail(id){
              </div>`
           : ''
       }
+
       <div class="sub" style="margin-top:10px">${t.durationText ? `${t.durationText} • Nonstop` : ''}</div>
     </div>
+
     <!-- Arrive -->
     <div class="tcard section">
       <div class="headrow" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
@@ -2196,10 +2638,15 @@ function openTripDetail(id){
           : ``
         }
       </div>
+
       <div class="bigtime">
-        <span class="${arrClass}">${arrShown}${t.plusOne ? ' <sup class="muted">+1</sup>' : ''}</span>
-        ${t.actualArrive ? `<span class="sched-old">${t.schedArrive}${t.plusOne ? ' +1':''}</span>` : ''}
-      </div>
+  ${
+    t.atc24
+      ? `<span class="chip-atc24 big">ATC24</span>`
+      : `<span class="${arrClass}">${arrShown}${t.plusOne ? ' <sup class="muted">+1</sup>' : ''}</span>${t.actualArrive ? `<span class="sched-old">${t.schedArrive}${t.plusOne ? ' +1':''}</span>` : ''}`
+  }
+</div>
+
       ${
         t.actualArrive
           ? `<div class="delta ${aDiff>0?'late':aDiff<0?'early':''}">
@@ -2207,60 +2654,77 @@ function openTripDetail(id){
              </div>`
           : ''
       }
+
       <div class="tfooter">
         <div class="kv"><span>Aircraft</span><b>${t.aircraft || '—'}</b></div>
         <div class="kv"><span>Passenger</span><b>${t.passenger || 'Passenger 1'}</b></div>
       </div>
     </div>
+
     <div style="height:6px"></div>
     <button class="btn-lg" id="btnStatus">Status</button>
   `;
+
   // render stopwatch (if any)
   renderInflightTimer(v.querySelector('#timerSlot'), t);
+
   v.querySelector('#btnStatus').addEventListener('click', () => openStatusActions(t));
+
   openSheet();
   renderView(`${t.from} → ${t.to}`, v);
   stepStack = [{ title: `${t.from} → ${t.to}`, html: v }];
 }
+
+/* ---------- Status Action Sheet ---------- */
 /* ---------- Status Action Sheet ---------- */
 function openStatusActions(trip){
   const back = document.createElement('div'); back.className='actions-backdrop';
   const box  = document.createElement('div'); box.className='actions';
+
   function close(){
     back.classList.remove('show'); box.classList.remove('show');
     document.body.classList.remove('modal-open');
     setTimeout(()=>{ back.remove(); box.remove(); }, 200);
   }
   back.addEventListener('click', close);
-  // mount
+
   document.body.append(back, box);
   requestAnimationFrame(()=>{ 
     back.classList.add('show'); 
     box.classList.add('show'); 
     document.body.classList.add('modal-open'); 
   });
+
   const st = trip.status;
   let html = '';
+
   if(st==='CONFIRMED'){
     html += `
       <div class="row"><button class="btn" id="toInflight">Change to INFLIGHT</button></div>
-      <div class="row" id="depRow" style="display:none">
-        <div class="muted">Enter actual departure time</div>
-        <input id="depTime" type="time">
-        <button class="btn" id="upd1">Update status</button>
-      </div>`;
+      ${trip.atc24 ? '' : `
+        <div class="row" id="depRow" style="display:none">
+          <div class="muted">Enter actual departure time</div>
+          <input id="depTime" type="time">
+          <button class="btn" id="upd1">Update status</button>
+        </div>
+      `}
+    `;
   } else if(st==='INFLIGHT'){
     html += `
       <div class="row"><button class="btn" id="toArrived">Change status to ARRIVED</button></div>
-      <div class="row" id="arrRow" style="display:none">
-        <div class="muted">Enter actual arrival time</div>
-        <input id="arrTime" type="time">
-        <button class="btn" id="upd2">Update status</button>
-      </div>`;
+      ${trip.atc24 ? '' : `
+        <div class="row" id="arrRow" style="display:none">
+          <div class="muted">Enter actual arrival time</div>
+          <input id="arrTime" type="time">
+          <button class="btn" id="upd2">Update status</button>
+        </div>
+      `}
+    `;
   } else if(st==='ARRIVED'){
     html += `<div class="row"><button class="btn red" id="archive">Archive flight</button></div>`;
   }
-  // Change gate (always present)
+
+  // Gate change UI (always available)
   html += `
     <div class="row"><button class="btn" id="chgGate">Change gate</button></div>
     <div class="row" id="gateMode" style="display:none">
@@ -2276,75 +2740,87 @@ function openStatusActions(trip){
     </div>
   `;
   box.innerHTML = html;
-  // ----- Status handlers -----
+
+  // ---- Status handlers
   if(st==='CONFIRMED'){
     box.querySelector('#toInflight').addEventListener('click', ()=>{
-      box.querySelector('#depRow').style.display='grid';
-    });
-    box.querySelector('#upd1').addEventListener('click', ()=>{
-      const v = box.querySelector('#depTime').value; if(!v) return;
-      const [H,M]=v.split(':').map(Number);
-      const ampm = H>=12?'PM':'AM';
-      const h12  = ((H+11)%12)+1;
-      const disp = `${h12}:${String(M).padStart(2,'0')} ${ampm}`;
-      const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
-      if(i>-1){
-        trips[i].status='INFLIGHT';
-        trips[i].actualDepart=disp;
-        if (!trips[i].inflightStart) trips[i].inflightStart = Date.now(); // harmless if you added a stopwatch
-        setTrips(trips);
+      if (trip.atc24){
+        const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
+        if(i>-1){
+          trips[i].status='INFLIGHT';
+          if (!trips[i].inflightStart) trips[i].inflightStart = Date.now();
+          setTrips(trips);
+        }
+        close(); openTripDetail(trip.id); renderTrips();
+      } else {
+        box.querySelector('#depRow').style.display='grid';
       }
-      close(); openTripDetail(trip.id); renderTrips();
     });
+    if (!trip.atc24){
+      box.querySelector('#upd1').addEventListener('click', ()=>{
+        const v = box.querySelector('#depTime').value; if(!v) return;
+        const [H,M] = v.split(':').map(Number);
+        const ampm  = H>=12?'PM':'AM'; const h12=((H+11)%12)+1; const disp=`${h12}:${String(M).padStart(2,'0')} ${ampm}`;
+        const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
+        if(i>-1){
+          trips[i].status='INFLIGHT'; trips[i].actualDepart=disp;
+          if (!trips[i].inflightStart) trips[i].inflightStart = Date.now();
+          setTrips(trips);
+        }
+        close(); openTripDetail(trip.id); renderTrips();
+      });
+    }
   } else if(st==='INFLIGHT'){
     box.querySelector('#toArrived').addEventListener('click', ()=>{
-      box.querySelector('#arrRow').style.display='grid';
+      if (trip.atc24){
+        const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
+        if(i>-1){
+          trips[i].status='ARRIVED';
+          trips[i].inflightEnd = Date.now();
+          setTrips(trips);
+          const updated = trips[i];
+          close(); openTripDetail(trip.id); renderTrips();
+          requestAnimationFrame(()=>{ if (shouldShowCBPOnArrived?.(updated)) openCBPForm(updated); });
+        }
+      } else {
+        box.querySelector('#arrRow').style.display='grid';
+      }
     });
-    box.querySelector('#upd2').addEventListener('click', ()=>{
-      const v = box.querySelector('#arrTime').value; if(!v) return;
-      const [H,M]=v.split(':').map(Number);
-      const ampm = H>=12?'PM':'AM';
-      const h12  = ((H+11)%12)+1;
-      const disp = `${h12}:${String(M).padStart(2,'0')} ${ampm}`;
+    if (!trip.atc24){
+      box.querySelector('#upd2').addEventListener('click', ()=>{
+        const v = box.querySelector('#arrTime').value; if(!v) return;
+        const [H,M] = v.split(':').map(Number);
+        const ampm  = H>=12?'PM':'AM'; const h12=((H+11)%12)+1; const disp=`${h12}:${String(M).padStart(2,'0')} ${ampm}`;
+        const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
+        if(i>-1){
+          trips[i].status='ARRIVED'; trips[i].actualArrive=disp;
+          trips[i].inflightEnd = Date.now();
+          setTrips(trips);
+          const updated = trips[i];
+        }
+        close(); openTripDetail(trip.id); renderTrips();
+        requestAnimationFrame(()=>{ if (shouldShowCBPOnArrived?.(trip)) openCBPForm(trip); });
+      });
+    }
+  } else if(st==='ARRIVED'){
+    box.querySelector('#archive').addEventListener('click', ()=>{
       const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
       if(i>-1){
         trips[i].status='ARRIVED';
-        trips[i].actualArrive=disp;
-        trips[i].inflightEnd = Date.now(); // harmless if using stopwatch
+        trips[i].isArchived=true;
         setTrips(trips);
-        const updated = trips[i]; // capture after save
-        // Return to details first
-        close();
-        openTripDetail(trip.id);
-        renderTrips();
-        // Then open CBP reliably on the next frame
-        requestAnimationFrame(() => {
-          if (shouldShowCBPOnArrived?.(updated)) {
-            openCBPForm(updated);
-          }
-        });
       }
+      close(); closeSheet(); renderTrips(); renderStats();
     });
-  } else if(st==='ARRIVED'){
-  box.querySelector('#archive').addEventListener('click', ()=>{
-    const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
-    if(i>-1){
-      trips[i].status='ARRIVED';   // keep label
-      trips[i].isArchived=true;    // move to Previous Trips
-      setTrips(trips);
-    }
-    close(); closeSheet(); renderTrips(); renderStats();   // ← update stats too
-  });
-}
-  // ----- Gate handlers -----
+  }
+
+  // ---- Gate handlers
   const gateMode = box.querySelector('#gateMode');
   const gateForm = box.querySelector('#gateForm');
-  box.querySelector('#chgGate').addEventListener('click', ()=> {
-    gateMode.style.display='grid';
-  });
-  let gateKind = ''; // 'dep' or 'arr'
-  box.querySelector('#gateDep').addEventListener('click', ()=> { gateKind='dep'; gateForm.style.display='grid'; });
-  box.querySelector('#gateArr').addEventListener('click', ()=> { gateKind='arr'; gateForm.style.display='grid'; });
+  box.querySelector('#chgGate').addEventListener('click', ()=>{ gateMode.style.display='grid'; });
+  let gateKind = '';
+  box.querySelector('#gateDep').addEventListener('click', ()=>{ gateKind='dep'; gateForm.style.display='grid'; });
+  box.querySelector('#gateArr').addEventListener('click', ()=>{ gateKind='arr'; gateForm.style.display='grid'; });
   box.querySelector('#saveGate').addEventListener('click', ()=>{
     const gate = box.querySelector('#gateInput').value.trim();
     const term = box.querySelector('#termInput').value.trim();
@@ -2358,9 +2834,10 @@ function openStatusActions(trip){
     close(); openTripDetail(trip.id); renderTrips();
   });
 }
-  /* ===== ID / VISA state + UI ===== */
+/* ===== ID / VISA state + UI ===== */
 const VISA_KEY = 'visa';
 let visaTimerHandle = null;
+
 function getVisa(){
   try { return JSON.parse(localStorage.getItem(VISA_KEY) || '{"status":"EXPIRED"}'); }
   catch(e){ return { status:'EXPIRED' }; }
@@ -2380,6 +2857,7 @@ function isVisaActive(){
   return v.status === 'ACTIVE' && v.expiresAt && v.expiresAt > Date.now();
 }
 function rand13(){ let s=''; for(let i=0;i<13;i++) s += Math.floor(Math.random()*10); return s; }
+
 function formatRemaining(ms){
   if (ms <= 0) return 'Expired';
   const sec = Math.floor(ms/1000);
@@ -2387,16 +2865,19 @@ function formatRemaining(ms){
   const h   = Math.floor((sec % 86400) / 3600);
   const m   = Math.floor((sec % 3600) / 60);
   const s   = sec % 60;
+
   if (d > 0) return `${d}d ${h}h`;
   if (h > 0) return `${h}h ${String(m).padStart(2,'0')}m`;
   if (m > 0) return `${m}m ${String(s).padStart(2,'0')}s`;
   return `${s}s`;
 }
+
 function startVisaTimer(expiresAt){
   // clear previous
   if (visaTimerHandle) { clearInterval(visaTimerHandle); visaTimerHandle = null; }
   const el = document.getElementById('visaTimer');
   if (!el || !expiresAt) return;
+
   const tick = ()=>{
     const left = expiresAt - Date.now();
     el.textContent = formatRemaining(left);
@@ -2413,14 +2894,17 @@ function startVisaTimer(expiresAt){
   tick();
   visaTimerHandle = setInterval(tick, 1000);
 }
+
 function renderIDPage(){
   const mount = document.getElementById('visaCardMount');
   if (!mount) return;
   const v = ensureVisaFresh();
+
   const isActive = v.status === 'ACTIVE' && v.expiresAt && v.expiresAt > Date.now();
   const statusClass = isActive ? 'active' : 'expired';
   const statusText  = isActive ? 'ACTIVE' : 'EXPIRED';
   const timerHTML   = isActive ? `<div class="visa-timer" id="visaTimer"></div>` : '';
+
   mount.innerHTML = `
     <div class="id-card visa" id="visaCard" role="button" tabindex="0" aria-label="Visa details">
       ${timerHTML}
@@ -2432,24 +2916,29 @@ function renderIDPage(){
       <span class="visa-status ${statusClass}">${statusText}</span>
     </div>
   `;
+
   // click opens modal
   const card = document.getElementById('visaCard');
   if (card){
     card.addEventListener('click', openVisaPopup);
     card.addEventListener('keypress', e=>{ if(e.key==='Enter' || e.key===' ') openVisaPopup(); });
   }
+
   // (re)start timer if active
   if (isActive) startVisaTimer(v.expiresAt);
 }
+
   function openCBPPage(){
   // keep ID tab visually active; CBP is a subpage
   setActiveTab(3);
   showScreen('screen-cbp');
   renderCBPPage();
 }
+
 function renderCBPPage(){
   const mount = document.getElementById('cbpContent');
   const saved = getCBPForm();
+
   if(!saved){
     mount.innerHTML = `
       <div class="cbp-empty">No saved forms</div>
@@ -2458,7 +2947,8 @@ function renderCBPPage(){
     document.getElementById('btnNewCBP').addEventListener('click', openCBPWizard);
     return;
   }
-  const apLabel = airportByCode(saved.port);
+
+  const apLabel = airportLabel(saved.port);
   mount.innerHTML = `
     <section class="id-card grad-ice">
       <div class="title">Saved form</div>
@@ -2466,6 +2956,7 @@ function renderCBPPage(){
       <div class="kv"><span>Traveler</span><b>${saved.name}</b></div>
       <div class="kv"><span>Saved</span><b>${stamp(saved.createdAt)}</b></div>
     </section>
+
     <div class="id-card" style="background:transparent; border-color:rgba(255,255,255,.12)">
       <div class="cbp-question">Have you arrived at ${apLabel}?</div>
       <div style="display:grid;gap:10px;margin-top:12px">
@@ -2477,6 +2968,7 @@ function renderCBPPage(){
   document.getElementById('cbpGoSubmit').addEventListener('click', ()=>{ openTrips(); });
   document.getElementById('cbpDelete').addEventListener('click', confirmDeleteCBP);
 }
+
 function confirmDeleteCBP(){
   const back = document.createElement('div'); back.className='confirm-backdrop';
   const box  = document.createElement('div'); box.className='confirm';
@@ -2496,22 +2988,28 @@ function confirmDeleteCBP(){
   back.addEventListener('click', close);
   box.querySelector('#cCancel').addEventListener('click', close);
   box.querySelector('#cDel').addEventListener('click', ()=>{ clearCBPForm(); close(); renderCBPPage(); });
+
   document.body.append(back, box);
   requestAnimationFrame(()=>{ back.classList.add('show'); box.classList.add('show'); document.body.classList.add('modal-open'); });
 }
+
   function openCBPWizard(){
   const back = document.createElement('div'); back.className='idv-backdrop';
   const box  = document.createElement('div'); box.className='idv-modal';
   document.body.append(back, box);
   requestAnimationFrame(()=>{ back.classList.add('show'); box.classList.add('show'); document.body.classList.add('modal-open'); });
+
   // US airports except MLR and PHP (based on your countryOf() mapping)
   const US_PORTS = AIRPORTS.filter(a => countryOf(a.code) === 'US' && !['MLR','PHP'].includes(a.code));
+
   const data = { port:'', name:'', q1:false, q2:false, q3:false };
   let step = 0;
+
   function close(){
     back.classList.remove('show'); box.classList.remove('show'); document.body.classList.remove('modal-open');
     setTimeout(()=>{ back.remove(); box.remove(); }, 220);
   }
+
   function view(){
     if(step===0){
       box.innerHTML = `
@@ -2566,6 +3064,7 @@ function confirmDeleteCBP(){
         </div>
       `;
     }
+
     // handlers for the current step
     box.querySelector('#wCancel')?.addEventListener('click', close);
     box.querySelector('#wNext')?.addEventListener('click', ()=>{
@@ -2587,20 +3086,25 @@ function confirmDeleteCBP(){
   }
   view();
 }
+
 function closeVisaModal(back, box){
   back.classList.remove('show'); box.classList.remove('show');
   document.body.classList.remove('modal-open');
   setTimeout(()=>{ back.remove(); box.remove(); }, 220);
 }
+
 function openVisaPopup(){
   const v = ensureVisaFresh();
   const back = document.createElement('div'); back.className = 'idv-backdrop';
   const box  = document.createElement('div'); box.className  = 'idv-modal';
+
   function mount(html){ box.innerHTML = html; }
+
   // active → show number + label
   if (v.status === 'ACTIVE' && v.expiresAt && v.expiresAt > Date.now()){
     const num = v.number || rand13();
     v.number = num; setVisa(v);
+
     mount(`
       <h3>VISA ${num}</h3>
       <div class="sub">Japan 2 day VISA</div>
@@ -2619,9 +3123,11 @@ function openVisaPopup(){
       </div>
     `);
   }
+
   back.addEventListener('click', ()=>closeVisaModal(back, box));
   document.body.append(back, box);
   requestAnimationFrame(()=>{ back.classList.add('show'); box.classList.add('show'); document.body.classList.add('modal-open'); });
+
   // wire buttons
   box.querySelector('#visaClose')?.addEventListener('click', ()=>closeVisaModal(back, box));
   box.querySelector('#visaRenew')?.addEventListener('click', ()=>{
@@ -2651,6 +3157,7 @@ function openVisaPopup(){
       const nm = (document.getElementById('vccName')?.value||'').trim();
       const ok = document.getElementById('vAgree')?.checked;
       if (!cc || !ex || !cv || !nm || !ok){ alert('Please complete payment details and agree.'); return; }
+
       // loading
       box.innerHTML = `
         <div class="processing" style="padding:30px 8px">
@@ -2669,6 +3176,7 @@ function openVisaPopup(){
     });
   });
 }
+
 /* screen switcher for ID */
 function openID(){
   // close any open result sheet first
@@ -2677,6 +3185,7 @@ function openID(){
   showScreen('screen-id');
   renderIDPage();
 }
+
 /* helper: need VISA only US -> JP */
 function needsVisa(from, to){
   return countryOf(from) === 'US' && countryOf(to) === 'JP';
@@ -2684,14 +3193,17 @@ function needsVisa(from, to){
 /* render Trips on load */
 renderTrips();
 renderStats();
+
   function openCBPForm(trip){
   const back = document.createElement('div'); back.className='cbp-backdrop';
   const box  = document.createElement('div'); box.className='cbp-modal';
+
   const city = CITY_LABEL[trip.to] || trip.to;
   const savedForm = getCBPForm();
   const savedBlock = savedForm
     ? `<div class="cbp-saved" id="cbpSavedSel">Saved form ${stamp(savedForm.createdAt)}</div>`
     : '';
+
   box.innerHTML = `
   <div class="cbp-head">
     <img src="./cbp-icon.png" alt="CBP">
@@ -2699,11 +3211,14 @@ renderStats();
   </div>
   <div class="cbp-body">
     <div class="cbp-title">Arrival into ${city}</div>
+
     ${savedBlock}
+
     <div class="cbp-row">
       <label>Passport Number</label>
       <input id="cbpPassport" type="text" placeholder="XXXXXXXXX">
     </div>
+
     <div class="cbp-row">
       <label>Departure airport</label>
       <select id="cbpDeparture">
@@ -2712,19 +3227,24 @@ renderStats();
         <option value="GRV">Grindavik (GRV)</option>
       </select>
     </div>
+
     <button class="btn-lg" id="cbpSubmit" type="button">Submit Form</button>
   </div>
 `;
+
     const savedBox = box.querySelector('#cbpSavedSel');
 savedBox?.addEventListener('click', ()=> savedBox.classList.toggle('selected'));
+
   function close(){
     back.classList.remove('show'); box.classList.remove('show');
     document.body.classList.remove('modal-open');
     setTimeout(()=>{ back.remove(); box.remove(); }, 220);
   }
+
   back.addEventListener('click', close);
   document.body.append(back, box);
   requestAnimationFrame(()=>{ back.classList.add('show'); box.classList.add('show'); document.body.classList.add('modal-open'); });
+
   box.querySelector('#cbpSubmit').addEventListener('click', ()=>{
   const passport = (box.querySelector('#cbpPassport').value || '').trim();
   const dep      = box.querySelector('#cbpDeparture').value || '';
@@ -2733,12 +3253,14 @@ savedBox?.addEventListener('click', ()=> savedBox.classList.toggle('selected'));
     alert('Please complete the form.');
     return;
   }
+
   box.innerHTML = `
     <div class="cbp-body" style="place-items:center; text-align:center">
       <div class="spinner" aria-hidden="true" style="margin:30px 0"></div>
       <div style="font-weight:800; font-size:18px">Submitting form</div>
     </div>
   `;
+
   setTimeout(()=>{
     const trips = getTrips();
     const i = trips.findIndex(t => t.id === trip.id);
@@ -2757,6 +3279,7 @@ savedBox?.addEventListener('click', ()=> savedBox.classList.toggle('selected'));
 function confirmDelete(tripId){
   const back = document.createElement('div'); back.className='confirm-backdrop';
   const box  = document.createElement('div'); box.className='confirm';
+
   box.innerHTML = `
     <h3>Delete this flight?</h3>
     <p>This will permanently remove it from Previous Trips.</p>
@@ -2765,11 +3288,13 @@ function confirmDelete(tripId){
       <button class="btn-danger"  id="cDel">Delete</button>
     </div>
   `;
+
   function close(){
     back.classList.remove('show'); box.classList.remove('show');
     document.body.classList.remove('modal-open');
     setTimeout(()=>{ back.remove(); box.remove(); }, 200);
   }
+
   back.addEventListener('click', close);
   box.querySelector('#cCancel').addEventListener('click', close);
   box.querySelector('#cDel').addEventListener('click', ()=>{
@@ -2783,6 +3308,7 @@ function confirmDelete(tripId){
     // if a detail sheet for this trip was open, close it cleanly
     try { closeSheet(); } catch(e){}
   });
+
   document.body.append(back, box);
   requestAnimationFrame(()=>{ 
     back.classList.add('show'); 
@@ -2790,7 +3316,9 @@ function confirmDelete(tripId){
     document.body.classList.add('modal-open'); 
   });
 }
+
 </script>
 </body>
 </html>
+
 
