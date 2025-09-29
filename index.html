@@ -1960,76 +1960,96 @@ function openSummary(opt){
 
 /* -------- Passengers step (real form + branching) -------- */
 function openPassengers(){
-  const v = document.createElement('div'); 
+  const intl = isIntl(lastSelection.from, lastSelection.to);
+  const askPassport = needsPassportOnPassengers(lastSelection.from, lastSelection.to);
+
+  const v = document.createElement('div');
   v.className = 'view';
-
-  const isATC24 = !!(lastSelection && lastSelection.atc24);
-
   v.innerHTML = `
-    ${isATC24 ? `<div class="atc24-banner">ATC24</div>` : ``}
+    ${intl ? `
+      <div class="panel info">
+        <div class="title">Know before you go</div>
+        <div class="muted">International travel requires a valid passport. Check visa and travel document requirements for your destination.</div>
+      </div>` : ''}
 
+    <!-- Your trip total -->
     <div class="panel">
-      <h3>Passenger details</h3>
+      <div class="kv"><span>Your trip total</span><b>$${lastSelection.price.toLocaleString()}</b></div>
+    </div>
+
+    <!-- Passenger 1 block - EXACT FIELDS / PLACEHOLDERS -->
+    <div class="panel">
+      <h3>Passenger 1</h3>
+
       <div class="form-row">
         <div class="field">
           <label>First name •</label>
-          <input id="pFirst" type="text" autocomplete="given-name" placeholder="e.g., Alex">
+          <input id="p1First" required type="text" placeholder="As on ID" autocomplete="given-name">
         </div>
+
         <div class="field">
           <label>Middle name</label>
-          <input id="pMiddle" type="text" autocomplete="additional-name" placeholder="">
+          <input id="p1Middle" type="text" placeholder="Optional" autocomplete="additional-name">
         </div>
+
         <div class="field">
           <label>Last name •</label>
-          <input id="pLast" type="text" autocomplete="family-name" placeholder="e.g., Chen">
+          <input id="p1Last" required type="text" placeholder="As on ID" autocomplete="family-name">
         </div>
       </div>
 
-      <div class="form-row half">
+      <div class="form-row half" style="margin-top:8px">
         <div class="field">
           <label>Date of birth •</label>
-          <input id="pDob" type="date">
+          <input id="p1Dob" required type="date" autocomplete="bday">
         </div>
+
         <div class="field">
-          <label>Passport #</label>
-          <input id="pPass" type="text" inputmode="numeric" placeholder="">
+          <label>Gender •</label>
+          <select id="p1Gender" required autocomplete="sex">
+            <option value="" disabled selected>Select</option>
+            <option>Female</option>
+            <option>Male</option>
+            <option>Unspecified</option>
+          </select>
         </div>
       </div>
     </div>
 
-    <button class="btn-lg" id="btnPassengersNext" type="button">
-      ${isATC24 ? 'Book flight' : 'Continue'}
-    </button>
-    <div class="muted" style="margin-top:8px">
-      ${isATC24 
-        ? 'ATC24: payment handled via account; booking finalizes now.'
-        : 'You can review and pay on the next step.'}
-    </div>
+    ${askPassport ? `
+      <div class="panel">
+        <div class="form-row" style="margin-top:8px">
+          <div class="field">
+            <label>Passport number •</label>
+            <input id="p1Passport" required type="text" inputmode="text" placeholder="XXXXXXXXX">
+          </div>
+        </div>
+      </div>` : ''}
+
+    <button class="btn-lg" id="goPay">Continue</button>
   `;
 
-  v.querySelector('#btnPassengersNext').addEventListener('click', () => {
-    const first = v.querySelector('#pFirst').value.trim();
-    const middle = v.querySelector('#pMiddle').value.trim();
-    const last  = v.querySelector('#pLast').value.trim();
-    const dob   = v.querySelector('#pDob').value;
-    const pass  = v.querySelector('#pPass').value.trim();
+  v.querySelector('#goPay').addEventListener('click', () => {
+    const first    = (document.getElementById('p1First').value  || '').trim();
+    const middle   = (document.getElementById('p1Middle').value || '').trim();
+    const last     = (document.getElementById('p1Last').value   || '').trim();
+    const dob      = document.getElementById('p1Dob').value || '';
+    const gender   = document.getElementById('p1Gender').value || '';
+    const passport = (document.getElementById('p1Passport')?.value || '').trim();
 
-    if(!first || !last || !dob){
-      alert('Please fill first name, last name, and date of birth.');
+    if (!first || !last || !dob || !gender){
+      alert('Please complete required passenger fields.');
+      return;
+    }
+    if (askPassport && !passport){
+      alert('Please enter the passport number.');
       return;
     }
 
-    // persist passenger data for confirmation + tickets
-    passengerData = { first, middle, last, dob, passport: pass };
+    passengerData = { first, middle, last, dob, gender };
+    if (askPassport) passengerData.passport = passport;
 
-    if (isATC24){
-      // Skip review & pay → book immediately
-      showProcessing();
-      setTimeout(showConfirmation, 1200);
-    } else {
-      // Regular flow → go to Review & Pay
-      openReviewPay();
-    }
+    openReviewPay();
   });
 
   stepStack.push({ title:'Passenger details', html:v });
