@@ -129,6 +129,87 @@
   .gf-price{font-weight:800;font-size:20px;color:var(--priceGreen)}
   .gf-overnight{margin-top:8px;color:#ffcc66;font-size:14px;display:flex;align-items:center;gap:6px}
 
+/* === ATC24 toggle + chip + filter UI === */
+.head-row{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px; margin:0 4px 8px;
+}
+.mini-icon-btn{
+  display:inline-grid; place-items:center;
+  width:36px; height:36px; border-radius:10px;
+  background:#2a2d33; border:1px solid rgba(255,255,255,.12);
+  cursor:pointer;
+}
+.mini-icon-btn svg{ width:18px; height:18px }
+.mini-icon-btn svg *{ stroke:#cfd6dd; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round }
+
+/* tiny slider */
+.atc24-toggle{
+  display:flex; align-items:center; justify-content:flex-end;
+  margin:10px 2px -2px;       /* tucks in under the price panel */
+}
+.tiny-switch{
+  display:inline-flex; align-items:center; gap:8px; font-weight:800; letter-spacing:.2px;
+}
+.tiny-switch input{ position:absolute; opacity:0; pointer-events:none }
+.tiny-track{
+  width:42px; height:24px; border-radius:999px; position:relative;
+  background:#444a52; border:1px solid rgba(255,255,255,.16);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+  transition: background var(--t), border-color var(--t);
+}
+.tiny-knob{
+  position:absolute; top:50%; left:3px; width:18px; height:18px; border-radius:50%;
+  transform:translateY(-50%); background:#fff; transition:left var(--t);
+  box-shadow:0 2px 6px rgba(0,0,0,.35);
+}
+.tiny-switch input:checked + .tiny-track{
+  background:rgba(33,208,122,.35); border-color:rgba(33,208,122,.55);
+}
+.tiny-switch input:checked + .tiny-track .tiny-knob{ left:21px; }
+
+/* white ATC24 “chip” used in many places */
+.chip-atc24{
+  display:inline-block; background:#fff; color:#111; font-weight:900;
+  padding:4px 8px; border-radius:8px; letter-spacing:.3px;
+  box-shadow:0 1px 0 rgba(0,0,0,.35);
+}
+.chip-atc24.big{ padding:6px 10px; border-radius:10px; font-size:22px }
+
+/* banner at top of trip detail when ATC24 */
+.atc24-banner{
+  display:flex; justify-content:center; align-items:center;
+  width:120px; margin:0 4px 12px; background:#fff; color:#111;
+  font-weight:900; padding:8px 10px; border-radius:10px; letter-spacing:.3px;
+}
+
+/* centered Filter modal (re-uses your visual language) */
+.flt-backdrop{
+  position:fixed; inset:0; background:rgba(0,0,0,.55);
+  opacity:0; pointer-events:none; transition:opacity var(--t); z-index:1400;
+}
+.flt-backdrop.show{ opacity:1; pointer-events:auto }
+.flt-modal{
+  position:fixed; left:50%; top:50%;
+  transform:translate(-50%,-40%) scale(.96); opacity:0;
+  width:min(360px, 92vw); background:var(--card); border:1px solid var(--cardBorder);
+  border-radius:16px; box-shadow:0 22px 60px rgba(0,0,0,.65);
+  padding:14px; transition:transform var(--t), opacity var(--t); z-index:1401;
+}
+.flt-modal.show{ transform:translate(-50%,-50%) scale(1); opacity:1 }
+.flt-modal h3{ margin:6px 0 10px; font-size:18px; font-weight:800 }
+.flt-options{ display:grid; gap:8px; }
+.flt-opt{
+  display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px; cursor:pointer;
+  background:#2a2d33; border:1px solid rgba(255,255,255,.12);
+}
+.flt-opt input{ width:18px; height:18px }
+.flt-btns{ display:flex; gap:10px; margin-top:12px }
+.flt-apply{ flex:1; height:48px; border-radius:12px; border:0; background:var(--accent); color:#fff; font-weight:900; cursor:pointer }
+
+/* Make Upcoming Trips same size as Previous Trips */
+#screen-trips h1{ font-size:22px; font-weight:800; margin:14px 4px 10px; letter-spacing:.2px }
+  
   /* ---- Processing / Confirmation bits ---- */
   .processing { display:grid; gap:14px; place-items:center; padding:40px 8px; text-align:center; }
   .spinner { width:52px; height:52px; border-radius:50%; border:4px solid rgba(255,255,255,.18); border-top-color: var(--accent); animation: spin 1s linear infinite; }
@@ -705,10 +786,16 @@
   </section>
 
   <main id="screen-trips" class="page screen" style="display:none">
+  <div class="head-row">
   <h1>Upcoming Trips</h1>
+  <button class="mini-icon-btn" id="btnTripsFilter" type="button" aria-label="Filter trips">
+    <svg viewBox="0 0 24 24">
+      <path d="M3 5h18M6 12h12M10 19h4"></path>
+    </svg>
+  </button>
+</div>
   <div id="upcomingEmpty" class="muted" style="margin:2px 4px 12px">No upcoming trips</div>
   <div id="upcomingList" class="trip-list"></div>
-
   <div class="hr" style="margin:12px 0"></div>
   <div class="subhead">Previous Trips</div>
   <div id="previousList" class="trip-list"></div>
@@ -717,7 +804,14 @@
   <main id="screen-trip-detail" class="page screen" style="display:none"></main>
 
   <main id="screen-stats" class="page screen" style="display:none">
+  <div class="head-row">
   <h1>Statistics</h1>
+  <button class="mini-icon-btn" id="btnStatsFilter" type="button" aria-label="Filter statistics">
+    <svg viewBox="0 0 24 24">
+      <path d="M3 5h18M6 12h12M10 19h4"></path>
+    </svg>
+  </button>
+</div>
   <div class="hr" style="margin:8px 4px 12px"></div>
 
   <section class="stat-card grad-blue">
@@ -866,6 +960,16 @@ const btnBack = document.getElementById('btnBack');
 const sheetBody = document.getElementById('sheetBody');
 const routeTitle = document.getElementById('routeTitle');
 let stepStack = [];
+
+  /* ---- ATC24 + filters state ---- */
+let currentTripsFilter = 'all';   // 'all' | 'regular' | 'atc24'
+let currentStatsFilter = 'all';   // 'all' | 'regular' | 'atc24'
+
+function applyFilter(arr, mode){
+  if (mode === 'all') return arr;
+  if (mode === 'atc24') return arr.filter(t => !!t.atc24);
+  /* regular */          return arr.filter(t => !t.atc24);
+}
 
 /* ---- inflight stopwatch (persists in localStorage) ---- */
 let inflightInterval = null;
@@ -1817,6 +1921,10 @@ function openSummary(opt){
     </div>`:'';
 
   v.innerHTML=`
+  // remember the setting for this selection
+v.querySelector('#atc24Chk').addEventListener('change', (e)=>{
+  lastSelection.atc24 = !!e.target.checked;
+});
     <div class="panel">
       <div style="font-weight:800; color:#21d07a; margin-bottom:6px">DEPART</div>
       <div style="font-size:17px; color:#e9eef4; margin-bottom:6px">${opt.from} to ${opt.to}</div>
@@ -1827,8 +1935,18 @@ function openSummary(opt){
     </div>
 
     ${warn}
-    <div class="panel"><div class="kv"><span>Total amount due</span><b>$${opt.price.toLocaleString()}</b></div></div>
-    <button class="btn-lg" id="goPassengers">Continue</button>`;
+<div class="panel"><div class="kv"><span>Total amount due</span><b>$${opt.price.toLocaleString()}</b></div></div>
+
+<!-- ATC24 tiny slider -->
+<div class="atc24-toggle">
+  <label class="tiny-switch">
+    <span>ATC24</span>
+    <input id="atc24Chk" type="checkbox">
+    <span class="tiny-track"><span class="tiny-knob"></span></span>
+  </label>
+</div>
+
+<button class="btn-lg" id="goPassengers">Continue</button>
 
   v.querySelector('#goPassengers').addEventListener('click',()=>openPassengers());
   if(!stepStack.length) openSheet();
@@ -1879,7 +1997,7 @@ function openPassengers(){
       </div>
     ` : ''}
 
-    <button class="btn-lg" id="goPay">Continue</button>
+    <button class="btn-lg" id="goPay">${lastSelection.atc24 ? 'Book' : 'Continue'}</button>
   `;
 
   v.querySelector('#goPay').addEventListener('click', () => {
@@ -1900,9 +2018,15 @@ function openPassengers(){
     }
 
     passengerData = { first, middle, last, dob, gender };
-    if (askPassport) passengerData.passport = passport;
+if (askPassport) passengerData.passport = passport;
 
-    openReviewPay();
+// ATC24 skips review & pay
+if (lastSelection.atc24){
+  showProcessing();
+  setTimeout(showConfirmation, 1500);
+} else {
+  openReviewPay();
+}
   });
 
   stepStack.push({ title:'Passenger details', html:v });
@@ -2020,6 +2144,7 @@ function showConfirmation(){
 saveTrip({
   id: Date.now() + '-' + randDigits(4),
   status: 'CONFIRMED',            // CONFIRMED → INFLIGHT → ARRIVED → ARCHIVED
+  atc24: !!lastSelection.atc24,
   carrier: lastSelection.carrier || '',
   logo: logoFor(lastSelection.carrier || ''),
   from: lastSelection.from,
@@ -2215,10 +2340,12 @@ function tripCardHTML(t, isArchived = false){
       <img class="trip-logo" alt="" src="${t.logo || ''}">
       <div class="trip-body">
         <div class="trip-times">
-          <b>${t.schedDepart}</b>
-          &nbsp;→&nbsp;
-          <b>${t.schedArrive}${t.plusOne ? ' <span class="muted">+1</span>' : ''}</b>
-        </div>
+  ${
+    t.atc24
+    ? `<span class="chip-atc24">ATC24</span>`
+    : `<b>${t.schedDepart}</b> &nbsp;→&nbsp; <b>${t.schedArrive}${t.plusOne ? ' <span class="muted">+1</span>' : ''}</b>`
+  }
+</div>
         <div class="trip-route">${t.from} &nbsp;→&nbsp; ${t.to}</div>
         <div class="trip-date">${formatDate(t.date)}</div>
       </div>
@@ -2232,8 +2359,9 @@ function tripCardHTML(t, isArchived = false){
 
 function renderTrips(){
   const trips = getTrips();
-  const upcoming = trips.filter(t => !t.isArchived);
-  const previous = trips.filter(t => t.isArchived);
+const filtered = applyFilter(trips, currentTripsFilter);
+const upcoming = filtered.filter(t => !t.isArchived);
+const previous = filtered.filter(t => t.isArchived);
 
   const up = document.getElementById('upcomingList');
   const prev = document.getElementById('previousList');
@@ -2310,7 +2438,7 @@ function mostFlownAircraft(trips){
 }
 
 function renderStats(){
-  const prev = getTrips().filter(t => t.isArchived);
+  const prev = applyFilter(getTrips(), currentStatsFilter).filter(t => t.isArchived);
 
   // Flight time (scheduled)
   const flightMins = prev.reduce((sum,t)=> sum + tripScheduledMinutes(t), 0);
@@ -2366,7 +2494,47 @@ document.getElementById('previousList').addEventListener('click', e=>{
 }
 function diffMins(a, b){ return timeStrToMins(a) - timeStrToMins(b); } // + = late, - = early
 
-function openTripDetail(id){
+function openFilter(which){ // which: 'trips' | 'stats'
+  const back = document.createElement('div'); back.className='flt-backdrop';
+  const box  = document.createElement('div'); box.className='flt-modal';
+
+  // current selection
+  const initial = (which==='trips' ? currentTripsFilter : currentStatsFilter);
+
+  box.innerHTML = `
+    <h3>Show</h3>
+    <div class="flt-options">
+      <label class="flt-opt"><input type="radio" name="flt" value="all" ${initial==='all'?'checked':''}>All</label>
+      <label class="flt-opt"><input type="radio" name="flt" value="regular" ${initial==='regular'?'checked':''}>Regular</label>
+      <label class="flt-opt"><input type="radio" name="flt" value="atc24" ${initial==='atc24'?'checked':''}>ATC24</label>
+    </div>
+    <div class="flt-btns">
+      <button class="flt-apply" id="fltApply" type="button">Filter</button>
+    </div>
+  `;
+
+  function close(){
+    back.classList.remove('show'); box.classList.remove('show');
+    document.body.classList.remove('modal-open');
+    setTimeout(()=>{ back.remove(); box.remove(); }, 220);
+  }
+  back.addEventListener('click', close);
+  box.querySelector('#fltApply').addEventListener('click', ()=>{
+    const sel = box.querySelector('input[name="flt"]:checked')?.value || 'all';
+    if (which === 'trips'){ currentTripsFilter = sel; renderTrips(); }
+    else                  { currentStatsFilter = sel; renderStats(); }
+    close();
+  });
+
+  document.body.append(back, box);
+  requestAnimationFrame(()=>{ back.classList.add('show'); box.classList.add('show'); document.body.classList.add('modal-open'); });
+}
+
+// wire the buttons (safe if missing)
+document.getElementById('btnTripsFilter')?.addEventListener('click', ()=>openFilter('trips'));
+document.getElementById('btnStatsFilter')?.addEventListener('click', ()=>openFilter('stats'));
+  
+  function openTripDetail(id){
   const trips = getTrips();
   const i = trips.findIndex(t => t.id === id);
   if (i < 0) return;
@@ -2397,8 +2565,9 @@ function openTripDetail(id){
   v.className = 'view tdetail';
 
   v.innerHTML = `
-    <div class="updated">Updated now</div>
-    <div class="route">${t.from} &nbsp;→&nbsp; ${t.to}</div>
+  ${t.atc24 ? `<div class="atc24-banner">ATC24</div>` : `<div class="updated">Updated now</div>`}
+  <div class="route">${t.from} &nbsp;→&nbsp; ${t.to}</div>
+  ...
 
     <!-- Airline header -->
     <div class="tcard">
@@ -2432,9 +2601,12 @@ function openTripDetail(id){
       </div>
 
       <div class="bigtime">
-        <span class="${depClass}">${depShown}</span>
-        ${t.actualDepart ? `<span class="sched-old">${t.schedDepart}</span>` : ''}
-      </div>
+  ${
+    t.atc24
+      ? `<span class="chip-atc24 big">ATC24</span>`
+      : `<span class="${depClass}">${depShown}</span>${t.actualDepart ? `<span class="sched-old">${t.schedDepart}</span>` : ''}`
+  }
+</div>
 
       ${
         t.actualDepart
@@ -2462,9 +2634,12 @@ function openTripDetail(id){
       </div>
 
       <div class="bigtime">
-        <span class="${arrClass}">${arrShown}${t.plusOne ? ' <sup class="muted">+1</sup>' : ''}</span>
-        ${t.actualArrive ? `<span class="sched-old">${t.schedArrive}${t.plusOne ? ' +1':''}</span>` : ''}
-      </div>
+  ${
+    t.atc24
+      ? `<span class="chip-atc24 big">ATC24</span>`
+      : `<span class="${arrClass}">${arrShown}${t.plusOne ? ' <sup class="muted">+1</sup>' : ''}</span>${t.actualArrive ? `<span class="sched-old">${t.schedArrive}${t.plusOne ? ' +1':''}</span>` : ''}`
+  }
+</div>
 
       ${
         t.actualArrive
@@ -2518,22 +2693,30 @@ function openStatusActions(trip){
   let html = '';
 
   if(st==='CONFIRMED'){
-    html += `
-      <div class="row"><button class="btn" id="toInflight">Change to INFLIGHT</button></div>
+  html += `
+    <div class="row"><button class="btn" id="toInflight">Change to INFLIGHT</button></div>
+    ${trip.atc24 ? '' : `
       <div class="row" id="depRow" style="display:none">
         <div class="muted">Enter actual departure time</div>
         <input id="depTime" type="time">
         <button class="btn" id="upd1">Update status</button>
-      </div>`;
-  } else if(st==='INFLIGHT'){
-    html += `
-      <div class="row"><button class="btn" id="toArrived">Change status to ARRIVED</button></div>
+      </div>
+    `}
+  `;
+}
+ else if(st==='INFLIGHT'){
+  html += `
+    <div class="row"><button class="btn" id="toArrived">Change status to ARRIVED</button></div>
+    ${trip.atc24 ? '' : `
       <div class="row" id="arrRow" style="display:none">
         <div class="muted">Enter actual arrival time</div>
         <input id="arrTime" type="time">
         <button class="btn" id="upd2">Update status</button>
-      </div>`;
-  } else if(st==='ARRIVED'){
+      </div>
+    `}
+  `;
+}
+ else if(st==='ARRIVED'){
     html += `<div class="row"><button class="btn red" id="archive">Archive flight</button></div>`;
   }
 
@@ -2557,10 +2740,34 @@ function openStatusActions(trip){
 
   // ----- Status handlers -----
   if(st==='CONFIRMED'){
-    box.querySelector('#toInflight').addEventListener('click', ()=>{
+  box.querySelector('#toInflight').addEventListener('click', ()=>{
+    if (trip.atc24){
+      const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
+      if(i>-1){
+        trips[i].status='INFLIGHT';
+        if (!trips[i].inflightStart) trips[i].inflightStart = Date.now();
+        setTrips(trips);
+      }
+      close(); openTripDetail(trip.id); renderTrips();
+    } else {
       box.querySelector('#depRow').style.display='grid';
-    });
+    }
+  });
+  if (!trip.atc24){
     box.querySelector('#upd1').addEventListener('click', ()=>{
+      const v = box.querySelector('#depTime').value; if(!v) return;
+      const [H,M]=v.split(':').map(Number);
+      const ampm = H>=12?'PM':'AM'; const h12=((H+11)%12)+1; const disp=`${h12}:${String(M).padStart(2,'0')} ${ampm}`;
+      const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
+      if(i>-1){
+        trips[i].status='INFLIGHT'; trips[i].actualDepart=disp;
+        if (!trips[i].inflightStart) trips[i].inflightStart = Date.now();
+        setTrips(trips);
+      }
+      close(); openTripDetail(trip.id); renderTrips();
+    });
+  }
+}
       const v = box.querySelector('#depTime').value; if(!v) return;
       const [H,M]=v.split(':').map(Number);
       const ampm = H>=12?'PM':'AM';
@@ -2577,10 +2784,38 @@ function openStatusActions(trip){
       close(); openTripDetail(trip.id); renderTrips();
     });
   } else if(st==='INFLIGHT'){
-    box.querySelector('#toArrived').addEventListener('click', ()=>{
+  box.querySelector('#toArrived').addEventListener('click', ()=>{
+    if (trip.atc24){
+      const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
+      if(i>-1){
+        trips[i].status='ARRIVED';
+        trips[i].inflightEnd = Date.now();
+        setTrips(trips);
+        const updated = trips[i];
+      }
+      close(); openTripDetail(trip.id); renderTrips();
+      requestAnimationFrame(()=>{ if (shouldShowCBPOnArrived?.(trip)) openCBPForm(trip); });
+    } else {
       box.querySelector('#arrRow').style.display='grid';
-    });
+    }
+  });
+  if (!trip.atc24){
     box.querySelector('#upd2').addEventListener('click', ()=>{
+      const v = box.querySelector('#arrTime').value; if(!v) return;
+      const [H,M]=v.split(':').map(Number);
+      const ampm=H>=12?'PM':'AM'; const h12=((H+11)%12)+1; const disp=`${h12}:${String(M).padStart(2,'0')} ${ampm}`;
+      const trips=getTrips(); const i=trips.findIndex(t=>t.id===trip.id);
+      if(i>-1){
+        trips[i].status='ARRIVED'; trips[i].actualArrive=disp;
+        trips[i].inflightEnd = Date.now();
+        setTrips(trips);
+        const updated = trips[i];
+      }
+      close(); openTripDetail(trip.id); renderTrips();
+      requestAnimationFrame(()=>{ if (shouldShowCBPOnArrived?.(trip)) openCBPForm(trip); });
+    });
+  }
+}
       const v = box.querySelector('#arrTime').value; if(!v) return;
       const [H,M]=v.split(':').map(Number);
       const ampm = H>=12?'PM':'AM';
