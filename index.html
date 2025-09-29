@@ -1958,6 +1958,23 @@ function openSummary(opt){
   renderView('Your trip summary', v);
 }
 
+// ---- ATC24 helper ----
+// Works whether you have a checkbox with id="atc24Toggle" or you set window.ATC24 elsewhere.
+function isATC24(){
+  return !!(document.getElementById('atc24Toggle')?.checked ?? window.ATC24 ?? false);
+}
+
+// optional: keep a memory copy if a checkbox exists
+document.getElementById('atc24Toggle')?.addEventListener('change', e=>{
+  window.ATC24 = !!e.target.checked;
+});
+
+// one-liner to book instantly (used by ATC24)
+function bookNowATC24(){
+  showProcessing();
+  setTimeout(showConfirmation, 1500); // same confirmation flow you already use
+}
+  
 /* -------- Passengers step (real form + branching) -------- */
 function openPassengers(){
   const intl = isIntl(lastSelection.from, lastSelection.to);
@@ -2030,27 +2047,34 @@ function openPassengers(){
   `;
 
   v.querySelector('#goPay').addEventListener('click', () => {
-    const first    = (document.getElementById('p1First').value  || '').trim();
-    const middle   = (document.getElementById('p1Middle').value || '').trim();
-    const last     = (document.getElementById('p1Last').value   || '').trim();
-    const dob      = document.getElementById('p1Dob').value || '';
-    const gender   = document.getElementById('p1Gender').value || '';
-    const passport = (document.getElementById('p1Passport')?.value || '').trim();
+  const first    = (document.getElementById('p1First').value  || '').trim();
+  const middle   = (document.getElementById('p1Middle').value || '').trim();
+  const last     = (document.getElementById('p1Last').value   || '').trim();
+  const dob      = document.getElementById('p1Dob').value || '';
+  const gender   = document.getElementById('p1Gender').value || '';
+  const passport = (document.getElementById('p1Passport')?.value || '').trim();
 
-    if (!first || !last || !dob || !gender){
-      alert('Please complete required passenger fields.');
-      return;
-    }
-    if (askPassport && !passport){
-      alert('Please enter the passport number.');
-      return;
-    }
+  if (!first || !last || !dob || !gender){
+    alert('Please complete required passenger fields.');
+    return;
+  }
+  if (askPassport && !passport){
+    alert('Please enter the passport number.');
+    return;
+  }
 
-    passengerData = { first, middle, last, dob, gender };
-    if (askPassport) passengerData.passport = passport;
+  passengerData = { first, middle, last, dob, gender };
+  if (askPassport) passengerData.passport = passport;
 
+  // ---- ATC24 behavior switch ----
+  if (isATC24()){
+    // Skip review/pay and book immediately (ATC24 flow)
+    bookNowATC24();
+  } else {
+    // Normal flow: go to Review & Pay
     openReviewPay();
-  });
+  }
+});
 
   stepStack.push({ title:'Passenger details', html:v });
   renderView('Passenger details', v);
