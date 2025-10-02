@@ -1251,7 +1251,7 @@ const AIRCRAFT_RULES = {
   },
   'HND-LCA': {
     'Delta': ['A350'],
-    'Singapore': ['A350'],
+    'Qatar Airways': ['A350'],
     'Emirates': ['A380']
   },
   'GRV-LCA': {
@@ -1348,7 +1348,7 @@ function buildRfdHndResults(fromCode, toCode){
   const carriers = [...firstSix, ...lastSix];
 
   const depTimes  = randomUniqueTimes(12);
-  const durations = Array.from({length:12}, () => randInt(510, 720));  // 8.5–12h
+  const durations = Array.from({length:12}, () => randInt(420, 510));
   const prices    = Array.from({length:12}, () => randInt(900, 1100));
 
   const tzDelta =
@@ -1695,11 +1695,11 @@ function buildLcaHndResults(from, to){
     ? [
         { carrier: 'Emirates',  timeMins: 9*60 },        // 9:00 AM
         { carrier: 'Delta',     timeMins: 17*60 },       // 5:00 PM
-        { carrier: 'Singapore', timeMins: 17*60 + 30 },  // 5:30 PM
+        { carrier: 'Qatar Airways', timeMins: 17*60 + 30 },  // 5:30 PM
       ]
     : [
         { carrier: 'Delta',     timeMins: 5*60 },        // 5:00 AM
-        { carrier: 'Singapore', timeMins: 5*60 + 30 },   // 5:30 AM
+        { carrier: 'Qatar Airways', timeMins: 5*60 + 30 },   // 5:30 AM
         { carrier: 'Emirates',  timeMins: 22*60 },       // 10:00 PM
       ];
 
