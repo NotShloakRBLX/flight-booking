@@ -698,6 +698,10 @@
   letter-spacing:.2px;
 }
 
+  /* NEW: make the “Average IRL time” card clickable like a button */
+.stat-card.clickable { cursor: pointer; }
+.stat-card.clickable:active { transform: translateY(1px); }
+
 </style>
 </head>
 <body>
@@ -834,6 +838,19 @@
     <div class="stat-big" id="statMostAircraft">—</div>
     <img id="statMostAircraftLogo" class="stat-logo" alt="">
   </section>
+
+    <section class="stat-card grad-ice">
+  <div class="stat-kicker">Most flown aircraft</div>
+  <div class="stat-big" id="statMostAircraft">—</div>
+  <img id="statMostAircraftLogo" class="stat-logo" alt="">
+</section>
+
+<!-- NEW: Average IRL time (clickable card) -->
+<section class="stat-card grad-ice clickable" id="avgIrlCard">
+  <div class="stat-kicker">Average IRL time</div>
+  <div class="stat-big" id="avgIrlValue">—</div>
+</section>
+
 </main>
 
 <!-- CBP Page (no dock tab) -->
@@ -2521,6 +2538,97 @@ function renderStats(){
   }
 }
 
+  /* ================== Average IRL time (Stats) ================== */
+
+/** Average over archived flights WITH stopwatch (inflightStart/end),
+ *  matching exact direction: origin -> destination only. Returns minutes or null if none. */
+function computeAvgIrlMinutes(origin, destination){
+  const trips = (getTrips() || []).filter(t =>
+    t.isArchived === true &&
+    t.from === origin &&
+    t.to === destination &&
+    typeof t.inflightStart === 'number' &&
+    typeof t.inflightEnd   === 'number' &&
+    t.inflightEnd > t.inflightStart
+  );
+  if (!trips.length) return null;
+  const totalMs = trips.reduce((sum, t) => sum + Math.max(0, t.inflightEnd - t.inflightStart), 0);
+  const avgMs   = totalMs / trips.length;
+  return Math.max(0, Math.round(avgMs / 60000)); // minutes
+}
+
+/** Display helper for the card */
+function updateAvgIrlCard(mins){
+  const el = document.getElementById('avgIrlValue');
+  if (!el) return;
+  el.textContent = (mins == null) ? '—' : formatTotalMinutes(mins); // you already have formatTotalMinutes(mins)
+}
+
+/** Popup to choose origin/destination and compute the average */
+function openAvgIrlPopup(){
+  // Reuse your VISA modal styles for a smooth, consistent popup
+  const back = document.createElement('div'); back.className = 'idv-backdrop';
+  const box  = document.createElement('div'); box.className  = 'idv-modal';
+
+  function close(){
+    back.classList.remove('show'); box.classList.remove('show');
+    document.body.classList.remove('modal-open');
+    setTimeout(()=>{ back.remove(); box.remove(); }, 220);
+  }
+
+  // Modal markup
+  box.innerHTML = `
+    <h3>Average IRL time</h3>
+    <div class="idv-row" style="grid-template-columns:1fr; gap:10px">
+      <div class="field">
+        <label>Origin</label>
+        <select id="avgFrom" aria-label="Origin"></select>
+      </div>
+      <div class="field">
+        <label>Destination</label>
+        <select id="avgTo" aria-label="Destination"></select>
+      </div>
+    </div>
+    <div class="idv-btns">
+      <button class="idv-btn" id="avgCancel">Cancel</button>
+      <button class="idv-btn primary" id="avgFind" disabled>Find</button>
+    </div>
+  `;
+
+  // Mount + animate
+  document.body.append(back, box);
+  requestAnimationFrame(()=>{ back.classList.add('show'); box.classList.add('show'); document.body.classList.add('modal-open'); });
+
+  // Wire dropdowns using your existing fillSelect() to keep them mutually exclusive
+  const fromSel = box.querySelector('#avgFrom');
+  const toSel   = box.querySelector('#avgTo');
+  fillSelect(fromSel);      // shows all
+  fillSelect(toSel);        // shows all
+
+  function refreshButtons(){
+    box.querySelector('#avgFind').disabled = !(fromSel.value && toSel.value);
+  }
+
+  fromSel.addEventListener('change', ()=>{ fillSelect(toSel, fromSel.value || null); refreshButtons(); });
+  toSel  .addEventListener('change', ()=>{ fillSelect(fromSel, toSel.value   || null); refreshButtons(); });
+
+  // Default state
+  refreshButtons();
+
+  // Buttons
+  box.querySelector('#avgCancel').addEventListener('click', close);
+  box.querySelector('#avgFind').addEventListener('click', ()=>{
+    const o = fromSel.value;
+    const d = toSel.value;
+    const mins = computeAvgIrlMinutes(o, d);
+    updateAvgIrlCard(mins);   // show result or "—" if none
+    close();
+  });
+
+  // Close by tapping the dim background
+  back.addEventListener('click', close);
+}
+
 document.getElementById('upcomingList').addEventListener('click', e=>{
   const card = e.target.closest('.trip-card'); if(card) openTripDetail(card.dataset.id);
 });
@@ -3237,6 +3345,7 @@ function needsVisa(from, to){
 /* render Trips on load */
 renderTrips();
 renderStats();
+document.getElementById('avgIrlCard')?.addEventListener('click', openAvgIrlPopup);
 
   function openCBPForm(trip){
   const back = document.createElement('div'); back.className='cbp-backdrop';
