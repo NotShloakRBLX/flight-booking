@@ -899,19 +899,25 @@
 
   <!-- shown when redirected here from blocked search -->
   <div id="visaWarn" class="id-warn">Active VISA required for travel to Japan.</div>
+  <div id="passportWarn" class="id-warn">Your passport is expired. Renew to book flights.</div>
 
-  <!-- Passport card -->
-  <section class="id-card passport" aria-label="Passport">
-    <div class="title">Passport</div>
-    <div class="row">
-      <div class="label mono">Number</div>
-      <div class="value mono">457476810</div>
-    </div>
-    <div class="row" style="margin-top:8px">
-      <div class="label">Name</div>
-      <div class="value">Shloak Patel</div>
-    </div>
-  </section>
+  <section class="id-card passport" id="passportCard" role="button" tabindex="0" aria-label="Passport">
+  <!-- timer shows only when ACTIVE -->
+  <div class="visa-timer" id="passportTimer"></div>
+
+  <div class="title">Passport</div>
+  <div class="row">
+    <div class="label mono">Number</div>
+    <div class="value mono" id="passportNumber">457476810</div>
+  </div>
+  <div class="row" style="margin-top:8px">
+    <div class="label">Name</div>
+    <div class="value">Shloak Patel</div>
+  </div>
+
+  <!-- same chip style as VISA -->
+  <span class="visa-status" id="passportStatus">ACTIVE</span>
+</section>
 
   <!-- VISA card container (rendered by JS) -->
   <section id="visaCardMount"></section>
@@ -2261,22 +2267,28 @@ function needsVisa(from, to){
 }
   document.getElementById('btnSearch').addEventListener('click', () => {
   const from = fromSel.value, to = toSel.value;
-const departDate = document.getElementById('depart').value;
+  const departDate = document.getElementById('depart').value;
 
-if (!from || !to || !departDate) {
-  const formCard = document.querySelector('.card');
-  formCard.style.boxShadow = '0 0 0 4px rgba(255,80,80,.25)';
-  setTimeout(()=>formCard.style.boxShadow = 'var(--shadow)', 350);
-  return;
-}
+  if (!from || !to || !departDate) { /* existing highlight code stays */ }
 
-/* NEW — block US → JP when VISA not active and redirect to ID page */
-if (needsVisa(from, to) && !isVisaActive()){
-  openID();
-  const w = document.getElementById('visaWarn');
-  if (w){ w.classList.add('show'); setTimeout(()=>w.classList.remove('show'), 2500); }
-  return;
-}
+  /* NEW — block ALL travel if Passport is expired */
+  if (!isPassportActive()){
+    openID();
+    const w = document.getElementById('passportWarn');
+    if (w){ w.classList.add('show'); setTimeout(()=>w.classList.remove('show'), 2500); }
+    return;
+  }
+
+  /* Existing VISA rule (US → JP only) */
+  if (needsVisa(from, to) && !isVisaActive()){
+    openID();
+    const w = document.getElementById('visaWarn');
+    if (w){ w.classList.add('show'); setTimeout(()=>w.classList.remove('show'), 2500); }
+    return;
+  }
+
+  // ... rest of your route selection code
+});
 
   const key = [from, to].sort().join('-');
 
@@ -2980,6 +2992,137 @@ function openStatusActions(trip){
     close(); openTripDetail(trip.id); renderTrips();
   });
 }
+
+/* ===== ID / PASSPORT state + UI (7 days) ===== */
+const PASSPORT_KEY = 'passport';
+let passportTimerHandle = null;
+
+function getPassport(){
+  try { return JSON.parse(localStorage.getItem(PASSPORT_KEY) || 'null'); }
+  catch(e){ return null; }
+}
+function setPassport(p){ localStorage.setItem(PASSPORT_KEY, JSON.stringify(p)); }
+
+/* Ensure we always have a passport object.
+   Defaults to ACTIVE for 7 days so the app isn't blocked on first load. */
+function ensurePassportFresh(){
+  let p = getPassport();
+  if (!p){
+    p = { status:'ACTIVE', number:'457476810', expiresAt: Date.now() + 7*24*60*60*1000 };
+    setPassport(p);
+  }
+  if (p.status === 'ACTIVE' && p.expiresAt && Date.now() >= p.expiresAt){
+    p.status = 'EXPIRED';
+    delete p.expiresAt;
+    setPassport(p);
+  }
+  return p;
+}
+
+function isPassportActive(){
+  const p = ensurePassportFresh();
+  return p.status === 'ACTIVE' && p.expiresAt && p.expiresAt > Date.now();
+}
+
+function startPassportTimer(expiresAt){
+  if (passportTimerHandle){ clearInterval(passportTimerHandle); passportTimerHandle = null; }
+  const el = document.getElementById('passportTimer');
+  if (!el || !expiresAt) return;
+
+  const tick = ()=>{
+    const left = expiresAt - Date.now();
+    el.textContent = formatRemaining(left);  // you already have formatRemaining()
+    if (left <= 0){
+      clearInterval(passportTimerHandle);
+      passportTimerHandle = null;
+      const p = getPassport();
+      p.status = 'EXPIRED';
+      delete p.expiresAt;
+      setPassport(p);
+      renderIDPage();  // re-render to flip to EXPIRED state
+    }
+  };
+  tick();
+  passportTimerHandle = setInterval(tick, 1000);
+}
+
+/* Passport renewal popup (same UX as VISA, $19.99, 7 days) */
+function openPassportPopup(){
+  const p = ensurePassportFresh();
+  const back = document.createElement('div'); back.className = 'idv-backdrop';
+  const box  = document.createElement('div'); box.className  = 'idv-modal';
+
+  function close(){
+    back.classList.remove('show'); box.classList.remove('show');
+    document.body.classList.remove('modal-open');
+    setTimeout(()=>{ back.remove(); box.remove(); }, 220);
+  }
+
+  // ACTIVE → show number; EXPIRED → show renewal
+  if (isPassportActive()){
+    const num = p.number || '—';
+    box.innerHTML = `
+      <h3>Passport ${num}</h3>
+      <div class="sub">Travel Identification</div>
+      <div class="idv-btns">
+        <button class="idv-btn" id="ppClose">Close</button>
+      </div>
+    `;
+    box.querySelector('#ppClose')?.addEventListener('click', close);
+  } else {
+    box.innerHTML = `
+      <h3>Passport</h3>
+      <div class="sub">Your passport is expired.</div>
+      <div class="idv-row">
+        <div class="field"><label>Card number</label><input id="pccNumber" type="text" inputmode="numeric" placeholder="1234 5678 9012 3456"></div>
+        <div class="idv-row" style="grid-template-columns:1fr 1fr; gap:8px">
+          <div class="field"><label>Expiry (MM/YY)</label><input id="pccExp" type="text" inputmode="numeric" placeholder="MM/YY"></div>
+          <div class="field"><label>CVV</label><input id="pccCvv" type="text" inputmode="numeric" placeholder="CVV" maxlength="4"></div>
+        </div>
+        <div class="field"><label>Cardholder name</label><input id="pccName" type="text" placeholder="Full name"></div>
+        <label class="agree"><input id="pAgree" type="checkbox"><span>I agree to the terms.</span></label>
+        <div class="idv-btns">
+          <button class="idv-btn" id="ppCancel">Cancel</button>
+          <button class="idv-btn primary" id="ppPay">Renew for $19.99</button>
+        </div>
+      </div>
+    `;
+    box.querySelector('#ppCancel')?.addEventListener('click', close);
+    box.querySelector('#ppPay')?.addEventListener('click', ()=>{
+      const cc = (document.getElementById('pccNumber')?.value||'').trim();
+      const ex = (document.getElementById('pccExp')?.value||'').trim();
+      const cv = (document.getElementById('pccCvv')?.value||'').trim();
+      const nm = (document.getElementById('pccName')?.value||'').trim();
+      const ok = document.getElementById('pAgree')?.checked;
+      if (!cc || !ex || !cv || !nm || !ok){ alert('Please complete payment details and agree.'); return; }
+
+      // loading
+      box.innerHTML = `
+        <div class="processing" style="padding:30px 8px">
+          <div class="spinner" aria-hidden="true"></div>
+          <div style="font-weight:800; font-size:18px">Processing transaction</div>
+        </div>
+      `;
+      setTimeout(()=>{
+        const now = Date.now();
+        const next = {
+          status:'ACTIVE',
+          number: ensurePassportFresh().number || '457476810',
+          expiresAt: now + 7*24*60*60*1000  // 7 days
+        };
+        setPassport(next);
+        renderIDPage();
+        startPassportTimer(next.expiresAt);
+        close();
+      }, 3000);
+    });
+  }
+
+  back.addEventListener('click', close);
+  document.body.append(back, box);
+  requestAnimationFrame(()=>{ back.classList.add('show'); box.classList.add('show'); document.body.classList.add('modal-open'); });
+}
+  
 /* ===== ID / VISA state + UI ===== */
 const VISA_KEY = 'visa';
 let visaTimerHandle = null;
@@ -3042,6 +3185,32 @@ function startVisaTimer(expiresAt){
 }
 
 function renderIDPage(){
+  /* ----- Passport card ----- */
+  const p = ensurePassportFresh();
+  const pActive = p.status === 'ACTIVE' && p.expiresAt && p.expiresAt > Date.now();
+
+  // number, chip text + style
+  document.getElementById('passportNumber')?.setAttribute('data-raw', p.number || '');
+  const pn = document.getElementById('passportNumber'); if (pn) pn.textContent = p.number || '—';
+
+  const ps = document.getElementById('passportStatus');
+  if (ps){
+    ps.classList.toggle('active', pActive);
+    ps.classList.toggle('expired', !pActive);
+    ps.textContent = pActive ? 'ACTIVE' : 'EXPIRED';
+  }
+
+  const pt = document.getElementById('passportTimer');
+  if (pt) pt.style.display = pActive ? '' : 'none';
+  if (pActive) startPassportTimer(p.expiresAt);
+
+  const pcard = document.getElementById('passportCard');
+  if (pcard){
+    pcard.onclick = openPassportPopup;
+    pcard.onkeypress = (e)=>{ if(e.key==='Enter' || e.key===' ') openPassportPopup(); };
+  }
+
+  /* ----- VISA card (existing code stays the same) ----- */
   const mount = document.getElementById('visaCardMount');
   if (!mount) return;
   const v = ensureVisaFresh();
@@ -3063,14 +3232,12 @@ function renderIDPage(){
     </div>
   `;
 
-  // click opens modal
   const card = document.getElementById('visaCard');
   if (card){
     card.addEventListener('click', openVisaPopup);
     card.addEventListener('keypress', e=>{ if(e.key==='Enter' || e.key===' ') openVisaPopup(); });
   }
 
-  // (re)start timer if active
   if (isActive) startVisaTimer(v.expiresAt);
 }
 
