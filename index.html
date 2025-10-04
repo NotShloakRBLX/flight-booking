@@ -2269,9 +2269,9 @@ function needsVisa(from, to){
   const from = fromSel.value, to = toSel.value;
   const departDate = document.getElementById('depart').value;
 
-  if (!from || !to || !departDate) { /* existing highlight code stays */ }
+  if (!from || !to || !departDate) { /* existing highlight code stays */ return; }
 
-  /* NEW — block ALL travel if Passport is expired */
+  // Block ALL travel if Passport expired
   if (!isPassportActive()){
     openID();
     const w = document.getElementById('passportWarn');
@@ -2279,7 +2279,7 @@ function needsVisa(from, to){
     return;
   }
 
-  /* Existing VISA rule (US → JP only) */
+  // US → JP requires active VISA
   if (needsVisa(from, to) && !isVisaActive()){
     openID();
     const w = document.getElementById('visaWarn');
@@ -2287,9 +2287,7 @@ function needsVisa(from, to){
     return;
   }
 
-  // ... rest of your route selection code
-});
-
+  // === Route selection MUST be inside this handler ===
   const key = [from, to].sort().join('-');
 
   let list;
@@ -2328,8 +2326,9 @@ function needsVisa(from, to){
   }
 
   const resNode = resultsView(list);
-  openSheet(); renderView('Choose departure', resNode); stepStack=[{title:'Choose departure', html:resNode}];
-});
+  openSheet(); renderView('Choose departure', resNode);
+  stepStack=[{title:'Choose departure', html:resNode}];
+}); // <-- keep this single closing brace/paren here
 
   /* ---- Dock behavior ---- */
 const dock = document.getElementById('dock');
@@ -3022,6 +3021,15 @@ function ensurePassportFresh(){
 function isPassportActive(){
   const p = ensurePassportFresh();
   return p.status === 'ACTIVE' && p.expiresAt && p.expiresAt > Date.now();
+}
+
+// --- place near other Utils (before startPassportTimer) ---
+function formatRemaining(ms){
+  const s = Math.max(0, Math.floor(ms/1000));
+  const d = Math.floor(s/86400);
+  const h = Math.floor((s%86400)/3600);
+  const m = Math.floor((s%3600)/60);
+  return d ? `${d}d ${h}h` : `${h}h ${String(m).padStart(2,'0')}m`;
 }
 
 function startPassportTimer(expiresAt){
